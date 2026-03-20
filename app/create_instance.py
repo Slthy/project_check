@@ -3,7 +3,7 @@ from flask import Flask
 from blueprints.auth import auth
 from blueprints.staff import staff
 from blueprints.student import student
-from app.blueprints.main.main import main
+from blueprints.main import main
 
 
 def instance():

@@ -1,9 +1,9 @@
-from flask import render_template, request, session, flash, redirect, url_for, jsonify
+from flask import request, session, flash, redirect, url_for, jsonify
 from . import staff
 
 import sqlite3
 
-from functions import grade_student
+from .functions import grade_student
 
 from utils.functions import get_db_connection
 
@@ -18,7 +18,7 @@ def myStudents(): # just for student list - admin panel
 
     query = "SELECT * FROM users"
 
-    if session['role'] == 2 : # professors only see their students
+    if session.get('role') == 2 : # professors only see their students
         query += ''' WHERE uid IN (
                     SELECT p.owner_id
                     FROM plan p
@@ -44,7 +44,7 @@ def grade(o_id: int, student_id: int):
         flash('unrecognized grade', 'error')
         return redirect(url_for(''))
 
-    if session['role'] == "2":  # professors can only grade once
+    if session.get('role') == 2:  # professors can only grade once
         grade = cursor.execute('''
             SELECT e.grade 
             FROM enrollment e

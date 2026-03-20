@@ -1,7 +1,6 @@
 from flask import render_template, session, flash, redirect
 from . import student
-from functions import *
-
+from .functions import *
 import sqlite3
 
 from utils.functions import get_db_connection, has_time_conflict
@@ -25,10 +24,9 @@ def show_user_profile(uid):
         user_info = get_user_info(cursor, uid)
     except sqlite3.IntegrityError:
         flash("error fetching student's info", "error")
-    finally:
-        conn.close()
+
     
-    if session['role'] in [0, 1, 3]: # get past courses, current courses
+    if session.get('role') in [0, 1, 3]: # get past courses, current courses
         try:
             past_courses = []
             current_courses = []

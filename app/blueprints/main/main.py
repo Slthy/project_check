@@ -1,7 +1,7 @@
 import sqlite3
 from flask import Blueprint, render_template, jsonify, session, flash, redirect
 
-from student import functions as student_functions
+from blueprints.student import functions as student_functions
 
 from utils.functions import get_db_connection
 from utils.decorators import login_required, role_required

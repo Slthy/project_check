@@ -52,4 +52,3 @@ def grade_student(o_id: int, student_id: int, grade: str):
     finally:
         if conn:
             conn.close()
-        return False
