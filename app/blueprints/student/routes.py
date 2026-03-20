@@ -1,4 +1,4 @@
-from flask import render_template, session, flash, redirect
+from flask import render_template, session, flash, redirect, url_for
 from . import student
 from .functions import *
 import sqlite3
@@ -12,36 +12,33 @@ def show_user_profile(uid):
     if session.get('role') == 3 and session.get('uid') != uid: # check that a student only asks his/her transcript
         flash("student: uid mismatch", "error")
         return redirect('/')
-    
-    conn = get_db_connection()
-    cursor = conn.cursor()
 
+    conn = None
     user_info = None
     past_courses = None
     current_courses = None
 
     try: # get student's info
-        user_info = get_user_info(cursor, uid)
-    except sqlite3.IntegrityError:
-        flash("error fetching student's info", "error")
+        conn = get_db_connection()
+        cursor = conn.cursor()
 
-    
-    if session.get('role') in [0, 1, 3]: # get past courses, current courses
-        try:
+        user_info = get_user_info(cursor, uid)
+
+        if session.get('role') in [0, 1, 3]:
             past_courses = []
             current_courses = []
-
-            courses = get_student_courses(cursor, uid)
-
-            for course in courses:
+            for course in get_student_courses(cursor, uid):
                 if course['grade'] == 'IP':
                     current_courses.append(course)
                 else:
                     past_courses.append(course)
 
-        except sqlite3.IntegrityError:
-            flash("Email already exists.", "error")
-        finally:
+    except sqlite3.Error as e:
+        flash("error loading profile.", "error")
+        print(f"DB error in show_user_profile: {e}")
+
+    finally:
+        if conn:
             conn.close()
 
     return render_template('student.html', info=user_info, past_courses=past_courses, current_courses=current_courses)
@@ -82,8 +79,7 @@ def drop_course(o_id):
         if conn:
             conn.close()
 
-    return redirect(f'/{uid}')
-
+    return redirect(url_for('student.show_user_profile', uid=uid))
 @student.route('/add_course/<int:o_id>', methods=['POST'])
 @role_required('system_admin', 'student')
 def add_course(o_id):
@@ -103,8 +99,7 @@ def add_course(o_id):
 
         if not course_info:
             flash("Course offering not found.", "error")
-            return redirect(f'/{uid}')
-            
+            return redirect(url_for('student.show_user_profile', uid=uid))            
         c_id = course_info['c_id']
 
         prereqs = get_course_prereqs(cursor, c_id)
@@ -120,8 +115,7 @@ def add_course(o_id):
 
             if missing_prereqs:
                 flash(f"Cannot add course. You are missing prerequisites: {', '.join(missing_prereqs)}", "error")
-                return redirect(f'/{uid}')
-
+                return redirect(url_for('student.show_user_profile', uid=uid))
         new_course_times = cursor.execute('''
             SELECT day, start_time, end_time 
             FROM schedule 
@@ -130,13 +124,11 @@ def add_course(o_id):
 
         if not new_course_times:
             flash("course schedule not found. It might not have meeting times.", "error")
-            return redirect(f'/{uid}')
-
+            return redirect(url_for('student.show_user_profile', uid=uid))
         if has_time_conflict(current_schedule, new_course_times):
             flash("time conflict! you must have at least 30 minutes between classes.", "error")
             # ugly functionality "for free": you cannot the same course twice, it would raise a time conflict
-            return redirect(f'/{uid}')
-
+            return redirect(url_for('student.show_user_profile', uid=uid))
         cursor.execute('''
             INSERT INTO enrollment (plan_id, o_id, grade)
             VALUES (

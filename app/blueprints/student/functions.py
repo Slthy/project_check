@@ -3,13 +3,14 @@ import sqlite3
 def get_student_courses(cursor: sqlite3.Cursor, uid: int):
     try:
         return cursor.execute('''
-            SELECT c.*, e.grade, e.enrolled_at
+            SELECT co.o_id, co.c_id, co.semester, co.year, co.section,
+                   cc.dept, cc.number, cc.name, cc.credits,
+                   e.grade, e.enrolled_at
             FROM enrollment e
-            JOIN c_offering c ON e.o_id = c.o_id
+            JOIN c_offering co ON e.o_id = co.o_id
+            JOIN c_catalog cc ON co.c_id = cc.c_id
             WHERE e.plan_id = (
-                SELECT plan_id 
-                FROM plan 
-                WHERE owner_id = ?
+                SELECT plan_id FROM plan WHERE owner_id = ?
             );
         ''', (uid,)).fetchall()
         

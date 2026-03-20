@@ -14,7 +14,7 @@ def register():
         mname = request.form['mname'] if request.form['mname'] else None
         email = request.form['email']
         password = request.form['password']
-        password_hash = hashpw(password.encode('utf-8'), gensalt())
+        password_hash = hashpw(password.encode('utf-8'), gensalt()).decode('utf-8')  # store as str
 
         # 0, system_admin: creates everybody but cannot be created          
         # 1, grad_secretary: cannot register
@@ -55,7 +55,7 @@ def login():
         password = request.form['password']
 
         conn = None
-        user = None
+        user = {}
         try:
             conn = get_db_connection()
             cursor = conn.cursor()
@@ -72,7 +72,10 @@ def login():
             if conn:
                 conn.close()
 
-        if user and checkpw(password.encode('utf-8'), user['password']):
+        stored = user['password']
+        if isinstance(stored, str):
+            stored = stored.encode('utf-8')
+        if user and checkpw(password.encode('utf-8'), stored):
             session.clear()
             session['email'] = user['email']
             session['uid'] = user['uid']

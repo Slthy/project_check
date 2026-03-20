@@ -35,44 +35,50 @@ def myStudents(): # just for student list - admin panel
 @is_staff
 def grade(o_id: int, student_id: int):
 
-    grade = request.form['grade_input']
+    new_grade = request.form['grade_input']
 
-    conn = get_db_connection()
-    cursor = conn.cursor()
-
-    if grade not in ['A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'F', 'IP']:
+    if new_grade not in ['A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'F', 'IP']:
         flash('unrecognized grade', 'error')
-        return redirect(url_for(''))
+        return redirect('/')
 
     if session.get('role') == 2:  # professors can only grade once
-        grade = cursor.execute('''
-            SELECT e.grade 
-            FROM enrollment e
-            JOIN c_offering co ON e.o_id = co.o_id
-            JOIN c_catalog cc ON co.c_id = cc.c_id
-            WHERE e.o_id = ? 
-            AND e.plan_id = (
-                SELECT plan_id 
-                FROM plan 
-                WHERE owner_id = ?
-            );
-        ''', (o_id, student_id)).fetchone()
+        conn = None
+        try:
+            conn = get_db_connection()
+            cursor = conn.cursor()
 
-        if conn:
-            conn.close()
+            existing = cursor.execute('''
+                SELECT e.grade 
+                FROM enrollment e
+                JOIN c_offering co ON e.o_id = co.o_id
+                WHERE e.o_id = ? 
+                AND e.plan_id = (
+                    SELECT plan_id 
+                    FROM plan 
+                    WHERE owner_id = ?
+                );
+            ''', (o_id, student_id)).fetchone()
 
-        if grade != 'IP':
+        except sqlite3.Error as e:
+            print(f"database error checking existing grade: {e}")
+            flash('database error, try again.', 'error')
+            return redirect('/')
+
+        finally:
+            if conn:
+                conn.close()
+
+        if existing is None or existing['grade'] != 'IP':
             flash('faculty_instructor cannot re-grade a course', 'error')
-            return redirect(url_for(''))
+            return redirect('/')
 
-    success = grade_student(o_id, student_id, grade)
+    success = grade_student(o_id, student_id, new_grade)
     if success:
         flash('grade updated successfully!', 'success')
     else:
         flash('unrecognized grade or database error', 'error')
-        
-    return redirect('/')
 
+    return redirect('/')
 
 @staff.route('/students', methods=['GET'])
 @is_staff
