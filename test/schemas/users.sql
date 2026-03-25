@@ -7,7 +7,7 @@
 PRAGMA foreign_keys = ON;
 
 CREATE TABLE IF NOT EXISTS users (
-    uid          INTEGER PRIMARY KEY DEFAULT 10000000,
+    uid          INTEGER PRIMARY KEY CHECK(uid >= 10000000 AND uid <= 99999999) DEFAULT 10000000,
     fname       TEXT    NOT NULL,
     lname       TEXT    NOT NULL,
     mname       TEXT,

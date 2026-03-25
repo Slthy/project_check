@@ -20,8 +20,8 @@ CREATE TABLE IF NOT EXISTS schedule (
     s_id        INTEGER PRIMARY KEY AUTOINCREMENT,
     o_id        INTEGER NOT NULL,
     day         TEXT    NOT NULL CHECK(day IN ('M', 'T', 'W', 'R', 'F')),
-    start_time  VARCHAR(5) -- 'HH:MM'
-    end_time    VARCHAR(5) -- 'HH:MM'
+    start_time  VARCHAR(5) CHECK (Start_Time LIKE '[0-2][0-9]:[0-5][0-9]')    NOT NULL,             -- 'HH:MM'
+    end_time    VARCHAR(5) CHECK (Start_Time LIKE '[0-2][0-9]:[0-5][0-9]')    NOT NULL,              -- 'HH:MM'
     UNIQUE(o_id, day),
     FOREIGN KEY (o_id) REFERENCES c_offering(o_id)
 );

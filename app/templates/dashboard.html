@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>Welcome, {{ data['fname'] }}!</h1>
+
+    <div class="dashboard-grid">
+        {% if session['role'] == 3 %}
+            <a class="dashboard-box" href="{{ url_for('student.index') }}">
+                <h2>Courses</h2>
+                <p>Browse available courses and manage registration.</p>
+            </a>
+
+            <a class="dashboard-box" href="{{ url_for('student.transcript') }}">
+                <h2>Transcript</h2>
+                <p>View completed courses, grades, and credits.</p>
+            </a>
+
+        {% elif session['role'] == 2 %}
+            <a class="dashboard-box" href="{{ url_for('faculty_instructor.index') }}">
+                <h2>Faculty Page</h2>
+                <p>Access faculty tools and course information.</p>
+            </a>
+
+        {% elif session['role'] == 1 %}
+            <a class="dashboard-box" href="{{ url_for('grad_secretary.index') }}">
+                <h2>Graduate Secretary Page</h2>
+                <p>Manage records and registration-related tasks.</p>
+            </a>
+
+        {% elif session['role'] == 0 %}
+            <a class="dashboard-box" href="{{ url_for('system_admin.index') }}">
+                <h2>Admin Home</h2>
+                <p>Access system admin tools and controls.</p>
+            </a>
+
+            <a class="dashboard-box" href="{{ url_for('auth.sys_admin_register') }}">
+                <h2>Create User</h2>
+                <p>Create new graduate secretary, faculty, or student accounts.</p>
+            </a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
