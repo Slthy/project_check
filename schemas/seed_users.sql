@@ -17,12 +17,10 @@ INSERT INTO users (id, fname, lname, email, password, role) VALUES
     -- psw: psw7
 
 INSERT INTO stud_type (id, track, admit_year) VALUES
-(12345678, 'Masters', 2024),
-(87654321, 'Masters', 2023);
+(88888888, 'Masters', 2024),   -- Billie Holiday
+(99999999, 'Masters', 2023);   -- Diana Krall
 
 INSERT INTO addresses (a_id, line_one, city, state, zip, country_code) VALUES
-(12345678, '123 Main St',    'Washington',    'DC', '20052', 'US'),
-(87654321, '456 Elm Ave',    'Washington',    'DC', '20001', 'US'),
 (10000001, '789 Oak Dr',     'Seattle',       'WA', '98101', 'US'),
 (10000002, '321 Pine Ln',    'Austin',        'TX', '73301', 'US'),
 (10000003, '654 Maple Ct',   'Denver',        'CO', '80201', 'US'),
