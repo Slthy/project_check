@@ -7,7 +7,7 @@
 PRAGMA foreign_keys = ON;
 
 CREATE TABLE IF NOT EXISTS users (
-    uid          INTEGER PRIMARY KEY DEFAULT 10000000,
+    id          INTEGER PRIMARY KEY CHECK(id >= 10000000 AND id <= 99999999),
     fname       TEXT    NOT NULL,
     lname       TEXT    NOT NULL,
     mname       TEXT,
@@ -18,10 +18,10 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 CREATE TABLE IF NOT EXISTS stud_type (
-    uid         INTEGER PRIMARY KEY,
+    id         INTEGER PRIMARY KEY,
     track       TEXT    NOT NULL CHECK(track IN ('Masters', 'PhD')),
     admit_year  INTEGER,
-    FOREIGN KEY (uid) REFERENCES users(uid)
+    FOREIGN KEY (id) REFERENCES users(id)
 );
 
 CREATE TABLE IF NOT EXISTS addresses (
@@ -33,5 +33,5 @@ CREATE TABLE IF NOT EXISTS addresses (
     state        TEXT,
     zip          TEXT    NOT NULL,
     country_code TEXT    NOT NULL DEFAULT 'US',
-    FOREIGN KEY (a_id) REFERENCES users(uid)
+    FOREIGN KEY (a_id) REFERENCES users(id)
 );

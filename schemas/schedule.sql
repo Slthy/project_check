@@ -13,15 +13,15 @@ CREATE TABLE IF NOT EXISTS c_offering (
     capacity    INTEGER,                      
     UNIQUE(c_id, semester, year, section),
     FOREIGN KEY (c_id) REFERENCES c_catalog(c_id),
-    FOREIGN KEY (i_id) REFERENCES users(uid)
+    FOREIGN KEY (i_id) REFERENCES users(id)
 );
 
 CREATE TABLE IF NOT EXISTS schedule (
     s_id        INTEGER PRIMARY KEY AUTOINCREMENT,
     o_id        INTEGER NOT NULL,
     day         TEXT    NOT NULL CHECK(day IN ('M', 'T', 'W', 'R', 'F')),
-    start_time  VARCHAR(5) -- 'HH:MM'
-    end_time    VARCHAR(5) -- 'HH:MM'
+    start_time  VARCHAR(5) NOT NULL,             -- 'HH:MM'
+    end_time    VARCHAR(5) NOT NULL,              -- 'HH:MM'
     UNIQUE(o_id, day),
     FOREIGN KEY (o_id) REFERENCES c_offering(o_id)
 );

@@ -23,5 +23,5 @@ CREATE TABLE IF NOT EXISTS plan (
     is_approved             SMALLINT DEFAULT 0 
                                 CHECK(is_approved IN (0, 1)),
                                 
-    FOREIGN KEY (owner_id)  REFERENCES users(uid)
+    FOREIGN KEY (owner_id)  REFERENCES users(id)
 );
