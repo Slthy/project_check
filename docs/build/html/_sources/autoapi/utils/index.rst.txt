@@ -1,0 +1,17 @@
+utils
+=====
+
+.. py:module:: utils
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/utils/decorators/index
+   /autoapi/utils/functions/index
+   /autoapi/utils/psw/index
+
+

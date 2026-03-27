@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Create User{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>Create User</h1>
+    <p>Create a new Graduate Secretary, Faculty Instructor, or Student account.</p>
+
+    <form method="POST" action="{{ url_for('auth.sys_admin_register') }}">
+        <label>First Name</label>
+        <input type="text" name="fname" required>
+
+        <label>Middle Name (optional)</label>
+        <input type="text" name="mname">
+
+        <label>Last Name</label>
+        <input type="text" name="lname" required>
+
+        <label>Email</label>
+        <input type="email" name="email" required>
+
+        <label>Password</label>
+        <input type="password" name="password" required>
+
+        <label>Role</label>
+        <select name="role" required id="role-select">
+            <option value="">Select role</option>
+            <option value="1">Graduate Secretary</option>
+            <option value="2">Faculty Instructor</option>
+            <option value="3">Student</option>
+        </select>
+
+        <div id="student-fields" style="display: none;">
+            <label>Program Track</label>
+            <select name="track">
+                <option value="">Select track</option>
+                <option value="Masters">Masters</option>
+                <option value="PhD">PhD</option>
+            </select>
+
+            <label>Admit Year</label>
+            <input type="number" name="admit_year" min="2000" max="2100">
+        </div>
+
+        <label>Address Line 1</label>
+        <input type="text" name="line_one" required>
+
+        <label>Address Line 2 (optional)</label>
+        <input type="text" name="line_two">
+
+        <label>City</label>
+        <input type="text" name="city" required>
+
+        <label>State</label>
+        <input type="text" name="state" required>
+
+        <label>ZIP Code</label>
+        <input type="text" name="zip" required>
+
+        <label>Country Code</label>
+        <input type="text" name="country_code" value="US" required>
+
+        <button type="submit">Create User</button>
+    </form>
+</div>
+
+<script>
+    document.getElementById('role-select').addEventListener('change', function() {
+        document.getElementById('student-fields').style.display =
+            this.value === '3' ? 'block' : 'none';
+    });
+</script>
+{% endblock %}

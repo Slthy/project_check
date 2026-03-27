@@ -1,0 +1,31 @@
+faculty_instructor.routes
+=========================
+
+.. py:module:: faculty_instructor.routes
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   faculty_instructor.routes.index
+   faculty_instructor.routes.courses
+   faculty_instructor.routes.roster
+   faculty_instructor.routes.grades
+   faculty_instructor.routes.submit_grade
+
+
+Module Contents
+---------------
+
+.. py:function:: index()
+
+.. py:function:: courses()
+
+.. py:function:: roster()
+
+.. py:function:: grades()
+
+.. py:function:: submit_grade(enroll_id)
+

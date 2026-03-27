@@ -1,0 +1,28 @@
+auth.routes
+===========
+
+.. py:module:: auth.routes
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   auth.routes.register
+   auth.routes.login
+   auth.routes.logout
+   auth.routes.sys_admin_register
+
+
+Module Contents
+---------------
+
+.. py:function:: register()
+
+.. py:function:: login()
+
+.. py:function:: logout()
+
+.. py:function:: sys_admin_register()
+

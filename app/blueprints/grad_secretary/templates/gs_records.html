@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Student Records{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>Student Records</h1>
+    <p>View all registered graduate students.</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Student ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Program</th>
+                <th>Admit Year</th>
+                <th>Transcript</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in students %}
+            <tr>
+                <td>{{ s['id'] }}</td>
+                <td>{{ s['name'] }}</td>
+                <td>{{ s['email'] }}</td>
+                <td>{{ s['track'] }}</td>
+                <td>{{ s['admit_year'] }}</td>
+                <td>
+                    <a href="{{ url_for('grad_secretary.student_transcript', uid=s['id']) }}">
+                        View Transcript
+                    </a>
+                </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="6">No students found.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

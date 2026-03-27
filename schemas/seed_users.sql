@@ -28,3 +28,17 @@ INSERT INTO addresses (a_id, line_one, city, state, zip, country_code) VALUES
 (10000005, '159 Cedar Pl',   'Chicago',       'IL', '60601', 'US'),
 (88888888, '753 Walnut St',  'New York',      'NY', '10001', 'US'),
 (99999999, '852 Spruce Way', 'San Francisco', 'CA', '94105', 'US');
+
+
+
+
+
+
+-- other users
+INSERT INTO users (id, fname, lname, email, password, role) VALUES
+(10000006, 'Alice',  'Faculty1', 'afaculty1@regs.edu', '$2b$12$L.cI2ivPf84OBlhc75OgmOhfmsXfsbN2GMqVXhSKTBzk8r8mPzb0C', 2),
+(10000007, 'Carlos', 'Faculty2', 'cfaculty2@regs.edu', '$2b$12$L.cI2ivPf84OBlhc75OgmOhfmsXfsbN2GMqVXhSKTBzk8r8mPzb0C', 2);
+
+INSERT INTO addresses (a_id, line_one, city, state, zip, country_code) VALUES
+(10000006, '111 Faculty Dr', 'Washington', 'DC', '20052', 'US'),
+(10000007, '222 Faculty Ave', 'Washington', 'DC', '20052', 'US');

@@ -1,0 +1,34 @@
+grad_secretary.routes
+=====================
+
+.. py:module:: grad_secretary.routes
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   grad_secretary.routes.index
+   grad_secretary.routes.records
+   grad_secretary.routes.student_transcript
+   grad_secretary.routes.schedule
+   grad_secretary.routes.override_grades
+   grad_secretary.routes.submit_override
+
+
+Module Contents
+---------------
+
+.. py:function:: index()
+
+.. py:function:: records()
+
+.. py:function:: student_transcript(uid)
+
+.. py:function:: schedule()
+
+.. py:function:: override_grades()
+
+.. py:function:: submit_override(enroll_id)
+

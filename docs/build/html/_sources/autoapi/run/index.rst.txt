@@ -1,0 +1,19 @@
+run
+===
+
+.. py:module:: run
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   run.app
+
+
+Module Contents
+---------------
+
+.. py:data:: app
+

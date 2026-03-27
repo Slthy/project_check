@@ -1,0 +1,28 @@
+system_admin.routes
+===================
+
+.. py:module:: system_admin.routes
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   system_admin.routes.index
+   system_admin.routes.view_users
+   system_admin.routes.delete_user
+   system_admin.routes.shutdown
+
+
+Module Contents
+---------------
+
+.. py:function:: index()
+
+.. py:function:: view_users()
+
+.. py:function:: delete_user()
+
+.. py:function:: shutdown()
+

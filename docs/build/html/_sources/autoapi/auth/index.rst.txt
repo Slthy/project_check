@@ -1,0 +1,28 @@
+auth
+====
+
+.. py:module:: auth
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/auth/routes/index
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   auth.auth
+
+
+Package Contents
+----------------
+
+.. py:data:: auth
+

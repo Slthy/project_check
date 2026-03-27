@@ -1,0 +1,28 @@
+student.routes
+==============
+
+.. py:module:: student.routes
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   student.routes.index
+   student.routes.transcript
+   student.routes.drop_course
+   student.routes.add_course
+
+
+Module Contents
+---------------
+
+.. py:function:: index()
+
+.. py:function:: transcript()
+
+.. py:function:: drop_course(o_id)
+
+.. py:function:: add_course(o_id)
+

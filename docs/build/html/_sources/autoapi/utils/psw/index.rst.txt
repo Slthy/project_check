@@ -1,0 +1,22 @@
+utils.psw
+=========
+
+.. py:module:: utils.psw
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   utils.psw.passwords
+   utils.psw.hashed
+
+
+Module Contents
+---------------
+
+.. py:data:: passwords
+
+.. py:data:: hashed
+

@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Override Grades{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>Override Grades</h1>
+    <p>Update or override any student grade. Unlike faculty, GS can change grades at any time.</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Student</th>
+                <th>Course</th>
+                <th>Current Grade</th>
+                <th>New Grade</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for e in enrollments %}
+            <tr>
+                <td>{{ e['student_name'] }}</td>
+                <td>{{ e['dept'] }} {{ e['number'] }} – {{ e['name'] }}</td>
+                <td>{{ e['grade'] }}</td>
+                <td>
+                    <form method="POST" action="{{ url_for('grad_secretary.submit_override', enroll_id=e['enroll_id']) }}">
+                        <select name="grade" required>
+                            <option value="">Select grade</option>
+                            {% for g in ['A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'F', 'IP'] %}
+                            <option value="{{ g }}" {% if e['grade'] == g %}selected{% endif %}>{{ g }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit">Save</button>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="4">No enrollment records found.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

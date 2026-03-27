@@ -1,0 +1,19 @@
+create_instance
+===============
+
+.. py:module:: create_instance
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   create_instance.instance
+
+
+Module Contents
+---------------
+
+.. py:function:: instance()
+

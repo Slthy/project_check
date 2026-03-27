@@ -1,0 +1,18 @@
+API Reference
+=============
+
+This page contains auto-generated API reference documentation [#f1]_.
+
+.. toctree::
+   :titlesonly:
+
+   /autoapi/run/index
+   /autoapi/auth/index
+   /autoapi/utils/index
+   /autoapi/student/index
+   /autoapi/system_admin/index
+   /autoapi/grad_secretary/index
+   /autoapi/create_instance/index
+   /autoapi/faculty_instructor/index
+
+.. [#f1] Created with `sphinx-autoapi <https://github.com/readthedocs/sphinx-autoapi>`_

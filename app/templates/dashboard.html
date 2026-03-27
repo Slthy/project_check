@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>Welcome, {{ data['fname'] }}!</h1>
+
+    <div class="dashboard-grid">
+        {% if session['role'] == 3 %}
+            <a class="dashboard-box" href="{{ url_for('student.index') }}">
+                <h2>Courses</h2>
+                <p>Browse available courses and manage registration.</p>
+            </a>
+
+            <a class="dashboard-box" href="{{ url_for('student.transcript') }}">
+                <h2>Transcript</h2>
+                <p>View completed courses, grades, and credits.</p>
+            </a>
+
+        {% elif session['role'] == 2 %}
+            <a class="dashboard-box" href="{{ url_for('faculty_instructor.courses') }}">
+                <h2>My Courses</h2>
+                <p>View the courses currently assigned to you.</p>
+            </a>
+            <a class="dashboard-box" href="{{ url_for('faculty_instructor.roster') }}">
+                <h2>Class Roster</h2>
+                <p>View students enrolled in your courses.</p>
+            </a>
+            <a class="dashboard-box" href="{{ url_for('faculty_instructor.grades') }}">
+                <h2>Enter Grades</h2>
+                <p>Submit final grades for your students.</p>
+            </a>
+
+        {% elif session['role'] == 1 %}
+            <a class="dashboard-box" href="{{ url_for('grad_secretary.records') }}">
+                <h2>Student Records</h2>
+                <p>View and manage student information and academic records.</p>
+            </a>
+            <a class="dashboard-box" href="{{ url_for('grad_secretary.schedule') }}">
+                <h2>Course Schedule</h2>
+                <p>View the semester schedule and course offerings.</p>
+            </a>
+            <a class="dashboard-box" href="{{ url_for('grad_secretary.override_grades') }}">
+                <h2>Override Grades</h2>
+                <p>Update or override submitted student grades.</p>
+            </a>
+
+        {% elif session['role'] == 0 %}
+            <a class="dashboard-box" href="{{ url_for('auth.sys_admin_register') }}">
+                <h2>Create User</h2>
+                <p>Create new graduate secretary, faculty, or student accounts.</p>
+            </a>
+            <a class="dashboard-box" href="{{ url_for('system_admin.view_users') }}">
+                <h2>View Users</h2>
+                <p>View all registered users and their assigned roles.</p>
+            </a>
+            <a class="dashboard-box" href="{{ url_for('grad_secretary.records') }}">
+                <h2>Student Records</h2>
+                <p>View all student academic records and transcripts.</p>
+            </a>
+            <a class="dashboard-box" href="{{ url_for('grad_secretary.schedule') }}">
+                <h2>Course Schedule</h2>
+                <p>View all course offerings and scheduling.</p>
+            </a>
+            <a class="dashboard-box" href="{{ url_for('grad_secretary.override_grades') }}">
+                <h2>Override Grades</h2>
+                <p>Update or override any submitted student grade.</p>
+            </a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Class Roster{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>Class Roster</h1>
+    <p>Students enrolled in your courses.</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Course</th>
+                <th>Student Name</th>
+                <th>Email</th>
+                <th>Grade</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in roster %}
+            <tr>
+                <td>{{ row['dept'] }} {{ row['number'] }}</td>
+                <td>{{ row['student_name'] }}</td>
+                <td>{{ row['email'] }}</td>
+                <td>{{ row['grade'] }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="4">No students enrolled in your courses.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

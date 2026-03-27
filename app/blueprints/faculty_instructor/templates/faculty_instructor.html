@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Faculty Home{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>Faculty Home</h1>
+    <p>Access faculty tools and course-related tasks.</p>
+
+    <div class="dashboard-grid">
+        <a class="dashboard-box" href="{{ url_for('faculty_instructor.courses') }}">
+            <h2>My Courses</h2>
+            <p>View the courses currently assigned to you.</p>
+        </a>
+
+        <a class="dashboard-box" href="{{ url_for('faculty_instructor.roster') }}">
+            <h2>Class Roster</h2>
+            <p>View students enrolled in your assigned courses.</p>
+        </a>
+
+        <a class="dashboard-box" href="{{ url_for('faculty_instructor.grades') }}">
+            <h2>Enter Grades</h2>
+            <p>Submit grades for students in the courses you teach.</p>
+        </a>
+    </div>
+</div>
+{% endblock %}

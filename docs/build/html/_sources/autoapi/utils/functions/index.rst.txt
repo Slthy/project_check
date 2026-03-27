@@ -1,0 +1,22 @@
+utils.functions
+===============
+
+.. py:module:: utils.functions
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   utils.functions.get_db_connection
+   utils.functions.has_time_conflict
+
+
+Module Contents
+---------------
+
+.. py:function:: get_db_connection()
+
+.. py:function:: has_time_conflict(current_schedule, new_times)
+

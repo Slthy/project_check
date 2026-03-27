@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}About Me{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 700px; margin: 0 auto;">
+    <h1>About Me</h1>
+
+    <p><strong>First Name:</strong> {{ data.fname }}</p>
+    <p><strong>Middle Name:</strong> {{ data.mname if data.mname else "N/A" }}</p>
+    <p><strong>Last Name:</strong> {{ data.lname }}</p>
+    <p><strong>Email:</strong> {{ data.email }}</p>
+
+    <p><strong>Role:</strong>
+        {% if data.role == 0 %}
+            Admin
+        {% elif data.role == 1 %}
+            Graduate Secretary
+        {% elif data.role == 2 %}
+            Faculty Instructor
+        {% elif data.role == 3 %}
+            Student
+        {% else %}
+            Unknown
+        {% endif %}
+    </p>
+
+    <p><strong>Account Created:</strong> {{ data.created_at }}</p>
+
+    <a href="{{ url_for('auth.logout') }}" class="logout-btn">Logout</a>
+</div>
+{% endblock %}

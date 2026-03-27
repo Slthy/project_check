@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}My Courses{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>My Courses</h1>
+    <p>Courses currently assigned to you.</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Course</th>
+                <th>Title</th>
+                <th>Credits</th>
+                <th>Semester</th>
+                <th>Day</th>
+                <th>Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for course in courses %}
+            <tr>
+                <td>{{ course['dept'] }} {{ course['number'] }}</td>
+                <td>{{ course['name'] }}</td>
+                <td>{{ course['credits'] }}</td>
+                <td>{{ course['semester'] }} {{ course['year'] }}</td>
+                <td>{{ course['day'] }}</td>
+                <td>{{ course['start_time'] }}–{{ course['end_time'] }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="6">No courses assigned.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Courses{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>Available Courses</h1>
+    <p>Browse scheduled courses and register if you meet the requirements.</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Course</th>
+                <th>Title</th>
+                <th>Day</th>
+                <th>Time</th>
+                <th>Instructor</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for course in all_courses %}
+            <tr>
+                <td>{{ course['dept'] }} {{ course['number'] }}</td>
+                <td>{{ course['name'] }}</td>
+                <td>{{ course['day'] }}</td>
+                <td>{{ course['start_time'] }}–{{ course['end_time'] }}</td>
+                <td>{{ course['instructor'] or 'TBA' }}</td>
+                <td>{{ course['status'] }}</td>
+                <td>
+                    {% if course['status'] == 'Eligible' %}
+                    <form method="POST" action="{{ url_for('student.add_course', o_id=course['o_id']) }}">
+                        <button type="submit">Add</button>
+                    </form>
+                    {% else %}
+                    <button type="button" disabled>Unavailable</button>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="card">
+    <h2>Current Schedule</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Course</th>
+                <th>Title</th>
+                <th>Day</th>
+                <th>Time</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for course in current_courses %}
+            <tr>
+                <td>{{ course['dept'] }} {{ course['number'] }}</td>
+                <td>{{ course['name'] }}</td>
+                <td>{{ course['day'] }}</td>
+                <td>{{ course['start_time'] }}–{{ course['end_time'] }}</td>
+                <td>
+                    <form method="POST" action="{{ url_for('student.drop_course', o_id=course['o_id']) }}">
+                        <button type="submit" class="btn-danger">Drop</button>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="5">No courses currently enrolled.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

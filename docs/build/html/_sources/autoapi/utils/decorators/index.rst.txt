@@ -1,0 +1,32 @@
+utils.decorators
+================
+
+.. py:module:: utils.decorators
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   utils.decorators.ROLES
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   utils.decorators.login_required
+   utils.decorators.role_required
+
+
+Module Contents
+---------------
+
+.. py:data:: ROLES
+
+.. py:function:: login_required(f)
+
+.. py:function:: role_required(*roles)
+
