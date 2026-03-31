@@ -42,8 +42,7 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul class="current">
+              <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="../../index.html">API Reference</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../../run/index.html">run</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../auth/index.html">auth</a></li>
@@ -93,24 +92,27 @@
              
   <section id="module-faculty_instructor.routes">
 <span id="faculty-instructor-routes"></span><h1>faculty_instructor.routes<a class="headerlink" href="#module-faculty_instructor.routes" title="Link to this heading"></a></h1>
+<p>Faculty instructor routes: course list, class roster, grade entry, and grade submission.</p>
+<p>All routes require an authenticated session with role ‘faculty_instructor’ or
+‘system_admin’. Routes are registered on the ‘faculty_instructor’ blueprint.</p>
 <section id="functions">
 <h2>Functions<a class="headerlink" href="#functions" title="Link to this heading"></a></h2>
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#faculty_instructor.routes.index" title="faculty_instructor.routes.index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">index</span></code></a>()</p></td>
-<td><p></p></td>
+<td><p>Render the faculty home dashboard.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#faculty_instructor.routes.courses" title="faculty_instructor.routes.courses"><code class="xref py py-obj docutils literal notranslate"><span class="pre">courses</span></code></a>()</p></td>
-<td><p></p></td>
+<td><p>Render a list of course offerings assigned to the logged-in instructor.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#faculty_instructor.routes.roster" title="faculty_instructor.routes.roster"><code class="xref py py-obj docutils literal notranslate"><span class="pre">roster</span></code></a>()</p></td>
-<td><p></p></td>
+<td><p>Render the class roster for all courses taught by the logged-in instructor.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#faculty_instructor.routes.grades" title="faculty_instructor.routes.grades"><code class="xref py py-obj docutils literal notranslate"><span class="pre">grades</span></code></a>()</p></td>
-<td><p></p></td>
+<td><p>Render the grade entry form for students with in-progress (IP) grades.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#faculty_instructor.routes.submit_grade" title="faculty_instructor.routes.submit_grade"><code class="xref py py-obj docutils literal notranslate"><span class="pre">submit_grade</span></code></a>(enroll_id)</p></td>
-<td><p></p></td>
+<td><p>Submit a final grade for a specific enrollment record (POST only).</p></td>
 </tr>
 </tbody>
 </table>
@@ -120,27 +122,47 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="faculty_instructor.routes.index">
 <span class="sig-prename descclassname"><span class="pre">faculty_instructor.routes.</span></span><span class="sig-name descname"><span class="pre">index</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/faculty_instructor/routes.html#index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#faculty_instructor.routes.index" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Render the faculty home dashboard.</p>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="faculty_instructor.routes.courses">
 <span class="sig-prename descclassname"><span class="pre">faculty_instructor.routes.</span></span><span class="sig-name descname"><span class="pre">courses</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/faculty_instructor/routes.html#courses"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#faculty_instructor.routes.courses" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Render a list of course offerings assigned to the logged-in instructor.</p>
+<p>Joins c_offering with c_catalog and schedule to display course code,
+title, credits, semester, day, and time for each assigned section.</p>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="faculty_instructor.routes.roster">
 <span class="sig-prename descclassname"><span class="pre">faculty_instructor.routes.</span></span><span class="sig-name descname"><span class="pre">roster</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/faculty_instructor/routes.html#roster"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#faculty_instructor.routes.roster" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Render the class roster for all courses taught by the logged-in instructor.</p>
+<p>Joins offerings, catalog, enrollment, plan, and users tables to list
+each enrolled student’s name, email, and current grade, grouped by course.</p>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="faculty_instructor.routes.grades">
 <span class="sig-prename descclassname"><span class="pre">faculty_instructor.routes.</span></span><span class="sig-name descname"><span class="pre">grades</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/faculty_instructor/routes.html#grades"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#faculty_instructor.routes.grades" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Render the grade entry form for students with in-progress (IP) grades.</p>
+<p>Only shows enrollments where grade=’IP’, preventing faculty from seeing
+or interacting with already-submitted grades.</p>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="faculty_instructor.routes.submit_grade">
 <span class="sig-prename descclassname"><span class="pre">faculty_instructor.routes.</span></span><span class="sig-name descname"><span class="pre">submit_grade</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">enroll_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/faculty_instructor/routes.html#submit_grade"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#faculty_instructor.routes.submit_grade" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Submit a final grade for a specific enrollment record (POST only).</p>
+<p>Validates that the grade value is in the allowed set, verifies that the
+enrollment belongs to a course taught by the requesting instructor, and
+confirms the grade is still ‘IP’ before updating. Rejects attempts to
+overwrite an already-submitted grade.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>enroll_id</strong> (<em>int</em>) – The enrollment record to update.</p>
+</dd>
+</dl>
+</dd></dl>
 
 </section>
 </section>

@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block title %}{{ _('Edit User') }}{% endblock %}
+
+{% block content %}
+<div style="max-width: 1100px; margin: 0 auto; display: flex; gap: 20px; align-items: flex-start;">
+
+    <div class="card" style="flex: 1;">
+        <h1>{{ _('Edit User') }}</h1>
+        <p>{{ _('Update user information below.') }}</p>
+
+        <form method="POST">
+            <label>{{ _('First Name') }}</label>
+            <input type="text" name="fname" value="{{ user['fname'] }}" required>
+
+            <label>{{ _('Last Name') }}</label>
+            <input type="text" name="lname" value="{{ user['lname'] }}" required>
+
+            <label>{{ _('Email') }}</label>
+            <input type="email" name="email" value="{{ user['email'] }}" required>
+
+            <label>{{ _('Address Line 1') }}</label>
+            <input type="text" name="line_one" value="{{ address.line_one if address else '' }}" required>
+
+            <label>{{ _('Address Line 2 (optional)') }}</label>
+            <input type="text" name="line_two" value="{{ address.line_two if address and address.line_two else '' }}">
+
+            <label>{{ _('City') }}</label>
+            <input type="text" name="city" value="{{ address.city if address else '' }}" required>
+
+            <label>{{ _('State') }}</label>
+            <input type="text" name="state" value="{{ address.state if address else '' }}" required>
+
+            <label>{{ _('ZIP Code') }}</label>
+            <input type="text" name="zip" value="{{ address.zip if address else '' }}" required>
+
+            <label>{{ _('Country Code') }}</label>
+            <input type="text" name="country_code" value="{{ address.country_code if address else 'US' }}" required>
+
+            <button type="submit">{{ _('Save Changes') }}</button>
+        </form>
+    </div>
+
+    {% if user['role'] == 2 %}
+    <div class="card" style="flex: 1;">
+        <h2>{{ _('Assigned Courses') }}</h2>
+
+        {% if assigned_courses %}
+        <table>
+            <thead>
+                <tr>
+                    <th>{{ _('Course') }}</th>
+                    <th>{{ _('Day') }}</th>
+                    <th>{{ _('Time') }}</th>
+                    <th>{{ _('Action') }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for course in assigned_courses %}
+                <tr>
+                    <td>{{ course['dept'] }} {{ course['number'] }}</td>
+                    <td>{{ course['day'] }}</td>
+                    <td>{{ course['start_time'] }}–{{ course['end_time'] }}</td>
+                    <td>
+                        <form method="POST" action="{{ url_for('system_admin.unassign_course', uid=user['id'], o_id=course['o_id']) }}">
+                            <button type="submit" class="btn-danger">{{ _('Unassign') }}</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>{{ _('No courses assigned.') }}</p>
+        {% endif %}
+
+        <h2 style="margin-top: 20px;">{{ _('Assign New Course') }}</h2>
+        {% if available_courses %}
+        <form method="POST" action="{{ url_for('system_admin.assign_course', uid=user['id']) }}">
+            <label>{{ _('Course') }}</label>
+            <select name="o_id" required>
+                <option value="">{{ _('Select a course') }}</option>
+                {% for course in available_courses %}
+                <option value="{{ course['o_id'] }}">
+                    {{ course['dept'] }} {{ course['number'] }} — {{ course['name'] }} ({{ course['day'] }} {{ course['start_time'] }}–{{ course['end_time'] }})
+                </option>
+                {% endfor %}
+            </select>
+            <button type="submit">{{ _('Assign') }}</button>
+        </form>
+        {% else %}
+        <p>{{ _('No available courses to assign.') }}</p>
+        {% endif %}
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

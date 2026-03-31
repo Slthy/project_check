@@ -35,10 +35,10 @@ INSERT INTO addresses (a_id, line_one, city, state, zip, country_code) VALUES
 
 
 -- other users
-INSERT INTO users (id, fname, lname, email, password, role) VALUES
-(10000006, 'Alice',  'Faculty1', 'afaculty1@regs.edu', '$2b$12$L.cI2ivPf84OBlhc75OgmOhfmsXfsbN2GMqVXhSKTBzk8r8mPzb0C', 2),
-(10000007, 'Carlos', 'Faculty2', 'cfaculty2@regs.edu', '$2b$12$L.cI2ivPf84OBlhc75OgmOhfmsXfsbN2GMqVXhSKTBzk8r8mPzb0C', 2);
-
-INSERT INTO addresses (a_id, line_one, city, state, zip, country_code) VALUES
-(10000006, '111 Faculty Dr', 'Washington', 'DC', '20052', 'US'),
-(10000007, '222 Faculty Ave', 'Washington', 'DC', '20052', 'US');
+-- INSERT INTO users (id, fname, lname, email, password, role) VALUES
+-- (10000006, 'Alice',  'Faculty1', 'afaculty1@regs.edu', '$2b$12$L.cI2ivPf84OBlhc75OgmOhfmsXfsbN2GMqVXhSKTBzk8r8mPzb0C', 2),
+-- (10000007, 'Carlos', 'Faculty2', 'cfaculty2@regs.edu', '$2b$12$L.cI2ivPf84OBlhc75OgmOhfmsXfsbN2GMqVXhSKTBzk8r8mPzb0C', 2);
+-- 
+-- INSERT INTO addresses (a_id, line_one, city, state, zip, country_code) VALUES
+-- (10000006, '111 Faculty Dr', 'Washington', 'DC', '20052', 'US'),
+-- (10000007, '222 Faculty Ave', 'Washington', 'DC', '20052', 'US');

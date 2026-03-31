@@ -1,31 +1,56 @@
 {% extends "base.html" %}
-{% block title %}About Me{% endblock %}
+{% block title %}{{ _('About Me') }}{% endblock %}
 
 {% block content %}
-<div class="card" style="max-width: 700px; margin: 0 auto;">
-    <h1>About Me</h1>
+<div style="max-width: 1100px; margin: 0 auto; display: flex; gap: 20px; align-items: flex-start;">
 
-    <p><strong>First Name:</strong> {{ data.fname }}</p>
-    <p><strong>Middle Name:</strong> {{ data.mname if data.mname else "N/A" }}</p>
-    <p><strong>Last Name:</strong> {{ data.lname }}</p>
-    <p><strong>Email:</strong> {{ data.email }}</p>
+    <div class="card" style="flex: 1;">
+        <h1>{{ _('About Me') }}</h1>
+        <p><strong>{{ _('First Name:') }}</strong> {{ data.fname }}</p>
+        <p><strong>{{ _('Middle Name:') }}</strong> {{ data.mname if data.mname else _('N/A') }}</p>
+        <p><strong>{{ _('Last Name:') }}</strong> {{ data.lname }}</p>
+        <p><strong>{{ _('Role:') }}</strong>
+            {% if data.role == 0 %}{{ _('Admin') }}
+            {% elif data.role == 1 %}{{ _('Graduate Secretary') }}
+            {% elif data.role == 2 %}{{ _('Faculty Instructor') }}
+            {% elif data.role == 3 %}{{ _('Student') }}
+            {% else %}{{ _('Unknown') }}{% endif %}
+        </p>
+        <p><strong>{{ _('Account Created:') }}</strong> {{ data.created_at }}</p>
+        <a href="{{ url_for('auth.logout') }}" class="logout-btn">{{ _('Logout') }}</a>
+    </div>
 
-    <p><strong>Role:</strong>
-        {% if data.role == 0 %}
-            Admin
-        {% elif data.role == 1 %}
-            Graduate Secretary
-        {% elif data.role == 2 %}
-            Faculty Instructor
-        {% elif data.role == 3 %}
-            Student
-        {% else %}
-            Unknown
-        {% endif %}
-    </p>
+    {% if session.get('role') in [1, 2, 3] %}
+    <div class="card" style="flex: 2;">
+        <h2>{{ _('Edit Personal Information') }}</h2>
+        <p>{{ _('You may update your email and address below.') }}</p>
 
-    <p><strong>Account Created:</strong> {{ data.created_at }}</p>
+        <form method="POST" action="{{ url_for('about_me') }}">
+            <label>{{ _('Email') }}</label>
+            <input type="email" name="email" value="{{ data.email }}" required>
 
-    <a href="{{ url_for('auth.logout') }}" class="logout-btn">Logout</a>
+            <label>{{ _('Address Line 1') }}</label>
+            <input type="text" name="line_one" value="{{ address.line_one if address else '' }}" required>
+
+            <label>{{ _('Address Line 2 (optional)') }}</label>
+            <input type="text" name="line_two" value="{{ address.line_two if address and address.line_two else '' }}">
+
+            <label>{{ _('City') }}</label>
+            <input type="text" name="city" value="{{ address.city if address else '' }}" required>
+
+            <label>{{ _('State') }}</label>
+            <input type="text" name="state" value="{{ address.state if address else '' }}" required>
+
+            <label>{{ _('ZIP Code') }}</label>
+            <input type="text" name="zip" value="{{ address.zip if address else '' }}" required>
+
+            <label>{{ _('Country Code') }}</label>
+            <input type="text" name="country_code" value="{{ address.country_code if address else 'US' }}" required>
+
+            <button type="submit">{{ _('Save Changes') }}</button>
+        </form>
+    </div>
+    {% endif %}
+
 </div>
 {% endblock %}

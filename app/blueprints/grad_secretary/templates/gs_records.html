@@ -1,20 +1,20 @@
 {% extends "base.html" %}
-{% block title %}Student Records{% endblock %}
+{% block title %}{{ _('Student Records') }}{% endblock %}
 
 {% block content %}
 <div class="card">
-    <h1>Student Records</h1>
-    <p>View all registered graduate students.</p>
+    <h1>{{ _('Student Records') }}</h1>
+    <p>{{ _('View all registered graduate students.') }}</p>
 
     <table>
         <thead>
             <tr>
-                <th>Student ID</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Program</th>
-                <th>Admit Year</th>
-                <th>Transcript</th>
+                <th>{{ _('Student ID') }}</th>
+                <th>{{ _('Name') }}</th>
+                <th>{{ _('Email') }}</th>
+                <th>{{ _('Program') }}</th>
+                <th>{{ _('Admit Year') }}</th>
+                <th>{{ _('Transcript') }}</th>
             </tr>
         </thead>
         <tbody>
@@ -27,12 +27,12 @@
                 <td>{{ s['admit_year'] }}</td>
                 <td>
                     <a href="{{ url_for('grad_secretary.student_transcript', uid=s['id']) }}">
-                        View Transcript
+                        {{ _('View Transcript') }}
                     </a>
                 </td>
             </tr>
             {% else %}
-            <tr><td colspan="6">No students found.</td></tr>
+            <tr><td colspan="6">{{ _('No students found.') }}</td></tr>
             {% endfor %}
         </tbody>
     </table>

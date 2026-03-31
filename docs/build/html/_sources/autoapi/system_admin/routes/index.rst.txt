@@ -3,6 +3,15 @@ system_admin.routes
 
 .. py:module:: system_admin.routes
 
+.. autoapi-nested-parse::
+
+   System administrator routes: user management, database reset, and documentation serving.
+
+   All routes (except serve_sphinx_docs) require an authenticated session with
+   role 'system_admin'. Routes are registered on the 'system_admin' blueprint
+   under /system_admin.
+
+
 
 Functions
 ---------
@@ -13,6 +22,7 @@ Functions
    system_admin.routes.view_users
    system_admin.routes.delete_user
    system_admin.routes.shutdown
+   system_admin.routes.serve_sphinx_docs
 
 
 Module Contents
@@ -20,9 +30,50 @@ Module Contents
 
 .. py:function:: index()
 
+   Redirect the system admin to the application home page.
+
+
 .. py:function:: view_users()
+
+   Render a paginated list of all users in the system.
+
+   Fetches id, first name, last name, email, and role for every user,
+   ordered by ID.
+
 
 .. py:function:: delete_user()
 
+   Delete a user account by ID (POST only).
+
+   Prevents the currently logged-in admin from deleting their own account.
+   On success, removes the user row (cascading to related tables if
+   foreign key constraints are configured) and flashes a confirmation.
+
+   Requires: system_admin role.
+
+
 .. py:function:: shutdown()
+
+   Reset the database to a clean seed state and redirect to login.
+
+   Removes the live database file and replaces it with the pre-seeded
+   backup stored in the reset/ directory.
+
+   Requires: system_admin role.
+
+
+.. py:function:: serve_sphinx_docs(filename='index.html')
+
+   Serve static files from the Sphinx HTML documentation build.
+
+   Handles both the docs root (/docs/) and arbitrary sub-paths
+   (/docs/<path>) by resolving files relative to docs/build/html/.
+
+   :param filename: Path to the requested file within the build directory.
+                    Defaults to 'index.html'.
+   :type filename: str
+
+   :returns: The requested static file served securely via send_from_directory.
+   :rtype: Response
+
 

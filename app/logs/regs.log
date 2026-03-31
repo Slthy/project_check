@@ -1,0 +1,60 @@
+[2026-03-31 00:18:48] INFO in routes: GS submitted grade override 'F' for enrollment 2
+[2026-03-31 00:19:10] INFO in routes: User 10000006 has been deleted.
+[2026-03-31 00:19:12] INFO in routes: User 10000007 has been deleted.
+[2026-03-31 00:35:50] INFO in routes: The database has been resetted.
+[2026-03-31 00:36:40] INFO in routes: User 10000007 has been deleted.
+[2026-03-31 00:37:07] INFO in routes: GS submitted grade override 'C+' for enrollment 2
+[2026-03-31 00:37:18] INFO in routes: User 10000006 has been deleted.
+[2026-03-31 00:37:23] INFO in routes: GS submitted grade override 'C' for enrollment 2
+[2026-03-31 00:38:06] INFO in routes: User 10000003 has been deleted.
+[2026-03-31 00:38:15] INFO in routes: GS submitted grade override 'B-' for enrollment 1
+[2026-03-31 00:38:44] INFO in routes: User 88888888 enrolled in offering 1
+[2026-03-31 00:38:50] INFO in routes: User 88888888 enrolled in offering 5
+[2026-03-31 01:00:50] WARNING in routes: Admin 10000001 wiped the in-memory application logs.
+[2026-03-31 01:01:12] WARNING in routes: Admin 10000001 failed to create user: Email 'aa@aa.com' is already in use.
+[2026-03-31 01:01:37] CRITICAL in routes: Admin 10000001 INITIATED A FULL DATABASE RESET. The system was wiped and seeded.
+[2026-03-31 01:02:23] WARNING in routes: Admin 10000001 wiped the in-memory application logs.
+[2026-03-31 01:02:26] CRITICAL in routes: Admin 10000001 INITIATED A FULL DATABASE RESET. The system was wiped and seeded.
+[2026-03-31 01:04:11] WARNING in routes: Admin 10000001 failed to create user: Email 'alessandroborsato5@gmail.com' is already in use.
+[2026-03-31 01:04:22] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-03-31 01:05:38] WARNING in routes: Admin 10000001 failed to create user: Email 'alessandroborsato5@gmail.com' is already in use.
+[2026-03-31 01:06:14] WARNING in routes: Self-registration failed: Email 'alessandroborsato5@gmail.com' is already in use.
+[2026-03-31 01:06:28] WARNING in routes: Self-registration failed: Email 'alessandroborsatddddddo5@gmail.com' is already in use.
+[2026-03-31 01:09:16] ERROR in routes: IntegrityError during self-registration: CHECK constraint failed: id >= 10000000 AND id <= 99999999
+[2026-03-31 01:26:00] ERROR in routes: IntegrityError during self-registration: CHECK constraint failed: id >= 10000000 AND id <= 99999999
+[2026-03-31 01:33:32] CRITICAL in routes: Admin Unknown INITIATED A FULL DATABASE RESET. The system was wiped and seeded.
+[2026-03-31 01:33:49] INFO in routes: New student successfully self-registered with ID 88888889 (Email: alessandroborsato5@gmail.com)
+[2026-03-31 01:34:26] INFO in routes: Admin 10000001 successfully created user 88888890 (Role: 1, Email: alessandroborsato3333335@gmail.com)
+[2026-03-31 01:34:26] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-03-31 01:35:22] INFO in routes: Grad Secretary 10000001 accessed the global student records list.
+[2026-03-31 01:35:43] INFO in routes: Admin 10000001 successfully created user 88888891 (Role: 3, Email: alessandroborsacdvdvdto5@gmail.com)
+[2026-03-31 01:35:43] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-03-31 01:36:06] WARNING in routes: Admin 10000001 failed to create user: Email 'alessandroborsato5@gmail.com' is already in use.
+[2026-03-31 01:37:54] CRITICAL in routes: Admin 10000001 INITIATED A FULL DATABASE RESET. The system was wiped and seeded.
+[2026-03-31 01:38:03] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-03-31 01:48:20] WARNING in routes: Admin 10000001 wiped the in-memory application logs.
+[2026-03-31 01:48:42] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-03-31 01:48:49] INFO in routes: Grad Secretary 10000001 accessed the global student records list.
+[2026-03-31 01:49:20] INFO in routes: New student successfully self-registered with ID 88888889 (Email: fdfdfdfdf@fdfdfdfdf.com)
+[2026-03-31 01:49:43] WARNING in routes: Admin 10000001 wiped the in-memory application logs.
+[2026-03-31 01:49:51] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-03-31 10:18:50] CRITICAL in routes: Admin 10000001 INITIATED A FULL DATABASE RESET. The system was wiped and seeded.
+[2026-03-31 10:19:47] INFO in routes: Admin 10000001 successfully created user 88888889 (Role: 3, Email: alessandroborsato5@gmail.com)
+[2026-03-31 10:19:47] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-03-31 10:20:17] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-03-31 10:20:20] INFO in routes: Admin 10000001 accessed the edit page for user ID 10000005.
+[2026-03-31 10:20:24] INFO in routes: Admin 10000001 accessed the edit page for user ID 88888888.
+[2026-03-31 10:20:43] CRITICAL in routes: Admin 10000001 INITIATED A FULL DATABASE RESET. The system was wiped and seeded.
+[2026-03-31 10:21:17] INFO in routes: Student 88888888 accessed the course browser.
+[2026-03-31 10:21:22] INFO in routes: Student 88888888 accessed their academic transcript.
+[2026-03-31 10:32:31] INFO in routes: Student 88888888 accessed the course browser.
+[2026-03-31 10:33:03] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-03-31 10:33:06] INFO in routes: Admin 10000001 accessed the edit page for user ID 88888888.
+[2026-03-31 10:33:13] INFO in routes: Grad Secretary 10000001 accessed the global student records list.
+[2026-03-31 10:33:16] INFO in routes: Grad Secretary 10000001 accessed the full course schedule.
+[2026-03-31 10:33:24] INFO in routes: Grad Secretary 10000001 accessed the grade override master list.
+[2026-03-31 10:48:10] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-03-31 10:48:13] INFO in routes: Admin 10000001 accessed the edit page for user ID 10000005.
+[2026-03-31 11:37:49] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-03-31 11:37:52] INFO in routes: Grad Secretary 10000001 accessed the global student records list.
+[2026-03-31 11:37:54] INFO in routes: Grad Secretary 10000001 accessed the full course schedule.

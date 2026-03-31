@@ -1,0 +1,846 @@
+# Hindi translations for PROJECT.
+# Copyright (C) 2026 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2026-03-29 20:10-0400\n"
+"PO-Revision-Date: 2026-03-30 17:15-0400\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: hi\n"
+"Language-Team: hi <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: create_instance.py:95
+msgid "Profile updated successfully."
+msgstr "प्रोफ़ाइल सफलतापूर्वक अपडेट की गई।"
+
+#: create_instance.py:98
+msgid "That email is already in use."
+msgstr "वह ईमेल पहले से ही उपयोग में है।"
+
+#: create_instance.py:108
+msgid "Error loading profile."
+msgstr "प्रोफ़ाइल लोड करने में त्रुटि।"
+
+#: blueprints/auth/routes.py:60 blueprints/auth/routes.py:165
+msgid "Email already exists."
+msgstr "ईमेल पहले से मौजूद है।"
+
+#: blueprints/auth/routes.py:99
+#, python-format
+msgid "Welcome back, %(name)s!"
+msgstr "वापस स्वागत है, %(name)s!"
+
+#: blueprints/auth/routes.py:102
+msgid "Invalid email or password."
+msgstr "अमान्य ईमेल या पासवर्ड।"
+
+#: blueprints/auth/routes.py:162
+msgid "User created successfully."
+msgstr "उपयोगकर्ता सफलतापूर्वक बनाया गया।"
+
+#: blueprints/auth/routes.py:169
+msgid "Invalid role selected."
+msgstr "अमान्य भूमिका चुनी गई।"
+
+#: blueprints/auth/templates/auth/login.html:2
+#: blueprints/auth/templates/auth/login.html:6
+#: blueprints/auth/templates/auth/login.html:18 templates/base.html:391
+msgid "Login"
+msgstr "लॉगिन"
+
+#: blueprints/auth/templates/auth/login.html:9
+#: blueprints/auth/templates/auth/register.html:24
+#: blueprints/auth/templates/auth/sys_admin_register.html:19
+#: blueprints/faculty_instructor/templates/faculty_roster.html:14
+#: blueprints/grad_secretary/templates/gs_records.html:14
+#: blueprints/system_admin/templates/edit_user.html:16
+#: blueprints/system_admin/templates/view_users.html:15
+#: templates/about_me.html:29
+msgid "Email"
+msgstr "ईमेल"
+
+#: blueprints/auth/templates/auth/login.html:10
+msgid "Enter your email"
+msgstr "अपना ईमेल दर्ज करें"
+
+#: blueprints/auth/templates/auth/login.html:14
+#: blueprints/auth/templates/auth/register.html:29
+#: blueprints/auth/templates/auth/sys_admin_register.html:22
+msgid "Password"
+msgstr "पासवर्ड"
+
+#: blueprints/auth/templates/auth/login.html:15
+msgid "Enter your password"
+msgstr "अपना पासवर्ड दर्ज करें"
+
+#: blueprints/auth/templates/auth/register.html:2 templates/base.html:392
+msgid "Register"
+msgstr "पंजीकरण करें"
+
+#: blueprints/auth/templates/auth/register.html:6
+msgid "Student Registration"
+msgstr "छात्र पंजीकरण"
+
+#: blueprints/auth/templates/auth/register.html:9
+#: blueprints/auth/templates/auth/sys_admin_register.html:10
+#: blueprints/system_admin/templates/edit_user.html:10
+#: blueprints/system_admin/templates/view_users.html:13
+msgid "First Name"
+msgstr "पहला नाम"
+
+#: blueprints/auth/templates/auth/register.html:14
+msgid "Middle Name"
+msgstr "मध्य नाम"
+
+#: blueprints/auth/templates/auth/register.html:19
+#: blueprints/auth/templates/auth/sys_admin_register.html:16
+#: blueprints/system_admin/templates/edit_user.html:13
+#: blueprints/system_admin/templates/view_users.html:14
+msgid "Last Name"
+msgstr "अंतिम नाम"
+
+#: blueprints/auth/templates/auth/register.html:34
+#: blueprints/auth/templates/auth/sys_admin_register.html:35
+msgid "Program Track"
+msgstr "कार्यक्रम ट्रैक"
+
+#: blueprints/auth/templates/auth/register.html:36
+msgid "Select program"
+msgstr "कार्यक्रम चुनें"
+
+#: blueprints/auth/templates/auth/register.html:37
+#: blueprints/auth/templates/auth/sys_admin_register.html:38
+msgid "Masters"
+msgstr "मास्टर्स"
+
+#: blueprints/auth/templates/auth/register.html:38
+#: blueprints/auth/templates/auth/sys_admin_register.html:39
+msgid "PhD"
+msgstr "पीएचडी"
+
+#: blueprints/auth/templates/auth/register.html:43
+#: blueprints/auth/templates/auth/sys_admin_register.html:42
+#: blueprints/grad_secretary/templates/gs_records.html:16
+msgid "Admit Year"
+msgstr "प्रवेश वर्ष"
+
+#: blueprints/auth/templates/auth/register.html:48
+#: blueprints/auth/templates/auth/sys_admin_register.html:46
+#: blueprints/system_admin/templates/edit_user.html:19
+#: templates/about_me.html:32
+msgid "Address Line 1"
+msgstr "पता पंक्ति 1"
+
+#: blueprints/auth/templates/auth/register.html:53
+msgid "Address Line 2"
+msgstr "पता पंक्ति 2"
+
+#: blueprints/auth/templates/auth/register.html:58
+#: blueprints/auth/templates/auth/sys_admin_register.html:52
+#: blueprints/system_admin/templates/edit_user.html:25
+#: templates/about_me.html:38
+msgid "City"
+msgstr "शहर"
+
+#: blueprints/auth/templates/auth/register.html:63
+#: blueprints/auth/templates/auth/sys_admin_register.html:55
+#: blueprints/system_admin/templates/edit_user.html:28
+#: templates/about_me.html:41
+msgid "State"
+msgstr "राज्य"
+
+#: blueprints/auth/templates/auth/register.html:68
+#: blueprints/auth/templates/auth/sys_admin_register.html:58
+#: blueprints/system_admin/templates/edit_user.html:31
+#: templates/about_me.html:44
+msgid "ZIP Code"
+msgstr "पिन कोड"
+
+#: blueprints/auth/templates/auth/register.html:73
+#: blueprints/auth/templates/auth/sys_admin_register.html:61
+#: blueprints/system_admin/templates/edit_user.html:34
+#: templates/about_me.html:47
+msgid "Country Code"
+msgstr "देश का कोड"
+
+#: blueprints/auth/templates/auth/register.html:77
+msgid "Create Account"
+msgstr "खाता बनाएं"
+
+#: blueprints/auth/templates/auth/sys_admin_register.html:2
+#: blueprints/auth/templates/auth/sys_admin_register.html:6
+#: blueprints/auth/templates/auth/sys_admin_register.html:64
+#: templates/base.html:414 templates/dashboard.html:49
+msgid "Create User"
+msgstr "उपयोगकर्ता बनाएं"
+
+#: blueprints/auth/templates/auth/sys_admin_register.html:7
+msgid "Create a new Graduate Secretary, Faculty Instructor, or Student account."
+msgstr "एक नया स्नातक सचिव, संकाय प्रशिक्षक, या छात्र खाता बनाएं।"
+
+#: blueprints/auth/templates/auth/sys_admin_register.html:13
+msgid "Middle Name (optional)"
+msgstr "मध्य नाम (वैकल्पिक)"
+
+#: blueprints/auth/templates/auth/sys_admin_register.html:25
+#: blueprints/system_admin/templates/view_users.html:16
+msgid "Role"
+msgstr "भूमिका"
+
+#: blueprints/auth/templates/auth/sys_admin_register.html:27
+msgid "Select role"
+msgstr "भूमिका चुनें"
+
+#: blueprints/auth/templates/auth/sys_admin_register.html:28
+msgid "System Administrator"
+msgstr "सिस्टम प्रशासक"
+
+#: blueprints/auth/templates/auth/sys_admin_register.html:29
+#: blueprints/system_admin/templates/view_users.html:29
+#: templates/about_me.html:14
+msgid "Graduate Secretary"
+msgstr "स्नातक सचिव"
+
+#: blueprints/auth/templates/auth/sys_admin_register.html:30
+#: blueprints/system_admin/templates/view_users.html:30
+#: templates/about_me.html:15
+msgid "Faculty Instructor"
+msgstr "संकाय प्रशिक्षक"
+
+#: blueprints/auth/templates/auth/sys_admin_register.html:31
+#: blueprints/grad_secretary/templates/gs_override_grades.html:12
+#: blueprints/system_admin/templates/view_users.html:31
+#: templates/about_me.html:16
+msgid "Student"
+msgstr "छात्र"
+
+#: blueprints/auth/templates/auth/sys_admin_register.html:37
+msgid "Select track"
+msgstr "ट्रैक चुनें"
+
+#: blueprints/auth/templates/auth/sys_admin_register.html:49
+#: blueprints/system_admin/templates/edit_user.html:22
+#: templates/about_me.html:35
+msgid "Address Line 2 (optional)"
+msgstr "पता पंक्ति 2 (वैकल्पिक)"
+
+#: blueprints/faculty_instructor/routes.py:52 blueprints/student/routes.py:106
+msgid "Error loading courses."
+msgstr "कोर्स लोड करने में त्रुटि।"
+
+#: blueprints/faculty_instructor/routes.py:91
+msgid "Error loading roster."
+msgstr "रोस्टर लोड करने में त्रुटि।"
+
+#: blueprints/faculty_instructor/routes.py:131
+#: blueprints/grad_secretary/routes.py:162
+msgid "Error loading grades."
+msgstr "ग्रेड लोड करने में त्रुटि।"
+
+#: blueprints/faculty_instructor/routes.py:160
+#: blueprints/grad_secretary/routes.py:189
+msgid "Invalid grade selected."
+msgstr "अमान्य ग्रेड चुना गया।"
+
+#: blueprints/faculty_instructor/routes.py:178
+msgid "You are not authorized to grade this student."
+msgstr "आप इस छात्र को ग्रेड देने के लिए अधिकृत नहीं हैं।"
+
+#: blueprints/faculty_instructor/routes.py:182
+msgid "Grade already submitted and cannot be changed."
+msgstr "ग्रेड पहले ही सबमिट किया जा चुका है और इसे बदला नहीं जा सकता।"
+
+#: blueprints/faculty_instructor/routes.py:189
+msgid "Grade submitted successfully."
+msgstr "ग्रेड सफलतापूर्वक सबमिट किया गया।"
+
+#: blueprints/faculty_instructor/routes.py:192
+#: blueprints/grad_secretary/routes.py:203 blueprints/student/routes.py:304
+msgid "A database error occurred."
+msgstr "डेटाबेस त्रुटि हुई।"
+
+#: blueprints/faculty_instructor/templates/faculty_courses.html:2
+#: blueprints/faculty_instructor/templates/faculty_courses.html:6
+#: blueprints/faculty_instructor/templates/faculty_instructor.html:11
+#: templates/base.html:402 templates/dashboard.html:21
+msgid "My Courses"
+msgstr "मेरे कोर्स"
+
+#: blueprints/faculty_instructor/templates/faculty_courses.html:7
+msgid "Courses currently assigned to you."
+msgstr "वर्तमान में आपको सौंपे गए कोर्स।"
+
+#: blueprints/faculty_instructor/templates/faculty_courses.html:12
+#: blueprints/faculty_instructor/templates/faculty_grades.html:12
+#: blueprints/faculty_instructor/templates/faculty_roster.html:12
+#: blueprints/grad_secretary/templates/gs_override_grades.html:13
+#: blueprints/grad_secretary/templates/gs_schedule.html:12
+#: blueprints/grad_secretary/templates/gs_transcript.html:12
+#: blueprints/student/templates/courses.html:12
+#: blueprints/student/templates/courses.html:50
+#: blueprints/student/templates/transcript.html:12
+msgid "Course"
+msgstr "कोर्स"
+
+#: blueprints/faculty_instructor/templates/faculty_courses.html:13
+#: blueprints/grad_secretary/templates/gs_schedule.html:13
+#: blueprints/grad_secretary/templates/gs_transcript.html:13
+#: blueprints/student/templates/courses.html:13
+#: blueprints/student/templates/courses.html:51
+#: blueprints/student/templates/transcript.html:13
+msgid "Title"
+msgstr "शीर्षक"
+
+#: blueprints/faculty_instructor/templates/faculty_courses.html:14
+#: blueprints/grad_secretary/templates/gs_schedule.html:14
+#: blueprints/grad_secretary/templates/gs_transcript.html:16
+#: blueprints/student/templates/transcript.html:16
+msgid "Credits"
+msgstr "क्रेडिट"
+
+#: blueprints/faculty_instructor/templates/faculty_courses.html:15
+#: blueprints/grad_secretary/templates/gs_schedule.html:15
+#: blueprints/grad_secretary/templates/gs_transcript.html:14
+#: blueprints/student/templates/transcript.html:14
+msgid "Semester"
+msgstr "सेमेस्टर"
+
+#: blueprints/faculty_instructor/templates/faculty_courses.html:16
+#: blueprints/grad_secretary/templates/gs_schedule.html:16
+#: blueprints/student/templates/courses.html:14
+#: blueprints/student/templates/courses.html:52
+msgid "Day"
+msgstr "दिन"
+
+#: blueprints/faculty_instructor/templates/faculty_courses.html:17
+#: blueprints/grad_secretary/templates/gs_schedule.html:17
+#: blueprints/student/templates/courses.html:15
+#: blueprints/student/templates/courses.html:53
+msgid "Time"
+msgstr "समय"
+
+#: blueprints/faculty_instructor/templates/faculty_courses.html:31
+msgid "No courses assigned."
+msgstr "कोई कोर्स नहीं सौंपा गया।"
+
+#: blueprints/faculty_instructor/templates/faculty_grades.html:2
+#: blueprints/faculty_instructor/templates/faculty_grades.html:6
+#: blueprints/faculty_instructor/templates/faculty_instructor.html:21
+#: templates/dashboard.html:29
+msgid "Enter Grades"
+msgstr "ग्रेड दर्ज करें"
+
+#: blueprints/faculty_instructor/templates/faculty_grades.html:7
+msgid "Submit final grades for students. Grades cannot be changed once submitted."
+msgstr ""
+"छात्रों के लिए अंतिम ग्रेड सबमिट करें। सबमिट करने के बाद ग्रेड बदला नहीं "
+"जा सकता।"
+
+#: blueprints/faculty_instructor/templates/faculty_grades.html:13
+#: blueprints/faculty_instructor/templates/faculty_roster.html:13
+msgid "Student Name"
+msgstr "छात्र का नाम"
+
+#: blueprints/faculty_instructor/templates/faculty_grades.html:14
+msgid "Submit Grade"
+msgstr "ग्रेड सबमिट करें"
+
+#: blueprints/faculty_instructor/templates/faculty_grades.html:25
+#: blueprints/grad_secretary/templates/gs_override_grades.html:27
+msgid "Select grade"
+msgstr "ग्रेड चुनें"
+
+#: blueprints/faculty_instructor/templates/faculty_grades.html:30
+msgid "Submit"
+msgstr "सबमिट करें"
+
+#: blueprints/faculty_instructor/templates/faculty_grades.html:35
+msgid "No pending grades."
+msgstr "कोई लंबित ग्रेड नहीं है।"
+
+#: blueprints/faculty_instructor/templates/faculty_instructor.html:2
+#: blueprints/faculty_instructor/templates/faculty_instructor.html:6
+msgid "Faculty Home"
+msgstr "संकाय होम"
+
+#: blueprints/faculty_instructor/templates/faculty_instructor.html:7
+msgid "Access faculty tools and course-related tasks."
+msgstr "संकाय टूल और कोर्स से संबंधित कार्यों तक पहुँचें।"
+
+#: blueprints/faculty_instructor/templates/faculty_instructor.html:12
+#: templates/dashboard.html:22
+msgid "View the courses currently assigned to you."
+msgstr "वर्तमान में आपको सौंपे गए कोर्स देखें।"
+
+#: blueprints/faculty_instructor/templates/faculty_instructor.html:16
+#: blueprints/faculty_instructor/templates/faculty_roster.html:2
+#: blueprints/faculty_instructor/templates/faculty_roster.html:6
+#: templates/dashboard.html:25
+msgid "Class Roster"
+msgstr "कक्षा रोस्टर"
+
+#: blueprints/faculty_instructor/templates/faculty_instructor.html:17
+msgid "View students enrolled in your assigned courses."
+msgstr "अपने सौंपे गए कोर्स में नामांकित छात्रों को देखें।"
+
+#: blueprints/faculty_instructor/templates/faculty_instructor.html:22
+msgid "Submit grades for students in the courses you teach."
+msgstr "जिन कोर्सों को आप पढ़ाते हैं उनमें छात्रों के लिए ग्रेड सबमिट करें।"
+
+#: blueprints/faculty_instructor/templates/faculty_roster.html:7
+msgid "Students enrolled in your courses."
+msgstr "आपके कोर्स में नामांकित छात्र।"
+
+#: blueprints/faculty_instructor/templates/faculty_roster.html:15
+#: blueprints/grad_secretary/templates/gs_transcript.html:15
+#: blueprints/student/templates/transcript.html:15
+msgid "Grade"
+msgstr "ग्रेड"
+
+#: blueprints/faculty_instructor/templates/faculty_roster.html:27
+msgid "No students enrolled in your courses."
+msgstr "आपके कोर्स में कोई छात्र नामांकित नहीं है।"
+
+#: blueprints/grad_secretary/routes.py:49
+msgid "Error loading student records."
+msgstr "छात्र रिकॉर्ड लोड करने में त्रुटि।"
+
+#: blueprints/grad_secretary/routes.py:91
+msgid "Error loading transcript."
+msgstr "ट्रांसक्रिप्ट लोड करने में त्रुटि।"
+
+#: blueprints/grad_secretary/routes.py:127
+msgid "Error loading schedule."
+msgstr "समय सारणी लोड करने में त्रुटि।"
+
+#: blueprints/grad_secretary/routes.py:201
+msgid "Grade updated successfully."
+msgstr "ग्रेड सफलतापूर्वक अपडेट किया गया।"
+
+#: blueprints/grad_secretary/templates/gs_override_grades.html:2
+#: blueprints/grad_secretary/templates/gs_override_grades.html:6
+#: templates/dashboard.html:43 templates/dashboard.html:65
+msgid "Override Grades"
+msgstr "ग्रेड ओवरराइड करें"
+
+#: blueprints/grad_secretary/templates/gs_override_grades.html:7
+msgid ""
+"Update or override any student grade. Unlike faculty, GS can change "
+"grades at any time."
+msgstr ""
+"किसी भी छात्र ग्रेड को अपडेट या ओवरराइड करें। संकाय के विपरीत, स्नातक "
+"सचिव किसी भी समय ग्रेड बदल सकते हैं।"
+
+#: blueprints/grad_secretary/templates/gs_override_grades.html:14
+msgid "Current Grade"
+msgstr "वर्तमान ग्रेड"
+
+#: blueprints/grad_secretary/templates/gs_override_grades.html:15
+msgid "New Grade"
+msgstr "नया ग्रेड"
+
+#: blueprints/grad_secretary/templates/gs_override_grades.html:32
+msgid "Save"
+msgstr "सहेजें"
+
+#: blueprints/grad_secretary/templates/gs_override_grades.html:37
+msgid "No enrollment records found."
+msgstr "कोई नामांकन रिकॉर्ड नहीं मिला।"
+
+#: blueprints/grad_secretary/templates/gs_records.html:2
+#: blueprints/grad_secretary/templates/gs_records.html:6
+#: templates/dashboard.html:35 templates/dashboard.html:57
+msgid "Student Records"
+msgstr "छात्र रिकॉर्ड"
+
+#: blueprints/grad_secretary/templates/gs_records.html:7
+msgid "View all registered graduate students."
+msgstr "सभी पंजीकृत स्नातक छात्रों को देखें।"
+
+#: blueprints/grad_secretary/templates/gs_records.html:12
+msgid "Student ID"
+msgstr "छात्र आईडी"
+
+#: blueprints/grad_secretary/templates/gs_records.html:13
+msgid "Name"
+msgstr "नाम"
+
+#: blueprints/grad_secretary/templates/gs_records.html:15
+msgid "Program"
+msgstr "कार्यक्रम"
+
+#: blueprints/grad_secretary/templates/gs_records.html:17
+#: blueprints/student/templates/transcript.html:2 templates/base.html:398
+#: templates/dashboard.html:15
+msgid "Transcript"
+msgstr "ट्रांसक्रिप्ट"
+
+#: blueprints/grad_secretary/templates/gs_records.html:30
+msgid "View Transcript"
+msgstr "ट्रांसक्रिप्ट देखें"
+
+#: blueprints/grad_secretary/templates/gs_records.html:35
+msgid "No students found."
+msgstr "कोई छात्र नहीं मिला।"
+
+#: blueprints/grad_secretary/templates/gs_schedule.html:2
+#: blueprints/grad_secretary/templates/gs_schedule.html:6
+#: templates/dashboard.html:39 templates/dashboard.html:61
+msgid "Course Schedule"
+msgstr "कोर्स समय सारणी"
+
+#: blueprints/grad_secretary/templates/gs_schedule.html:7
+msgid "All course offerings and their scheduled times."
+msgstr "सभी कोर्स पेशकश और उनके निर्धारित समय।"
+
+#: blueprints/grad_secretary/templates/gs_schedule.html:18
+#: blueprints/student/templates/courses.html:16
+msgid "Instructor"
+msgstr "प्रशिक्षक"
+
+#: blueprints/grad_secretary/templates/gs_schedule.html:30
+#: blueprints/student/templates/courses.html:28
+msgid "TBA"
+msgstr "घोषित किया जाएगा"
+
+#: blueprints/grad_secretary/templates/gs_schedule.html:33
+#: blueprints/grad_secretary/templates/gs_transcript.html:29
+#: blueprints/student/templates/transcript.html:29
+msgid "No courses found."
+msgstr "कोई कोर्स नहीं मिला।"
+
+#: blueprints/grad_secretary/templates/gs_transcript.html:2
+msgid "Student Transcript"
+msgstr "छात्र ट्रांसक्रिप्ट"
+
+#: blueprints/grad_secretary/templates/gs_transcript.html:6
+#, python-format
+msgid "Transcript — %(fname)s %(lname)s"
+msgstr "ट्रांसक्रिप्ट — %(fname)s %(lname)s"
+
+#: blueprints/student/routes.py:203
+msgid "Course successfully dropped."
+msgstr "कोर्स सफलतापूर्वक हटा दिया गया।"
+
+#: blueprints/student/routes.py:205
+msgid "Could not drop the course. Are you sure you are enrolled?"
+msgstr "कोर्स नहीं हटाया जा सका। क्या आप वाकई नामांकित हैं?"
+
+#: blueprints/student/routes.py:208
+msgid "A database error occurred while dropping the course."
+msgstr "कोर्स हटाते समय डेटाबेस त्रुटि हुई।"
+
+#: blueprints/student/routes.py:256
+msgid "Course offering not found."
+msgstr "कोर्स की पेशकश नहीं मिली।"
+
+#: blueprints/student/routes.py:283
+#, python-format
+msgid "Missing prerequisites: %(prereqs)s"
+msgstr "अनुपस्थित पूर्वापेक्षाएँ: %(prereqs)s"
+
+#: blueprints/student/routes.py:291
+msgid "Time conflict! You must have at least 30 minutes between classes."
+msgstr "समय संघर्ष! कक्षाओं के बीच कम से कम 30 मिनट का समय होना चाहिए।"
+
+#: blueprints/student/routes.py:299
+msgid "Course successfully added!"
+msgstr "कोर्स सफलतापूर्वक जोड़ा गया!"
+
+#: blueprints/student/routes.py:302
+msgid "You are already enrolled in this course."
+msgstr "आप पहले से ही इस कोर्स में नामांकित हैं।"
+
+#: blueprints/student/templates/courses.html:2 templates/base.html:397
+#: templates/dashboard.html:11
+msgid "Courses"
+msgstr "कोर्स"
+
+#: blueprints/student/templates/courses.html:6
+msgid "Available Courses"
+msgstr "उपलब्ध कोर्स"
+
+#: blueprints/student/templates/courses.html:7
+msgid "Browse scheduled courses and register if you meet the requirements."
+msgstr ""
+"निर्धारित कोर्स देखें और यदि आप आवश्यकताओं को पूरा करते हैं तो पंजीकरण "
+"करें।"
+
+#: blueprints/student/templates/courses.html:17
+msgid "Status"
+msgstr "स्थिति"
+
+#: blueprints/student/templates/courses.html:18
+#: blueprints/student/templates/courses.html:54
+#: blueprints/system_admin/templates/view_users.html:17
+msgid "Action"
+msgstr "कार्य"
+
+#: blueprints/student/templates/courses.html:33
+msgid "Add"
+msgstr "जोड़ें"
+
+#: blueprints/student/templates/courses.html:36
+msgid "Unavailable"
+msgstr "अनुपलब्ध"
+
+#: blueprints/student/templates/courses.html:46
+msgid "Current Schedule"
+msgstr "वर्तमान समय सारणी"
+
+#: blueprints/student/templates/courses.html:66
+msgid "Drop"
+msgstr "हटाएं"
+
+#: blueprints/student/templates/courses.html:71
+msgid "No courses currently enrolled."
+msgstr "वर्तमान में कोई कोर्स नामांकित नहीं है।"
+
+#: blueprints/student/templates/transcript.html:6
+msgid "Academic Transcript"
+msgstr "अकादमिक ट्रांसक्रिप्ट"
+
+#: blueprints/student/templates/transcript.html:7
+msgid "View completed courses, grades, and earned credits."
+msgstr "पूरे किए गए कोर्स, ग्रेड और अर्जित क्रेडिट देखें।"
+
+#: blueprints/student/templates/transcript.html:36
+msgid "Transcript Summary"
+msgstr "ट्रांसक्रिप्ट सारांश"
+
+#: blueprints/student/templates/transcript.html:40
+msgid "Total Credits Earned"
+msgstr "अर्जित कुल क्रेडिट"
+
+#: blueprints/student/templates/transcript.html:44
+msgid "Current GPA"
+msgstr "वर्तमान जीपीए"
+
+#: blueprints/system_admin/templates/edit_user.html:2
+#: blueprints/system_admin/templates/edit_user.html:6
+msgid "Edit User"
+msgstr "उपयोगकर्ता संपादित करें"
+
+#: blueprints/system_admin/templates/edit_user.html:7
+msgid "Update user information below."
+msgstr "नीचे उपयोगकर्ता जानकारी अपडेट करें।"
+
+#: blueprints/system_admin/templates/edit_user.html:37
+#: templates/about_me.html:50
+msgid "Save Changes"
+msgstr "परिवर्तन सहेजें"
+
+#: blueprints/system_admin/templates/view_users.html:2 templates/base.html:415
+#: templates/dashboard.html:53
+msgid "View Users"
+msgstr "उपयोगकर्ता देखें"
+
+#: blueprints/system_admin/templates/view_users.html:6
+msgid "All Users"
+msgstr "सभी उपयोगकर्ता"
+
+#: blueprints/system_admin/templates/view_users.html:7
+msgid "View all registered users in the system."
+msgstr "सिस्टम में सभी पंजीकृत उपयोगकर्ताओं को देखें।"
+
+#: blueprints/system_admin/templates/view_users.html:12
+msgid "ID"
+msgstr "आईडी"
+
+#: blueprints/system_admin/templates/view_users.html:28
+msgid "System Admin"
+msgstr "सिस्टम एडमिन"
+
+#: blueprints/system_admin/templates/view_users.html:32
+#: templates/about_me.html:17
+msgid "Unknown"
+msgstr "अज्ञात"
+
+#: blueprints/system_admin/templates/view_users.html:37
+msgid "Edit"
+msgstr "संपादित करें"
+
+#: blueprints/system_admin/templates/view_users.html:41
+msgid "Delete"
+msgstr "हटाएं"
+
+#: templates/about_me.html:2 templates/about_me.html:8
+msgid "About Me"
+msgstr "मेरे बारे में"
+
+#: templates/about_me.html:9
+msgid "First Name:"
+msgstr "पहला नाम:"
+
+#: templates/about_me.html:10
+msgid "Middle Name:"
+msgstr "मध्य नाम:"
+
+#: templates/about_me.html:10
+msgid "N/A"
+msgstr "लागू नहीं"
+
+#: templates/about_me.html:11
+msgid "Last Name:"
+msgstr "अंतिम नाम:"
+
+#: templates/about_me.html:12
+msgid "Role:"
+msgstr "भूमिका:"
+
+#: templates/about_me.html:13
+msgid "Admin"
+msgstr "एडमिन"
+
+#: templates/about_me.html:19
+msgid "Account Created:"
+msgstr "खाता बनाया गया:"
+
+#: templates/about_me.html:20
+msgid "Logout"
+msgstr "लॉगआउट"
+
+#: templates/about_me.html:25
+msgid "Edit Personal Information"
+msgstr "व्यक्तिगत जानकारी संपादित करें"
+
+#: templates/about_me.html:26
+msgid "You may update your email and address below."
+msgstr "आप नीचे अपना ईमेल और पता अपडेट कर सकते हैं।"
+
+#: templates/base.html:363
+msgid "ADMIN PORTAL"
+msgstr "एडमिन पोर्टल"
+
+#: templates/base.html:364
+msgid "GRAD SECRETARY PORTAL"
+msgstr "स्नातक सचिव पोर्टल"
+
+#: templates/base.html:365
+msgid "FACULTY PORTAL"
+msgstr "संकाय पोर्टल"
+
+#: templates/base.html:366
+msgid "STUDENT PORTAL"
+msgstr "छात्र पोर्टल"
+
+#: templates/base.html:381 templates/base.html:440
+msgid "Search courses..."
+msgstr "कोर्स खोजें..."
+
+#: templates/base.html:394 templates/index.html:2
+msgid "Home"
+msgstr "होम"
+
+#: templates/base.html:403
+msgid "Roster"
+msgstr "रोस्टर"
+
+#: templates/base.html:404 templates/base.html:410 templates/base.html:417
+msgid "Grades"
+msgstr "ग्रेड"
+
+#: templates/base.html:408 templates/base.html:416
+msgid "Students"
+msgstr "छात्र"
+
+#: templates/base.html:409
+msgid "Schedule"
+msgstr "समय सारणी"
+
+#: templates/base.html:421
+msgid "Warning: this will wipe all data. Are you sure?"
+msgstr "चेतावनी: इससे सारा डेटा मिट जाएगा। क्या आप सुनिश्चित हैं?"
+
+#: templates/base.html:424
+msgid "Reset DB"
+msgstr "डेटाबेस रीसेट करें"
+
+#: templates/dashboard.html:2
+msgid "Dashboard"
+msgstr "डैशबोर्ड"
+
+#: templates/dashboard.html:6
+#, python-format
+msgid "Welcome, %(name)s!"
+msgstr "स्वागत है, %(name)s!"
+
+#: templates/dashboard.html:12
+msgid "Browse available courses and manage registration."
+msgstr "उपलब्ध कोर्स ब्राउज़ करें और पंजीकरण प्रबंधित करें।"
+
+#: templates/dashboard.html:16
+msgid "View completed courses, grades, and credits."
+msgstr "पूरे किए गए कोर्स, ग्रेड और क्रेडिट देखें।"
+
+#: templates/dashboard.html:26
+msgid "View students enrolled in your courses."
+msgstr "अपने कोर्स में नामांकित छात्रों को देखें।"
+
+#: templates/dashboard.html:30
+msgid "Submit final grades for your students."
+msgstr "अपने छात्रों के लिए अंतिम ग्रेड सबमिट करें।"
+
+#: templates/dashboard.html:36
+msgid "View and manage student information and academic records."
+msgstr "छात्र जानकारी और शैक्षणिक रिकॉर्ड देखें और प्रबंधित करें।"
+
+#: templates/dashboard.html:40
+msgid "View the semester schedule and course offerings."
+msgstr "सेमेस्टर समय सारणी और कोर्स पेशकश देखें।"
+
+#: templates/dashboard.html:44
+msgid "Update or override submitted student grades."
+msgstr "सबमिट किए गए छात्र ग्रेड अपडेट या ओवरराइड करें।"
+
+#: templates/dashboard.html:50
+msgid "Create new graduate secretary, faculty, or student accounts."
+msgstr "नया स्नातक सचिव, संकाय या छात्र खाता बनाएं।"
+
+#: templates/dashboard.html:54
+msgid "View all registered users and their assigned roles."
+msgstr "सभी पंजीकृत उपयोगकर्ताओं और उनकी सौंपी गई भूमिकाओं को देखें।"
+
+#: templates/dashboard.html:58
+msgid "View all student academic records and transcripts."
+msgstr "सभी छात्र शैक्षणिक रिकॉर्ड और ट्रांसक्रिप्ट देखें।"
+
+#: templates/dashboard.html:62
+msgid "View all course offerings and scheduling."
+msgstr "सभी कोर्स पेशकश और समय निर्धारण देखें।"
+
+#: templates/dashboard.html:66
+msgid "Update or override any submitted student grade."
+msgstr "किसी भी सबमिट किए गए छात्र ग्रेड को अपडेट या ओवरराइड करें।"
+
+#: templates/dashboard.html:69
+msgid "Documentation"
+msgstr "दस्तावेज़ीकरण"
+
+#: templates/dashboard.html:70
+msgid "View the system API documentation."
+msgstr "सिस्टम API दस्तावेज़ीकरण देखें।"
+
+#: templates/index.html:6
+msgid "Welcome to REGS"
+msgstr "REGS में आपका स्वागत है"
+
+#: templates/index.html:7
+msgid "This is a demo front-end template for the registration system project."
+msgstr "यह पंजीकरण प्रणाली परियोजना के लिए एक डेमो फ्रंट-एंड टेम्पलेट है।"
+
+#: templates/index.html:8
+msgid "Use the navigation bar to preview the required pages for each user role."
+msgstr ""
+"प्रत्येक उपयोगकर्ता भूमिका के लिए आवश्यक पृष्ठों का पूर्वावलोकन करने के "
+"लिए नेविगेशन बार का उपयोग करें।"
+

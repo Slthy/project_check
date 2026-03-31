@@ -1,20 +1,20 @@
 {% extends "base.html" %}
-{% block title %}View Users{% endblock %}
+{% block title %}{{ _('View Users') }}{% endblock %}
 
 {% block content %}
 <div class="card">
-    <h1>All Users</h1>
-    <p>View all registered users in the system.</p>
-
+    <h1>{{ _('All Users') }}</h1>
+    <p>{{ _('View all registered users in the system.') }}</p>
+    <input type="text" id="userSearch" placeholder="{{ _('Search by name, email, or role...') }}" style="margin-bottom: 16px;" oninput="filterUsers()">
     <table>
         <thead>
             <tr>
-                <th>ID</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Email</th>
-                <th>Role</th>
-                <th>Action</th>
+                <th>{{ _('ID') }}</th>
+                <th>{{ _('First Name') }}</th>
+                <th>{{ _('Last Name') }}</th>
+                <th>{{ _('Email') }}</th>
+                <th>{{ _('Role') }}</th>
+                <th>{{ _('Action') }}</th>
             </tr>
         </thead>
         <tbody>
@@ -25,22 +25,20 @@
                 <td>{{ user['lname'] }}</td>
                 <td>{{ user['email'] }}</td>
                 <td>
-                    {% if user['role'] == 0 %}
-                        System Admin
-                    {% elif user['role'] == 1 %}
-                        Graduate Secretary
-                    {% elif user['role'] == 2 %}
-                        Faculty Instructor
-                    {% elif user['role'] == 3 %}
-                        Student
-                    {% else %}
-                        Unknown
+                    {% if user['role'] == 0 %}{{ _('System Admin') }}
+                    {% elif user['role'] == 1 %}{{ _('Graduate Secretary') }}
+                    {% elif user['role'] == 2 %}{{ _('Faculty Instructor') }}
+                    {% elif user['role'] == 3 %}{{ _('Student') }}
+                    {% else %}{{ _('Unknown') }}
                     {% endif %}
                 </td>
-                <td>
+                <td style="display: flex; gap: 8px;">
+                    <a href="{{ url_for('system_admin.edit_user', uid=user['id']) }}">
+                        <button type="button" class="btn-secondary">{{ _('Edit') }}</button>
+                    </a>
                     <form method="POST" action="{{ url_for('system_admin.delete_user') }}">
                         <input type="hidden" name="user_id" value="{{ user['id'] }}">
-                        <button type="submit" class="btn-danger">Delete</button>
+                        <button type="submit" class="btn-danger">{{ _('Delete') }}</button>
                     </form>
                 </td>
             </tr>
@@ -48,4 +46,14 @@
         </tbody>
     </table>
 </div>
+<script>
+function filterUsers() {
+    const query = document.getElementById('userSearch').value.toLowerCase();
+    const rows = document.querySelectorAll('tbody tr');
+    rows.forEach(row => {
+        row.style.display = row.innerText.toLowerCase().includes(query) ? '' : 'none';
+    });
+}
+</script>
+
 {% endblock %}

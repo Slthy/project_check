@@ -20,7 +20,7 @@
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="utils.psw" href="../psw/index.html" />
+    <link rel="next" title="student" href="../../student/index.html" />
     <link rel="prev" title="utils.decorators" href="../decorators/index.html" /> 
 </head>
 
@@ -43,8 +43,7 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul class="current">
+              <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="../../index.html">API Reference</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../../run/index.html">run</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../auth/index.html">auth</a></li>
@@ -52,7 +51,6 @@
 <li class="toctree-l3 current"><a class="reference internal" href="../index.html#submodules">Submodules</a><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="../decorators/index.html">utils.decorators</a></li>
 <li class="toctree-l4 current"><a class="current reference internal" href="#">utils.functions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../psw/index.html">utils.psw</a></li>
 </ul>
 </li>
 </ul>
@@ -94,15 +92,16 @@
              
   <section id="module-utils.functions">
 <span id="utils-functions"></span><h1>utils.functions<a class="headerlink" href="#module-utils.functions" title="Link to this heading"></a></h1>
+<p>Shared utility functions used across all blueprints.</p>
 <section id="functions">
 <h2>Functions<a class="headerlink" href="#functions" title="Link to this heading"></a></h2>
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#utils.functions.get_db_connection" title="utils.functions.get_db_connection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_db_connection</span></code></a>()</p></td>
-<td><p></p></td>
+<td><p>Open and return a connection to the SQLite database.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#utils.functions.has_time_conflict" title="utils.functions.has_time_conflict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_time_conflict</span></code></a>(current_schedule, new_times)</p></td>
-<td><p></p></td>
+<td><p>Determine whether a set of new course times conflicts with an existing schedule.</p></td>
 </tr>
 </tbody>
 </table>
@@ -112,12 +111,44 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="utils.functions.get_db_connection">
 <span class="sig-prename descclassname"><span class="pre">utils.functions.</span></span><span class="sig-name descname"><span class="pre">get_db_connection</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/utils/functions.html#get_db_connection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.functions.get_db_connection" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Open and return a connection to the SQLite database.</p>
+<p>The database path is resolved relative to this file’s location,
+two directories up (i.e., the project root). The connection uses
+sqlite3.Row as its row factory so columns are accessible by name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An open database connection.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>sqlite3.Connection</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="utils.functions.has_time_conflict">
 <span class="sig-prename descclassname"><span class="pre">utils.functions.</span></span><span class="sig-name descname"><span class="pre">has_time_conflict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current_schedule</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_times</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/utils/functions.html#has_time_conflict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.functions.has_time_conflict" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Determine whether a set of new course times conflicts with an existing schedule.</p>
+<p>Two time slots conflict if they share the same day and do not have at least
+a 30-minute gap between them (i.e., one must end at least 30 minutes before
+the other begins).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>current_schedule</strong> (<em>list</em><em>[</em><em>sqlite3.Row</em><em>]</em>) – Rows containing ‘day’, ‘start_time’,
+and ‘end_time’ for each currently enrolled course.</p></li>
+<li><p><strong>new_times</strong> (<em>list</em><em>[</em><em>sqlite3.Row</em><em> | </em><em>dict</em><em>]</em>) – Rows or dicts with the same keys
+for the course being evaluated.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if a conflict is detected, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
 
 </section>
 </section>
@@ -127,7 +158,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="../decorators/index.html" class="btn btn-neutral float-left" title="utils.decorators" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="../psw/index.html" class="btn btn-neutral float-right" title="utils.psw" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="../../student/index.html" class="btn btn-neutral float-right" title="student" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

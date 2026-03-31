@@ -1,25 +1,25 @@
 {% extends "base.html" %}
-{% block title %}Faculty Home{% endblock %}
+{% block title %}{{ _('Faculty Home') }}{% endblock %}
 
 {% block content %}
 <div class="card">
-    <h1>Faculty Home</h1>
-    <p>Access faculty tools and course-related tasks.</p>
+    <h1>{{ _('Faculty Home') }}</h1>
+    <p>{{ _('Access faculty tools and course-related tasks.') }}</p>
 
     <div class="dashboard-grid">
         <a class="dashboard-box" href="{{ url_for('faculty_instructor.courses') }}">
-            <h2>My Courses</h2>
-            <p>View the courses currently assigned to you.</p>
+            <h2>{{ _('My Courses') }}</h2>
+            <p>{{ _('View the courses currently assigned to you.') }}</p>
         </a>
 
         <a class="dashboard-box" href="{{ url_for('faculty_instructor.roster') }}">
-            <h2>Class Roster</h2>
-            <p>View students enrolled in your assigned courses.</p>
+            <h2>{{ _('Class Roster') }}</h2>
+            <p>{{ _('View students enrolled in your assigned courses.') }}</p>
         </a>
 
         <a class="dashboard-box" href="{{ url_for('faculty_instructor.grades') }}">
-            <h2>Enter Grades</h2>
-            <p>Submit grades for students in the courses you teach.</p>
+            <h2>{{ _('Enter Grades') }}</h2>
+            <p>{{ _('Submit grades for students in the courses you teach.') }}</p>
         </a>
     </div>
 </div>

@@ -43,8 +43,7 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul class="current">
+              <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="../../index.html">API Reference</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../../run/index.html">run</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../auth/index.html">auth</a></li>
@@ -94,21 +93,28 @@
              
   <section id="module-system_admin.routes">
 <span id="system-admin-routes"></span><h1>system_admin.routes<a class="headerlink" href="#module-system_admin.routes" title="Link to this heading"></a></h1>
+<p>System administrator routes: user management, database reset, and documentation serving.</p>
+<p>All routes (except serve_sphinx_docs) require an authenticated session with
+role ‘system_admin’. Routes are registered on the ‘system_admin’ blueprint
+under /system_admin.</p>
 <section id="functions">
 <h2>Functions<a class="headerlink" href="#functions" title="Link to this heading"></a></h2>
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#system_admin.routes.index" title="system_admin.routes.index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">index</span></code></a>()</p></td>
-<td><p></p></td>
+<td><p>Redirect the system admin to the application home page.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#system_admin.routes.view_users" title="system_admin.routes.view_users"><code class="xref py py-obj docutils literal notranslate"><span class="pre">view_users</span></code></a>()</p></td>
-<td><p></p></td>
+<td><p>Render a paginated list of all users in the system.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#system_admin.routes.delete_user" title="system_admin.routes.delete_user"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delete_user</span></code></a>()</p></td>
-<td><p></p></td>
+<td><p>Delete a user account by ID (POST only).</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#system_admin.routes.shutdown" title="system_admin.routes.shutdown"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shutdown</span></code></a>()</p></td>
-<td><p></p></td>
+<td><p>Reset the database to a clean seed state and redirect to login.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#system_admin.routes.serve_sphinx_docs" title="system_admin.routes.serve_sphinx_docs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">serve_sphinx_docs</span></code></a>([filename])</p></td>
+<td><p>Serve static files from the Sphinx HTML documentation build.</p></td>
 </tr>
 </tbody>
 </table>
@@ -118,22 +124,55 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="system_admin.routes.index">
 <span class="sig-prename descclassname"><span class="pre">system_admin.routes.</span></span><span class="sig-name descname"><span class="pre">index</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/system_admin/routes.html#index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#system_admin.routes.index" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Redirect the system admin to the application home page.</p>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="system_admin.routes.view_users">
 <span class="sig-prename descclassname"><span class="pre">system_admin.routes.</span></span><span class="sig-name descname"><span class="pre">view_users</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/system_admin/routes.html#view_users"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#system_admin.routes.view_users" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Render a paginated list of all users in the system.</p>
+<p>Fetches id, first name, last name, email, and role for every user,
+ordered by ID.</p>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="system_admin.routes.delete_user">
 <span class="sig-prename descclassname"><span class="pre">system_admin.routes.</span></span><span class="sig-name descname"><span class="pre">delete_user</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/system_admin/routes.html#delete_user"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#system_admin.routes.delete_user" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Delete a user account by ID (POST only).</p>
+<p>Prevents the currently logged-in admin from deleting their own account.
+On success, removes the user row (cascading to related tables if
+foreign key constraints are configured) and flashes a confirmation.</p>
+<p>Requires: system_admin role.</p>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="system_admin.routes.shutdown">
 <span class="sig-prename descclassname"><span class="pre">system_admin.routes.</span></span><span class="sig-name descname"><span class="pre">shutdown</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/system_admin/routes.html#shutdown"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#system_admin.routes.shutdown" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Reset the database to a clean seed state and redirect to login.</p>
+<p>Removes the live database file and replaces it with the pre-seeded
+backup stored in the reset/ directory.</p>
+<p>Requires: system_admin role.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="system_admin.routes.serve_sphinx_docs">
+<span class="sig-prename descclassname"><span class="pre">system_admin.routes.</span></span><span class="sig-name descname"><span class="pre">serve_sphinx_docs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'index.html'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/system_admin/routes.html#serve_sphinx_docs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#system_admin.routes.serve_sphinx_docs" title="Link to this definition"></a></dt>
+<dd><p>Serve static files from the Sphinx HTML documentation build.</p>
+<p>Handles both the docs root (/docs/) and arbitrary sub-paths
+(/docs/&lt;path&gt;) by resolving files relative to docs/build/html/.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – Path to the requested file within the build directory.
+Defaults to ‘index.html’.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The requested static file served securely via send_from_directory.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Response</p>
+</dd>
+</dl>
+</dd></dl>
 
 </section>
 </section>

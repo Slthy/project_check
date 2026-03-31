@@ -40,8 +40,7 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../autoapi/index.html">API Reference</a></li>
 </ul>
 
@@ -71,7 +70,15 @@
            <div itemprop="articleBody">
              
   <h1>Source code for system_admin.routes</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">flask</span><span class="w"> </span><span class="kn">import</span> <span class="n">render_template</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">redirect</span><span class="p">,</span> <span class="n">url_for</span><span class="p">,</span> <span class="n">flash</span><span class="p">,</span> <span class="n">session</span>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">System administrator routes: user management, database reset, and documentation serving.</span>
+
+<span class="sd">All routes (except serve_sphinx_docs) require an authenticated session with</span>
+<span class="sd">role &#39;system_admin&#39;. Routes are registered on the &#39;system_admin&#39; blueprint</span>
+<span class="sd">under /system_admin.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">flask</span><span class="w"> </span><span class="kn">import</span> <span class="n">render_template</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">redirect</span><span class="p">,</span> <span class="n">url_for</span><span class="p">,</span> <span class="n">flash</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">send_from_directory</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">utils.decorators</span><span class="w"> </span><span class="kn">import</span> <span class="n">role_required</span><span class="p">,</span> <span class="n">login_required</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">utils.functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_db_connection</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">system_admin</span>
@@ -83,6 +90,9 @@
 <div class="viewcode-block" id="index">
 <a class="viewcode-back" href="../../autoapi/system_admin/routes/index.html#system_admin.routes.index">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">index</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Redirect the system admin to the application home page.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;home&#39;</span><span class="p">))</span></div>
 
 
@@ -92,6 +102,12 @@
 <div class="viewcode-block" id="view_users">
 <a class="viewcode-back" href="../../autoapi/system_admin/routes/index.html#system_admin.routes.view_users">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">view_users</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Render a paginated list of all users in the system.</span>
+
+<span class="sd">    Fetches id, first name, last name, email, and role for every user,</span>
+<span class="sd">    ordered by ID.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">users</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">conn</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">try</span><span class="p">:</span>
@@ -116,6 +132,15 @@
 <div class="viewcode-block" id="delete_user">
 <a class="viewcode-back" href="../../autoapi/system_admin/routes/index.html#system_admin.routes.delete_user">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">delete_user</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Delete a user account by ID (POST only).</span>
+
+<span class="sd">    Prevents the currently logged-in admin from deleting their own account.</span>
+<span class="sd">    On success, removes the user row (cascading to related tables if</span>
+<span class="sd">    foreign key constraints are configured) and flashes a confirmation.</span>
+
+<span class="sd">    Requires: system_admin role.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">user_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;user_id&#39;</span><span class="p">]</span>
 
     <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">user_id</span><span class="p">)</span> <span class="o">==</span> <span class="n">session</span><span class="p">[</span><span class="s1">&#39;user_id&#39;</span><span class="p">]:</span>
@@ -140,14 +165,47 @@
 
 
 <span class="nd">@system_admin</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/reset&#39;</span><span class="p">)</span>
+<span class="nd">@role_required</span><span class="p">(</span><span class="s1">&#39;system_admin&#39;</span><span class="p">)</span>
 <div class="viewcode-block" id="shutdown">
 <a class="viewcode-back" href="../../autoapi/system_admin/routes/index.html#system_admin.routes.shutdown">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">shutdown</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reset the database to a clean seed state and redirect to login.</span>
+
+<span class="sd">    Removes the live database file and replaces it with the pre-seeded</span>
+<span class="sd">    backup stored in the reset/ directory.</span>
+
+<span class="sd">    Requires: system_admin role.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="s2">&quot;../26-project-phase1-birdsarentreal/database.db&quot;</span><span class="p">):</span>
         <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s2">&quot;../26-project-phase1-birdsarentreal/database.db&quot;</span><span class="p">)</span>
     <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="s2">&quot;../26-project-phase1-birdsarentreal/reset/database.db&quot;</span><span class="p">,</span> <span class="s2">&quot;../26-project-phase1-birdsarentreal&quot;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;auth.login&#39;</span><span class="p">))</span></div>
+
+
+<span class="nd">@system_admin</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/docs/&#39;</span><span class="p">)</span>
+<span class="nd">@system_admin</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/docs/&lt;path:filename&gt;&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="serve_sphinx_docs">
+<a class="viewcode-back" href="../../autoapi/system_admin/routes/index.html#system_admin.routes.serve_sphinx_docs">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">serve_sphinx_docs</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s1">&#39;index.html&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Serve static files from the Sphinx HTML documentation build.</span>
+
+<span class="sd">    Handles both the docs root (/docs/) and arbitrary sub-paths</span>
+<span class="sd">    (/docs/&lt;path&gt;) by resolving files relative to docs/build/html/.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        filename (str): Path to the requested file within the build directory.</span>
+<span class="sd">                        Defaults to &#39;index.html&#39;.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Response: The requested static file served securely via send_from_directory.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">docs_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s1">&#39;../../../docs/build/html&#39;</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">send_from_directory</span><span class="p">(</span><span class="n">docs_dir</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span></div>
 
 </pre></div>
 

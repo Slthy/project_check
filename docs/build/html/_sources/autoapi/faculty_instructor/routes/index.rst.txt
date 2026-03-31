@@ -3,6 +3,14 @@ faculty_instructor.routes
 
 .. py:module:: faculty_instructor.routes
 
+.. autoapi-nested-parse::
+
+   Faculty instructor routes: course list, class roster, grade entry, and grade submission.
+
+   All routes require an authenticated session with role 'faculty_instructor' or
+   'system_admin'. Routes are registered on the 'faculty_instructor' blueprint.
+
+
 
 Functions
 ---------
@@ -21,11 +29,43 @@ Module Contents
 
 .. py:function:: index()
 
+   Render the faculty home dashboard.
+
+
 .. py:function:: courses()
+
+   Render a list of course offerings assigned to the logged-in instructor.
+
+   Joins c_offering with c_catalog and schedule to display course code,
+   title, credits, semester, day, and time for each assigned section.
+
 
 .. py:function:: roster()
 
+   Render the class roster for all courses taught by the logged-in instructor.
+
+   Joins offerings, catalog, enrollment, plan, and users tables to list
+   each enrolled student's name, email, and current grade, grouped by course.
+
+
 .. py:function:: grades()
 
+   Render the grade entry form for students with in-progress (IP) grades.
+
+   Only shows enrollments where grade='IP', preventing faculty from seeing
+   or interacting with already-submitted grades.
+
+
 .. py:function:: submit_grade(enroll_id)
+
+   Submit a final grade for a specific enrollment record (POST only).
+
+   Validates that the grade value is in the allowed set, verifies that the
+   enrollment belongs to a course taught by the requesting instructor, and
+   confirms the grade is still 'IP' before updating. Rejects attempts to
+   overwrite an already-submitted grade.
+
+   :param enroll_id: The enrollment record to update.
+   :type enroll_id: int
+
 

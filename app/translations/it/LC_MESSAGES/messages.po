@@ -1,0 +1,834 @@
+
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2026-03-29 20:10-0400\n"
+"PO-Revision-Date: 2026-03-29 20:12-0400\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: it\n"
+"Language-Team: it <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: create_instance.py:95
+msgid "Profile updated successfully."
+msgstr "Profilo aggiornato con successo."
+
+#: create_instance.py:98
+msgid "That email is already in use."
+msgstr "Questa email è già in uso."
+
+#: create_instance.py:108
+msgid "Error loading profile."
+msgstr "Errore durante il caricamento del profilo."
+
+#: blueprints/auth/routes.py:60 blueprints/auth/routes.py:165
+msgid "Email already exists."
+msgstr "L'email esiste già."
+
+#: blueprints/auth/routes.py:99
+#, python-format
+msgid "Welcome back, %(name)s!"
+msgstr "Bentornato/a, %(name)s!"
+
+#: blueprints/auth/routes.py:102
+msgid "Invalid email or password."
+msgstr "Email o password non valide."
+
+#: blueprints/auth/routes.py:162
+msgid "User created successfully."
+msgstr "Utente creato con successo."
+
+#: blueprints/auth/routes.py:169
+msgid "Invalid role selected."
+msgstr "Ruolo selezionato non valido."
+
+#: blueprints/auth/templates/auth/login.html:2
+#: blueprints/auth/templates/auth/login.html:6
+#: blueprints/auth/templates/auth/login.html:18 templates/base.html:391
+msgid "Login"
+msgstr "Accedi"
+
+#: blueprints/auth/templates/auth/login.html:9
+#: blueprints/auth/templates/auth/register.html:24
+#: blueprints/auth/templates/auth/sys_admin_register.html:19
+#: blueprints/faculty_instructor/templates/faculty_roster.html:14
+#: blueprints/grad_secretary/templates/gs_records.html:14
+#: blueprints/system_admin/templates/edit_user.html:16
+#: blueprints/system_admin/templates/view_users.html:15
+#: templates/about_me.html:29
+msgid "Email"
+msgstr "Email"
+
+#: blueprints/auth/templates/auth/login.html:10
+msgid "Enter your email"
+msgstr "Inserisci la tua email"
+
+#: blueprints/auth/templates/auth/login.html:14
+#: blueprints/auth/templates/auth/register.html:29
+#: blueprints/auth/templates/auth/sys_admin_register.html:22
+msgid "Password"
+msgstr "Password"
+
+#: blueprints/auth/templates/auth/login.html:15
+msgid "Enter your password"
+msgstr "Inserisci la tua password"
+
+#: blueprints/auth/templates/auth/register.html:2 templates/base.html:392
+msgid "Register"
+msgstr "Registrati"
+
+#: blueprints/auth/templates/auth/register.html:6
+msgid "Student Registration"
+msgstr "Registrazione Studente"
+
+#: blueprints/auth/templates/auth/register.html:9
+#: blueprints/auth/templates/auth/sys_admin_register.html:10
+#: blueprints/system_admin/templates/edit_user.html:10
+#: blueprints/system_admin/templates/view_users.html:13
+msgid "First Name"
+msgstr "Nome"
+
+#: blueprints/auth/templates/auth/register.html:14
+msgid "Middle Name"
+msgstr "Secondo Nome"
+
+#: blueprints/auth/templates/auth/register.html:19
+#: blueprints/auth/templates/auth/sys_admin_register.html:16
+#: blueprints/system_admin/templates/edit_user.html:13
+#: blueprints/system_admin/templates/view_users.html:14
+msgid "Last Name"
+msgstr "Cognome"
+
+#: blueprints/auth/templates/auth/register.html:34
+#: blueprints/auth/templates/auth/sys_admin_register.html:35
+msgid "Program Track"
+msgstr "Percorso di Studi"
+
+#: blueprints/auth/templates/auth/register.html:36
+msgid "Select program"
+msgstr "Seleziona programma"
+
+#: blueprints/auth/templates/auth/register.html:37
+#: blueprints/auth/templates/auth/sys_admin_register.html:38
+msgid "Masters"
+msgstr "Laurea Magistrale"
+
+#: blueprints/auth/templates/auth/register.html:38
+#: blueprints/auth/templates/auth/sys_admin_register.html:39
+msgid "PhD"
+msgstr "Dottorato"
+
+#: blueprints/auth/templates/auth/register.html:43
+#: blueprints/auth/templates/auth/sys_admin_register.html:42
+#: blueprints/grad_secretary/templates/gs_records.html:16
+msgid "Admit Year"
+msgstr "Anno di Ammissione"
+
+#: blueprints/auth/templates/auth/register.html:48
+#: blueprints/auth/templates/auth/sys_admin_register.html:46
+#: blueprints/system_admin/templates/edit_user.html:19
+#: templates/about_me.html:32
+msgid "Address Line 1"
+msgstr "Indirizzo (Riga 1)"
+
+#: blueprints/auth/templates/auth/register.html:53
+msgid "Address Line 2"
+msgstr "Indirizzo (Riga 2)"
+
+#: blueprints/auth/templates/auth/register.html:58
+#: blueprints/auth/templates/auth/sys_admin_register.html:52
+#: blueprints/system_admin/templates/edit_user.html:25
+#: templates/about_me.html:38
+msgid "City"
+msgstr "Città"
+
+#: blueprints/auth/templates/auth/register.html:63
+#: blueprints/auth/templates/auth/sys_admin_register.html:55
+#: blueprints/system_admin/templates/edit_user.html:28
+#: templates/about_me.html:41
+msgid "State"
+msgstr "Stato/Provincia"
+
+#: blueprints/auth/templates/auth/register.html:68
+#: blueprints/auth/templates/auth/sys_admin_register.html:58
+#: blueprints/system_admin/templates/edit_user.html:31
+#: templates/about_me.html:44
+msgid "ZIP Code"
+msgstr "CAP"
+
+#: blueprints/auth/templates/auth/register.html:73
+#: blueprints/auth/templates/auth/sys_admin_register.html:61
+#: blueprints/system_admin/templates/edit_user.html:34
+#: templates/about_me.html:47
+msgid "Country Code"
+msgstr "Codice Paese"
+
+#: blueprints/auth/templates/auth/register.html:77
+msgid "Create Account"
+msgstr "Crea Account"
+
+#: blueprints/auth/templates/auth/sys_admin_register.html:2
+#: blueprints/auth/templates/auth/sys_admin_register.html:6
+#: blueprints/auth/templates/auth/sys_admin_register.html:64
+#: templates/base.html:414 templates/dashboard.html:49
+msgid "Create User"
+msgstr "Crea Utente"
+
+#: blueprints/auth/templates/auth/sys_admin_register.html:7
+msgid "Create a new Graduate Secretary, Faculty Instructor, or Student account."
+msgstr "Crea un nuovo account Segreteria Studenti, Docente o Studente."
+
+#: blueprints/auth/templates/auth/sys_admin_register.html:13
+msgid "Middle Name (optional)"
+msgstr "Secondo Nome (opzionale)"
+
+#: blueprints/auth/templates/auth/sys_admin_register.html:25
+#: blueprints/system_admin/templates/view_users.html:16
+msgid "Role"
+msgstr "Ruolo"
+
+#: blueprints/auth/templates/auth/sys_admin_register.html:27
+msgid "Select role"
+msgstr "Seleziona ruolo"
+
+#: blueprints/auth/templates/auth/sys_admin_register.html:28
+msgid "System Administrator"
+msgstr "Amministratore di Sistema"
+
+#: blueprints/auth/templates/auth/sys_admin_register.html:29
+#: blueprints/system_admin/templates/view_users.html:29
+#: templates/about_me.html:14
+msgid "Graduate Secretary"
+msgstr "Segreteria Studenti"
+
+#: blueprints/auth/templates/auth/sys_admin_register.html:30
+#: blueprints/system_admin/templates/view_users.html:30
+#: templates/about_me.html:15
+msgid "Faculty Instructor"
+msgstr "Docente"
+
+#: blueprints/auth/templates/auth/sys_admin_register.html:31
+#: blueprints/grad_secretary/templates/gs_override_grades.html:12
+#: blueprints/system_admin/templates/view_users.html:31
+#: templates/about_me.html:16
+msgid "Student"
+msgstr "Studente"
+
+#: blueprints/auth/templates/auth/sys_admin_register.html:37
+msgid "Select track"
+msgstr "Seleziona percorso"
+
+#: blueprints/auth/templates/auth/sys_admin_register.html:49
+#: blueprints/system_admin/templates/edit_user.html:22
+#: templates/about_me.html:35
+msgid "Address Line 2 (optional)"
+msgstr "Indirizzo (Riga 2) (opzionale)"
+
+#: blueprints/faculty_instructor/routes.py:52 blueprints/student/routes.py:106
+msgid "Error loading courses."
+msgstr "Errore durante il caricamento dei corsi."
+
+#: blueprints/faculty_instructor/routes.py:91
+msgid "Error loading roster."
+msgstr "Errore durante il caricamento del registro."
+
+#: blueprints/faculty_instructor/routes.py:131
+#: blueprints/grad_secretary/routes.py:162
+msgid "Error loading grades."
+msgstr "Errore durante il caricamento dei voti."
+
+#: blueprints/faculty_instructor/routes.py:160
+#: blueprints/grad_secretary/routes.py:189
+msgid "Invalid grade selected."
+msgstr "Voto selezionato non valido."
+
+#: blueprints/faculty_instructor/routes.py:178
+msgid "You are not authorized to grade this student."
+msgstr "Non sei autorizzato a valutare questo studente."
+
+#: blueprints/faculty_instructor/routes.py:182
+msgid "Grade already submitted and cannot be changed."
+msgstr "Voto già inviato e non modificabile."
+
+#: blueprints/faculty_instructor/routes.py:189
+msgid "Grade submitted successfully."
+msgstr "Voto inviato con successo."
+
+#: blueprints/faculty_instructor/routes.py:192
+#: blueprints/grad_secretary/routes.py:203 blueprints/student/routes.py:304
+msgid "A database error occurred."
+msgstr "Si è verificato un errore del database."
+
+#: blueprints/faculty_instructor/templates/faculty_courses.html:2
+#: blueprints/faculty_instructor/templates/faculty_courses.html:6
+#: blueprints/faculty_instructor/templates/faculty_instructor.html:11
+#: templates/base.html:402 templates/dashboard.html:21
+msgid "My Courses"
+msgstr "I Miei Corsi"
+
+#: blueprints/faculty_instructor/templates/faculty_courses.html:7
+msgid "Courses currently assigned to you."
+msgstr "Corsi attualmente assegnati a te."
+
+#: blueprints/faculty_instructor/templates/faculty_courses.html:12
+#: blueprints/faculty_instructor/templates/faculty_grades.html:12
+#: blueprints/faculty_instructor/templates/faculty_roster.html:12
+#: blueprints/grad_secretary/templates/gs_override_grades.html:13
+#: blueprints/grad_secretary/templates/gs_schedule.html:12
+#: blueprints/grad_secretary/templates/gs_transcript.html:12
+#: blueprints/student/templates/courses.html:12
+#: blueprints/student/templates/courses.html:50
+#: blueprints/student/templates/transcript.html:12
+msgid "Course"
+msgstr "Corso"
+
+#: blueprints/faculty_instructor/templates/faculty_courses.html:13
+#: blueprints/grad_secretary/templates/gs_schedule.html:13
+#: blueprints/grad_secretary/templates/gs_transcript.html:13
+#: blueprints/student/templates/courses.html:13
+#: blueprints/student/templates/courses.html:51
+#: blueprints/student/templates/transcript.html:13
+msgid "Title"
+msgstr "Titolo"
+
+#: blueprints/faculty_instructor/templates/faculty_courses.html:14
+#: blueprints/grad_secretary/templates/gs_schedule.html:14
+#: blueprints/grad_secretary/templates/gs_transcript.html:16
+#: blueprints/student/templates/transcript.html:16
+msgid "Credits"
+msgstr "Crediti"
+
+#: blueprints/faculty_instructor/templates/faculty_courses.html:15
+#: blueprints/grad_secretary/templates/gs_schedule.html:15
+#: blueprints/grad_secretary/templates/gs_transcript.html:14
+#: blueprints/student/templates/transcript.html:14
+msgid "Semester"
+msgstr "Semestre"
+
+#: blueprints/faculty_instructor/templates/faculty_courses.html:16
+#: blueprints/grad_secretary/templates/gs_schedule.html:16
+#: blueprints/student/templates/courses.html:14
+#: blueprints/student/templates/courses.html:52
+msgid "Day"
+msgstr "Giorno"
+
+#: blueprints/faculty_instructor/templates/faculty_courses.html:17
+#: blueprints/grad_secretary/templates/gs_schedule.html:17
+#: blueprints/student/templates/courses.html:15
+#: blueprints/student/templates/courses.html:53
+msgid "Time"
+msgstr "Orario"
+
+#: blueprints/faculty_instructor/templates/faculty_courses.html:31
+msgid "No courses assigned."
+msgstr "Nessun corso assegnato."
+
+#: blueprints/faculty_instructor/templates/faculty_grades.html:2
+#: blueprints/faculty_instructor/templates/faculty_grades.html:6
+#: blueprints/faculty_instructor/templates/faculty_instructor.html:21
+#: templates/dashboard.html:29
+msgid "Enter Grades"
+msgstr "Inserisci Voti"
+
+#: blueprints/faculty_instructor/templates/faculty_grades.html:7
+msgid "Submit final grades for students. Grades cannot be changed once submitted."
+msgstr "Invia i voti finali per gli studenti. I voti non possono essere modificati una volta inviati."
+
+#: blueprints/faculty_instructor/templates/faculty_grades.html:13
+#: blueprints/faculty_instructor/templates/faculty_roster.html:13
+msgid "Student Name"
+msgstr "Nome Studente"
+
+#: blueprints/faculty_instructor/templates/faculty_grades.html:14
+msgid "Submit Grade"
+msgstr "Invia Voto"
+
+#: blueprints/faculty_instructor/templates/faculty_grades.html:25
+#: blueprints/grad_secretary/templates/gs_override_grades.html:27
+msgid "Select grade"
+msgstr "Seleziona voto"
+
+#: blueprints/faculty_instructor/templates/faculty_grades.html:30
+msgid "Submit"
+msgstr "Invia"
+
+#: blueprints/faculty_instructor/templates/faculty_grades.html:35
+msgid "No pending grades."
+msgstr "Nessun voto in sospeso."
+
+#: blueprints/faculty_instructor/templates/faculty_instructor.html:2
+#: blueprints/faculty_instructor/templates/faculty_instructor.html:6
+msgid "Faculty Home"
+msgstr "Home Docente"
+
+#: blueprints/faculty_instructor/templates/faculty_instructor.html:7
+msgid "Access faculty tools and course-related tasks."
+msgstr "Accedi agli strumenti per i docenti e alle attività relative ai corsi."
+
+#: blueprints/faculty_instructor/templates/faculty_instructor.html:12
+#: templates/dashboard.html:22
+msgid "View the courses currently assigned to you."
+msgstr "Visualizza i corsi attualmente assegnati a te."
+
+#: blueprints/faculty_instructor/templates/faculty_instructor.html:16
+#: blueprints/faculty_instructor/templates/faculty_roster.html:2
+#: blueprints/faculty_instructor/templates/faculty_roster.html:6
+#: templates/dashboard.html:25
+msgid "Class Roster"
+msgstr "Registro di Classe"
+
+#: blueprints/faculty_instructor/templates/faculty_instructor.html:17
+msgid "View students enrolled in your assigned courses."
+msgstr "Visualizza gli studenti iscritti ai tuoi corsi assegnati."
+
+#: blueprints/faculty_instructor/templates/faculty_instructor.html:22
+msgid "Submit grades for students in the courses you teach."
+msgstr "Invia i voti per gli studenti nei corsi che insegni."
+
+#: blueprints/faculty_instructor/templates/faculty_roster.html:7
+msgid "Students enrolled in your courses."
+msgstr "Studenti iscritti ai tuoi corsi."
+
+#: blueprints/faculty_instructor/templates/faculty_roster.html:15
+#: blueprints/grad_secretary/templates/gs_transcript.html:15
+#: blueprints/student/templates/transcript.html:15
+msgid "Grade"
+msgstr "Voto"
+
+#: blueprints/faculty_instructor/templates/faculty_roster.html:27
+msgid "No students enrolled in your courses."
+msgstr "Nessuno studente iscritto ai tuoi corsi."
+
+#: blueprints/grad_secretary/routes.py:49
+msgid "Error loading student records."
+msgstr "Errore durante il caricamento dei registri degli studenti."
+
+#: blueprints/grad_secretary/routes.py:91
+msgid "Error loading transcript."
+msgstr "Errore durante il caricamento del libretto."
+
+#: blueprints/grad_secretary/routes.py:127
+msgid "Error loading schedule."
+msgstr "Errore durante il caricamento dell'orario."
+
+#: blueprints/grad_secretary/routes.py:201
+msgid "Grade updated successfully."
+msgstr "Voto aggiornato con successo."
+
+#: blueprints/grad_secretary/templates/gs_override_grades.html:2
+#: blueprints/grad_secretary/templates/gs_override_grades.html:6
+#: templates/dashboard.html:43 templates/dashboard.html:65
+msgid "Override Grades"
+msgstr "Sovrascrivi Voti"
+
+#: blueprints/grad_secretary/templates/gs_override_grades.html:7
+msgid ""
+"Update or override any student grade. Unlike faculty, GS can change "
+"grades at any time."
+msgstr "Aggiorna o sovrascrivi qualsiasi voto studente. A differenza dei docenti, la segreteria può modificare i voti in qualsiasi momento."
+
+#: blueprints/grad_secretary/templates/gs_override_grades.html:14
+msgid "Current Grade"
+msgstr "Voto Attuale"
+
+#: blueprints/grad_secretary/templates/gs_override_grades.html:15
+msgid "New Grade"
+msgstr "Nuovo Voto"
+
+#: blueprints/grad_secretary/templates/gs_override_grades.html:32
+msgid "Save"
+msgstr "Salva"
+
+#: blueprints/grad_secretary/templates/gs_override_grades.html:37
+msgid "No enrollment records found."
+msgstr "Nessun record di iscrizione trovato."
+
+#: blueprints/grad_secretary/templates/gs_records.html:2
+#: blueprints/grad_secretary/templates/gs_records.html:6
+#: templates/dashboard.html:35 templates/dashboard.html:57
+msgid "Student Records"
+msgstr "Registri Studenti"
+
+#: blueprints/grad_secretary/templates/gs_records.html:7
+msgid "View all registered graduate students."
+msgstr "Visualizza tutti gli studenti registrati."
+
+#: blueprints/grad_secretary/templates/gs_records.html:12
+msgid "Student ID"
+msgstr "Matricola"
+
+#: blueprints/grad_secretary/templates/gs_records.html:13
+msgid "Name"
+msgstr "Nome"
+
+#: blueprints/grad_secretary/templates/gs_records.html:15
+msgid "Program"
+msgstr "Programma"
+
+#: blueprints/grad_secretary/templates/gs_records.html:17
+#: blueprints/student/templates/transcript.html:2 templates/base.html:398
+#: templates/dashboard.html:15
+msgid "Transcript"
+msgstr "Libretto Universitario"
+
+#: blueprints/grad_secretary/templates/gs_records.html:30
+msgid "View Transcript"
+msgstr "Visualizza Libretto"
+
+#: blueprints/grad_secretary/templates/gs_records.html:35
+msgid "No students found."
+msgstr "Nessuno studente trovato."
+
+#: blueprints/grad_secretary/templates/gs_schedule.html:2
+#: blueprints/grad_secretary/templates/gs_schedule.html:6
+#: templates/dashboard.html:39 templates/dashboard.html:61
+msgid "Course Schedule"
+msgstr "Orario dei Corsi"
+
+#: blueprints/grad_secretary/templates/gs_schedule.html:7
+msgid "All course offerings and their scheduled times."
+msgstr "Tutta l'offerta formativa e i relativi orari."
+
+#: blueprints/grad_secretary/templates/gs_schedule.html:18
+#: blueprints/student/templates/courses.html:16
+msgid "Instructor"
+msgstr "Docente"
+
+#: blueprints/grad_secretary/templates/gs_schedule.html:30
+#: blueprints/student/templates/courses.html:28
+msgid "TBA"
+msgstr "Da definire"
+
+#: blueprints/grad_secretary/templates/gs_schedule.html:33
+#: blueprints/grad_secretary/templates/gs_transcript.html:29
+#: blueprints/student/templates/transcript.html:29
+msgid "No courses found."
+msgstr "Nessun corso trovato."
+
+#: blueprints/grad_secretary/templates/gs_transcript.html:2
+msgid "Student Transcript"
+msgstr "Libretto Studente"
+
+#: blueprints/grad_secretary/templates/gs_transcript.html:6
+#, python-format
+msgid "Transcript — %(fname)s %(lname)s"
+msgstr "Libretto — %(fname)s %(lname)s"
+
+#: blueprints/student/routes.py:203
+msgid "Course successfully dropped."
+msgstr "Corso abbandonato con successo."
+
+#: blueprints/student/routes.py:205
+msgid "Could not drop the course. Are you sure you are enrolled?"
+msgstr "Impossibile abbandonare il corso. Sei sicuro di esservi iscritto?"
+
+#: blueprints/student/routes.py:208
+msgid "A database error occurred while dropping the course."
+msgstr "Si è verificato un errore del database durante l'abbandono del corso."
+
+#: blueprints/student/routes.py:256
+msgid "Course offering not found."
+msgstr "Offerta formativa non trovata."
+
+#: blueprints/student/routes.py:283
+#, python-format
+msgid "Missing prerequisites: %(prereqs)s"
+msgstr "Prerequisiti mancanti: %(prereqs)s"
+
+#: blueprints/student/routes.py:291
+msgid "Time conflict! You must have at least 30 minutes between classes."
+msgstr Conflitto di orario! Devi avere almeno 30 minuti tra una lezione e l'altra."
+
+#: blueprints/student/routes.py:299
+msgid "Course successfully added!"
+msgstr "Corso aggiunto con successo!"
+
+#: blueprints/student/routes.py:302
+msgid "You are already enrolled in this course."
+msgstr "Sei già iscritto a questo corso."
+
+#: blueprints/student/templates/courses.html:2 templates/base.html:397
+#: templates/dashboard.html:11
+msgid "Courses"
+msgstr "Corsi"
+
+#: blueprints/student/templates/courses.html:6
+msgid "Available Courses"
+msgstr "Corsi Disponibili"
+
+#: blueprints/student/templates/courses.html:7
+msgid "Browse scheduled courses and register if you meet the requirements."
+msgstr "Sfoglia i corsi in programma e iscriviti se soddisfi i requisiti."
+
+#: blueprints/student/templates/courses.html:17
+msgid "Status"
+msgstr "Stato"
+
+#: blueprints/student/templates/courses.html:18
+#: blueprints/student/templates/courses.html:54
+#: blueprints/system_admin/templates/view_users.html:17
+msgid "Action"
+msgstr "Azione"
+
+#: blueprints/student/templates/courses.html:33
+msgid "Add"
+msgstr "Aggiungi"
+
+#: blueprints/student/templates/courses.html:36
+msgid "Unavailable"
+msgstr "Non disponibile"
+
+#: blueprints/student/templates/courses.html:46
+msgid "Current Schedule"
+msgstr "Orario Attuale"
+
+#: blueprints/student/templates/courses.html:66
+msgid "Drop"
+msgstr "Rimuovi"
+
+#: blueprints/student/templates/courses.html:71
+msgid "No courses currently enrolled."
+msgstr "Nessun corso attualmente iscritto."
+
+#: blueprints/student/templates/transcript.html:6
+msgid "Academic Transcript"
+msgstr "Libretto Accademico"
+
+#: blueprints/student/templates/transcript.html:7
+msgid "View completed courses, grades, and earned credits."
+msgstr "Visualizza i corsi completati, i voti e i crediti acquisiti."
+
+#: blueprints/student/templates/transcript.html:36
+msgid "Transcript Summary"
+msgstr "Riepilogo Libretto"
+
+#: blueprints/student/templates/transcript.html:40
+msgid "Total Credits Earned"
+msgstr "Totale Crediti Acquisiti"
+
+#: blueprints/student/templates/transcript.html:44
+msgid "Current GPA"
+msgstr "Media Attuale"
+
+#: blueprints/system_admin/templates/edit_user.html:2
+#: blueprints/system_admin/templates/edit_user.html:6
+msgid "Edit User"
+msgstr "Modifica Utente"
+
+#: blueprints/system_admin/templates/edit_user.html:7
+msgid "Update user information below."
+msgstr "Aggiorna le informazioni dell'utente di seguito."
+
+#: blueprints/system_admin/templates/edit_user.html:37
+#: templates/about_me.html:50
+msgid "Save Changes"
+msgstr "Salva Modifiche"
+
+#: blueprints/system_admin/templates/view_users.html:2 templates/base.html:415
+#: templates/dashboard.html:53
+msgid "View Users"
+msgstr "Visualizza Utenti"
+
+#: blueprints/system_admin/templates/view_users.html:6
+msgid "All Users"
+msgstr "Tutti gli Utenti"
+
+#: blueprints/system_admin/templates/view_users.html:7
+msgid "View all registered users in the system."
+msgstr "Visualizza tutti gli utenti registrati nel sistema."
+
+#: blueprints/system_admin/templates/view_users.html:12
+msgid "ID"
+msgstr "ID"
+
+#: blueprints/system_admin/templates/view_users.html:28
+msgid "System Admin"
+msgstr "Amministratore di Sistema"
+
+#: blueprints/system_admin/templates/view_users.html:32
+#: templates/about_me.html:17
+msgid "Unknown"
+msgstr "Sconosciuto"
+
+#: blueprints/system_admin/templates/view_users.html:37
+msgid "Edit"
+msgstr "Modifica"
+
+#: blueprints/system_admin/templates/view_users.html:41
+msgid "Delete"
+msgstr "Elimina"
+
+#: templates/about_me.html:2 templates/about_me.html:8
+msgid "About Me"
+msgstr "Profilo Personale"
+
+#: templates/about_me.html:9
+msgid "First Name:"
+msgstr "Nome:"
+
+#: templates/about_me.html:10
+msgid "Middle Name:"
+msgstr "Secondo Nome:"
+
+#: templates/about_me.html:10
+msgid "N/A"
+msgstr "N/D"
+
+#: templates/about_me.html:11
+msgid "Last Name:"
+msgstr "Cognome:"
+
+#: templates/about_me.html:12
+msgid "Role:"
+msgstr "Ruolo:"
+
+#: templates/about_me.html:13
+msgid "Admin"
+msgstr "Amministratore"
+
+#: templates/about_me.html:19
+msgid "Account Created:"
+msgstr "Account Creato il:"
+
+#: templates/about_me.html:20
+msgid "Logout"
+msgstr "Esci"
+
+#: templates/about_me.html:25
+msgid "Edit Personal Information"
+msgstr "Modifica Informazioni Personali"
+
+#: templates/about_me.html:26
+msgid "You may update your email and address below."
+msgstr "Puoi aggiornare la tua email e il tuo indirizzo qui sotto."
+
+#: templates/base.html:363
+msgid "ADMIN PORTAL"
+msgstr "PORTALE AMMINISTRATORE"
+
+#: templates/base.html:364
+msgid "GRAD SECRETARY PORTAL"
+msgstr "PORTALE SEGRETERIA STUDENTI"
+
+#: templates/base.html:365
+msgid "FACULTY PORTAL"
+msgstr "PORTALE DOCENTI"
+
+#: templates/base.html:366
+msgid "STUDENT PORTAL"
+msgstr "PORTALE STUDENTI"
+
+#: templates/base.html:381 templates/base.html:440
+msgid "Search courses..."
+msgstr "Cerca corsi..."
+
+#: templates/base.html:394 templates/index.html:2
+msgid "Home"
+msgstr "Home"
+
+#: templates/base.html:403
+msgid "Roster"
+msgstr "Registro"
+
+#: templates/base.html:404 templates/base.html:410 templates/base.html:417
+msgid "Grades"
+msgstr "Voti"
+
+#: templates/base.html:408 templates/base.html:416
+msgid "Students"
+msgstr "Studenti"
+
+#: templates/base.html:409
+msgid "Schedule"
+msgstr "Orario"
+
+#: templates/base.html:421
+msgid "Warning: this will wipe all data. Are you sure?"
+msgstr "Attenzione: questo cancellerà tutti i dati. Sei sicuro?"
+
+#: templates/base.html:424
+msgid "Reset DB"
+msgstr "Reimposta DB"
+
+#: templates/dashboard.html:2
+msgid "Dashboard"
+msgstr "Dashboard"
+
+#: templates/dashboard.html:6
+#, python-format
+msgid "Welcome, %(name)s!"
+msgstr "Benvenuto/a, %(name)s!"
+
+#: templates/dashboard.html:12
+msgid "Browse available courses and manage registration."
+msgstr "Sfoglia i corsi disponibili e gestisci le iscrizioni."
+
+#: templates/dashboard.html:16
+msgid "View completed courses, grades, and credits."
+msgstr "Visualizza corsi completati, voti e crediti."
+
+#: templates/dashboard.html:26
+msgid "View students enrolled in your courses."
+msgstr "Visualizza gli studenti iscritti ai tuoi corsi."
+
+#: templates/dashboard.html:30
+msgid "Submit final grades for your students."
+msgstr "Invia i voti finali per i tuoi studenti."
+
+#: templates/dashboard.html:36
+msgid "View and manage student information and academic records."
+msgstr "Visualizza e gestisci le informazioni e la carriera accademica degli studenti."
+
+#: templates/dashboard.html:40
+msgid "View the semester schedule and course offerings."
+msgstr "Visualizza l'orario del semestre e l'offerta formativa."
+
+#: templates/dashboard.html:44
+msgid "Update or override submitted student grades."
+msgstr "Aggiorna o sovrascrivi i voti inviati degli studenti."
+
+#: templates/dashboard.html:50
+msgid "Create new graduate secretary, faculty, or student accounts."
+msgstr "Crea nuovi account per segreteria, docenti o studenti."
+
+#: templates/dashboard.html:54
+msgid "View all registered users and their assigned roles."
+msgstr "Visualizza tutti gli utenti registrati e i ruoli assegnati."
+
+#: templates/dashboard.html:58
+msgid "View all student academic records and transcripts."
+msgstr "Visualizza tutte le carriere accademiche e i libretti degli studenti."
+
+#: templates/dashboard.html:62
+msgid "View all course offerings and scheduling."
+msgstr "Visualizza tutta l'offerta formativa e la programmazione."
+
+#: templates/dashboard.html:66
+msgid "Update or override any submitted student grade."
+msgstr "Aggiorna o sovrascrivi qualsiasi voto inviato."
+
+#: templates/dashboard.html:69
+msgid "Documentation"
+msgstr "Documentazione"
+
+#: templates/dashboard.html:70
+msgid "View the system API documentation."
+msgstr "Visualizza la documentazione API del sistema."
+
+#: templates/index.html:6
+msgid "Welcome to REGS"
+msgstr "Benvenuto in REGS"
+
+#: templates/index.html:7
+msgid "This is a demo front-end template for the registration system project."
+msgstr "Questo è un template front-end dimostrativo per il progetto del sistema di registrazione."
+
+#: templates/index.html:8
+msgid "Use the navigation bar to preview the required pages for each user role."
+msgstr "Usa la barra di navigazione per visualizzare in anteprima le pagine richieste per ogni ruolo utente."
+

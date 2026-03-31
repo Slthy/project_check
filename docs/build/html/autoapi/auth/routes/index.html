@@ -43,8 +43,7 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul class="current">
+              <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="../../index.html">API Reference</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../../run/index.html">run</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../index.html">auth</a><ul class="current">
@@ -94,21 +93,24 @@
              
   <section id="module-auth.routes">
 <span id="auth-routes"></span><h1>auth.routes<a class="headerlink" href="#module-auth.routes" title="Link to this heading"></a></h1>
+<p>Authentication routes: registration, login, logout, and admin user creation.</p>
+<p>All routes in this module are registered on the ‘auth’ blueprint and are
+accessible under the /auth URL prefix.</p>
 <section id="functions">
 <h2>Functions<a class="headerlink" href="#functions" title="Link to this heading"></a></h2>
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#auth.routes.register" title="auth.routes.register"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register</span></code></a>()</p></td>
-<td><p></p></td>
+<td><p>Handle student self-registration (GET and POST).</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#auth.routes.login" title="auth.routes.login"><code class="xref py py-obj docutils literal notranslate"><span class="pre">login</span></code></a>()</p></td>
-<td><p></p></td>
+<td><p>Handle user login for all roles (GET and POST).</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#auth.routes.logout" title="auth.routes.logout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logout</span></code></a>()</p></td>
-<td><p></p></td>
+<td><p>Clear the session and redirect to the login page.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#auth.routes.sys_admin_register" title="auth.routes.sys_admin_register"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sys_admin_register</span></code></a>()</p></td>
-<td><p></p></td>
+<td><p>Allow a system administrator to create a new user account (GET and POST).</p></td>
 </tr>
 </tbody>
 </table>
@@ -118,22 +120,47 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="auth.routes.register">
 <span class="sig-prename descclassname"><span class="pre">auth.routes.</span></span><span class="sig-name descname"><span class="pre">register</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/auth/routes.html#register"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#auth.routes.register" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Handle student self-registration (GET and POST).</p>
+<p>GET:  Render the registration form.
+POST: Validate form data, hash the password, insert a new user row</p>
+<blockquote>
+<div><p>(role=3), a matching stud_type row, and an address row inside a
+single transaction. Redirect to login on success; flash an error
+if the email is already taken.</p>
+</div></blockquote>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="auth.routes.login">
 <span class="sig-prename descclassname"><span class="pre">auth.routes.</span></span><span class="sig-name descname"><span class="pre">login</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/auth/routes.html#login"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#auth.routes.login" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Handle user login for all roles (GET and POST).</p>
+<p>GET:  Render the login form.
+POST: Look up the user by email, verify the bcrypt password hash, and</p>
+<blockquote>
+<div><p>populate the session with user_id, email, and role on success.
+Flash an error and re-render the form on failure.</p>
+</div></blockquote>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="auth.routes.logout">
 <span class="sig-prename descclassname"><span class="pre">auth.routes.</span></span><span class="sig-name descname"><span class="pre">logout</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/auth/routes.html#logout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#auth.routes.logout" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Clear the session and redirect to the login page.</p>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="auth.routes.sys_admin_register">
 <span class="sig-prename descclassname"><span class="pre">auth.routes.</span></span><span class="sig-name descname"><span class="pre">sys_admin_register</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/auth/routes.html#sys_admin_register"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#auth.routes.sys_admin_register" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Allow a system administrator to create a new user account (GET and POST).</p>
+<p>GET:  Render the admin user-creation form.
+POST: Validate the selected role (GS=1, Faculty=2, Student=3), hash the</p>
+<blockquote>
+<div><p>password, and insert the user. For student accounts, also insert a
+stud_type row. Always inserts an address row. Redirects to the user
+list on success; flashes errors for duplicate email or invalid role.</p>
+</div></blockquote>
+<p>Requires: system_admin role.</p>
+</dd></dl>
 
 </section>
 </section>

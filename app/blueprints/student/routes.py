@@ -1,13 +1,30 @@
-from flask import render_template, session, flash, redirect, url_for
+"""
+Student-facing routes: course browser, transcript, add course, and drop course.
+
+All routes require an authenticated session with role 'student' or
+'system_admin'. Routes are registered on the 'student' blueprint under /student.
+"""
+
+from flask import render_template, session, flash, redirect, url_for, current_app
 from utils.decorators import role_required, login_required
 from utils.functions import get_db_connection, has_time_conflict
 from . import student
 import sqlite3
+from flask_babel import _
 
 @student.route('/')
 @login_required
 @role_required('system_admin', 'student')
 def index():
+    """
+    Render the course browser with eligibility status for each offering.
+
+    Fetches the student's current schedule (in-progress enrollments) and
+    completed course IDs to determine, for every available offering, whether
+    the student is already enrolled, is missing prerequisites, has a time
+    conflict, or is eligible to register. Passes both the full offering list
+    (with status) and the current schedule table to the template.
+    """
     uid = session['user_id']
     conn = None
     all_courses = []
@@ -85,9 +102,11 @@ def index():
             WHERE p.owner_id = ? AND e.grade = 'IP'
         ''', (uid,)).fetchall()
 
+        current_app.logger.info(f"Student {uid} accessed the course browser.")
+
     except sqlite3.Error as e:
-        flash("Error loading courses.", "error")
-        print(f"DB error in index: {e}")
+        flash(_("Error loading courses."), "error")
+        current_app.logger.error(f"DB error in index: {e}")
     finally:
         if conn:
             conn.close()
@@ -99,6 +118,14 @@ def index():
 @login_required
 @role_required('system_admin', 'student')
 def transcript():
+    """
+    Render the student's academic transcript with GPA summary.
+
+    Retrieves all enrollment records for the logged-in student, filters to
+    completed courses (grade != 'IP') to compute total earned credits and
+    weighted GPA, and passes the full course list and summary stats to the
+    template.
+    """
     uid = session['user_id']
     all_courses = []
     conn = None
@@ -122,8 +149,11 @@ def transcript():
             ORDER BY o.year, o.semester
         ''', (uid,))
         all_courses = cursor.fetchall()
+        
+        current_app.logger.info(f"Student {uid} accessed their academic transcript.")
+        
     except sqlite3.Error as e:
-        print(f"DB error in transcript: {e}")
+        current_app.logger.error(f"DB error in index: {e}")
     finally:
         if conn:
             conn.close()
@@ -151,6 +181,16 @@ def transcript():
 @login_required
 @role_required('system_admin', 'student')
 def drop_course(o_id):
+    """
+    Drop the student from a specific course offering (POST only).
+
+    Deletes the enrollment row matching the offering ID and the student's
+    plan. Flashes a success message if a row was deleted, or an error if no
+    matching enrollment was found.
+
+    Args:
+        o_id (int): The offering ID to drop.
+    """
     uid = session['user_id']
     conn = None
 
@@ -165,13 +205,17 @@ def drop_course(o_id):
         conn.commit()
 
         if cursor.rowcount > 0:
-            flash("Course successfully dropped.", "success")
+            flash(_("Course successfully dropped."), "success")
+            
+            current_app.logger.info(f"Student {uid} successfully dropped offering {o_id}.")
         else:
-            flash("Could not drop the course. Are you sure you are enrolled?", "error")
+            flash(_("Could not drop the course. Are you sure you are enrolled?"), "error")
+            
+            current_app.logger.warning(f"Student {uid} failed to drop offering {o_id} (not enrolled).")
 
     except sqlite3.Error as e:
-        flash("A database error occurred while dropping the course.", "error")
-        print(f"DB error dropping course {o_id} for user {uid}: {e}")
+        flash(_("A database error occurred while dropping the course."), "error")
+        current_app.logger.error(f"DB error dropping course {o_id} for user {uid}: {e}")
     finally:
         if conn:
             conn.close()
@@ -183,6 +227,20 @@ def drop_course(o_id):
 @login_required
 @role_required('system_admin', 'student')
 def add_course(o_id):
+    """
+    Enroll the student in a specific course offering (POST only).
+
+    Performs three server-side checks before inserting the enrollment row:
+    1. Verifies the offering exists.
+    2. Checks that all prerequisites have been completed with a non-IP grade.
+    3. Checks for schedule conflicts with the student's current timetable.
+
+    Flashes appropriate error messages if any check fails. On success, inserts
+    an enrollment row with grade='IP' linked to the student's plan.
+
+    Args:
+        o_id (int): The offering ID to enroll in.
+    """
     uid = session['user_id']
     conn = None
 
@@ -204,7 +262,9 @@ def add_course(o_id):
         ).fetchone()
 
         if not course_info:
-            flash("Course offering not found.", "error")
+            flash(_("Course offering not found."), "error")
+            
+            current_app.logger.warning(f"Student {uid} attempted to enroll in non-existent offering {o_id}.")
             return redirect(url_for('student.index'))
 
         c_id = course_info['c_id']
@@ -231,7 +291,9 @@ def add_course(o_id):
                     missing.append(f"{prereq['dept']} {prereq['number']}")
 
         if missing:
-            flash(f"Missing prerequisites: {', '.join(missing)}", "error")
+            flash(_("Missing prerequisites: %(prereqs)s", prereqs=', '.join(missing)), "error")
+            
+            current_app.logger.warning(f"Student {uid} failed prerequisite check for offering {o_id}. Missing: {', '.join(missing)}.")
             return redirect(url_for('student.index'))
 
         new_course_times = cursor.execute(
@@ -239,7 +301,9 @@ def add_course(o_id):
         ).fetchall()
 
         if has_time_conflict(current_schedule, new_course_times):
-            flash("Time conflict! You must have at least 30 minutes between classes.", "error")
+            flash(_("Time conflict! You must have at least 30 minutes between classes."), "error")
+            
+            current_app.logger.warning(f"Student {uid} experienced a time conflict when attempting to add offering {o_id}.")
             return redirect(url_for('student.index'))
 
         cursor.execute('''
@@ -247,13 +311,17 @@ def add_course(o_id):
             VALUES ((SELECT plan_id FROM plan WHERE owner_id = ?), ?, 'IP')
         ''', (uid, o_id))
         conn.commit()
-        flash("Course successfully added!", "success")
+        flash(_("Course successfully added!"), "success")
+        
+        current_app.logger.info(f"Student {uid} successfully enrolled in offering {o_id}.")
 
     except sqlite3.IntegrityError:
-        flash("You are already enrolled in this course.", "error")
+        flash(_("You are already enrolled in this course."), "error")
+        
+        current_app.logger.warning(f"Student {uid} attempted to enroll in offering {o_id} but is already enrolled.")
     except sqlite3.Error as e:
-        flash("A database error occurred.", "error")
-        print(f"DB error in add_course: {e}")
+        flash(_("A database error occurred."), "error")
+        current_app.logger.error(f"DB error in add_course: {e}")
     finally:
         if conn:
             conn.close()

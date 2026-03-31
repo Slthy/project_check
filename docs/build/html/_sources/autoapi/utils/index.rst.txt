@@ -12,6 +12,5 @@ Submodules
 
    /autoapi/utils/decorators/index
    /autoapi/utils/functions/index
-   /autoapi/utils/psw/index
 
 

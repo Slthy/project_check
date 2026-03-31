@@ -1,21 +1,21 @@
 {% extends "base.html" %}
-{% block title %}Course Schedule{% endblock %}
+{% block title %}{{ _('Course Schedule') }}{% endblock %}
 
 {% block content %}
 <div class="card">
-    <h1>Course Schedule</h1>
-    <p>All course offerings and their scheduled times.</p>
+    <h1>{{ _('Course Schedule') }}</h1>
+    <p>{{ _('All course offerings and their scheduled times.') }}</p>
 
     <table>
         <thead>
             <tr>
-                <th>Course</th>
-                <th>Title</th>
-                <th>Credits</th>
-                <th>Semester</th>
-                <th>Day</th>
-                <th>Time</th>
-                <th>Instructor</th>
+                <th>{{ _('Course') }}</th>
+                <th>{{ _('Title') }}</th>
+                <th>{{ _('Credits') }}</th>
+                <th>{{ _('Semester') }}</th>
+                <th>{{ _('Day') }}</th>
+                <th>{{ _('Time') }}</th>
+                <th>{{ _('Instructor') }}</th>
             </tr>
         </thead>
         <tbody>
@@ -27,10 +27,10 @@
                 <td>{{ course['semester'] }} {{ course['year'] }}</td>
                 <td>{{ course['day'] }}</td>
                 <td>{{ course['start_time'] }}–{{ course['end_time'] }}</td>
-                <td>{{ course['instructor'] or 'TBA' }}</td>
+                <td>{{ course['instructor'] or _('TBA') }}</td>
             </tr>
             {% else %}
-            <tr><td colspan="7">No courses found.</td></tr>
+            <tr><td colspan="7">{{ _('No courses found.') }}</td></tr>
             {% endfor %}
         </tbody>
     </table>

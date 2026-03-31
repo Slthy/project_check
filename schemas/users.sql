@@ -7,7 +7,7 @@
 PRAGMA foreign_keys = ON;
 
 CREATE TABLE IF NOT EXISTS users (
-    id          INTEGER PRIMARY KEY CHECK(id >= 10000000 AND id <= 99999999),
+    id          INTEGER PRIMARY KEY AUTOINCREMENT CHECK(id >= 10000000 AND id <= 99999999),
     fname       TEXT    NOT NULL,
     lname       TEXT    NOT NULL,
     mname       TEXT,

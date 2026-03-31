@@ -1,72 +1,111 @@
 {% extends "base.html" %}
-{% block title %}Dashboard{% endblock %}
+{% block title %}{{ _('Dashboard') }}{% endblock %}
 
 {% block content %}
 <div class="card">
-    <h1>Welcome, {{ data['fname'] }}!</h1>
+    <h1>{{ _('Welcome, %(name)s!', name=data['fname']) }}</h1>
 
     <div class="dashboard-grid">
         {% if session['role'] == 3 %}
             <a class="dashboard-box" href="{{ url_for('student.index') }}">
-                <h2>Courses</h2>
-                <p>Browse available courses and manage registration.</p>
+                <h2>{{ _('Courses') }}</h2>
+                <p>{{ _('Browse available courses and manage registration.') }}</p>
             </a>
-
             <a class="dashboard-box" href="{{ url_for('student.transcript') }}">
-                <h2>Transcript</h2>
-                <p>View completed courses, grades, and credits.</p>
+                <h2>{{ _('Transcript') }}</h2>
+                <p>{{ _('View completed courses, grades, and credits.') }}</p>
             </a>
 
         {% elif session['role'] == 2 %}
             <a class="dashboard-box" href="{{ url_for('faculty_instructor.courses') }}">
-                <h2>My Courses</h2>
-                <p>View the courses currently assigned to you.</p>
+                <h2>{{ _('My Courses') }}</h2>
+                <p>{{ _('View the courses currently assigned to you.') }}</p>
             </a>
             <a class="dashboard-box" href="{{ url_for('faculty_instructor.roster') }}">
-                <h2>Class Roster</h2>
-                <p>View students enrolled in your courses.</p>
+                <h2>{{ _('Class Roster') }}</h2>
+                <p>{{ _('View students enrolled in your courses.') }}</p>
             </a>
             <a class="dashboard-box" href="{{ url_for('faculty_instructor.grades') }}">
-                <h2>Enter Grades</h2>
-                <p>Submit final grades for your students.</p>
+                <h2>{{ _('Enter Grades') }}</h2>
+                <p>{{ _('Submit final grades for your students.') }}</p>
             </a>
 
         {% elif session['role'] == 1 %}
             <a class="dashboard-box" href="{{ url_for('grad_secretary.records') }}">
-                <h2>Student Records</h2>
-                <p>View and manage student information and academic records.</p>
+                <h2>{{ _('Student Records') }}</h2>
+                <p>{{ _('View and manage student information and academic records.') }}</p>
             </a>
             <a class="dashboard-box" href="{{ url_for('grad_secretary.schedule') }}">
-                <h2>Course Schedule</h2>
-                <p>View the semester schedule and course offerings.</p>
+                <h2>{{ _('Course Schedule') }}</h2>
+                <p>{{ _('View the semester schedule and course offerings.') }}</p>
             </a>
             <a class="dashboard-box" href="{{ url_for('grad_secretary.override_grades') }}">
-                <h2>Override Grades</h2>
-                <p>Update or override submitted student grades.</p>
+                <h2>{{ _('Override Grades') }}</h2>
+                <p>{{ _('Update or override submitted student grades.') }}</p>
             </a>
 
         {% elif session['role'] == 0 %}
             <a class="dashboard-box" href="{{ url_for('auth.sys_admin_register') }}">
-                <h2>Create User</h2>
-                <p>Create new graduate secretary, faculty, or student accounts.</p>
+                <h2>{{ _('Create User') }}</h2>
+                <p>{{ _('Create new graduate secretary, faculty, or student accounts.') }}</p>
             </a>
             <a class="dashboard-box" href="{{ url_for('system_admin.view_users') }}">
-                <h2>View Users</h2>
-                <p>View all registered users and their assigned roles.</p>
+                <h2>{{ _('View Users') }}</h2>
+                <p>{{ _('View all registered users and their assigned roles.') }}</p>
             </a>
             <a class="dashboard-box" href="{{ url_for('grad_secretary.records') }}">
-                <h2>Student Records</h2>
-                <p>View all student academic records and transcripts.</p>
+                <h2>{{ _('Student Records') }}</h2>
+                <p>{{ _('View all student academic records and transcripts.') }}</p>
             </a>
             <a class="dashboard-box" href="{{ url_for('grad_secretary.schedule') }}">
-                <h2>Course Schedule</h2>
-                <p>View all course offerings and scheduling.</p>
+                <h2>{{ _('Course Schedule') }}</h2>
+                <p>{{ _('View all course offerings and scheduling.') }}</p>
             </a>
             <a class="dashboard-box" href="{{ url_for('grad_secretary.override_grades') }}">
-                <h2>Override Grades</h2>
-                <p>Update or override any submitted student grade.</p>
+                <h2>{{ _('Override Grades') }}</h2>
+                <p>{{ _('Update or override any submitted student grade.') }}</p>
+            </a>
+            <a class="dashboard-box" href="{{ url_for('system_admin.serve_sphinx_docs') }}">
+                <h2>{{ _('Documentation') }}</h2>
+                <p>{{ _('View the system API documentation.') }}</p>
             </a>
         {% endif %}
     </div>
+    {% if session['role'] == 0 %}
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h1>{{ _('Application Logs') }}</h1>
+                <form method="POST" action="{{ url_for('system_admin.clear_logs') }}">
+                    <button type="submit" class="btn-danger" style="width: auto; padding: 8px 16px;">
+                        {{ _('Clear Logs') }}
+                    </button>
+                </form>
+            </div>
+
+            <div style="background: #1e1e1e; border-radius: 8px; padding: 16px; font-family: monospace; font-size: 13px; max-height: 600px; overflow-y: auto;">
+                {% if logs %}
+                    {% for log in logs | reverse %}
+                        
+                        {% set log_color = '#fff' %}
+                        {% if log.level == 'DEBUG' %}{% set log_color = '#888' %}
+                        {% elif log.level == 'INFO' %}{% set log_color = '#4fc3f7' %}
+                        {% elif log.level == 'WARNING' %}{% set log_color = '#ffb74d' %}
+                        {% elif log.level == 'ERROR' %}{% set log_color = '#ef5350' %}
+                        {% elif log.level == 'CRITICAL' %}{% set log_color = '#ff1744' %}
+                        {% endif %}
+
+                        <div style="padding: 4px 0; border-bottom: 1px solid #2e2e2e; color: {{ log_color }};"> <!--override errors-->
+                            <span style="color: #666;">{{ log.time }}</span>
+                            <span style="font-weight: bold; margin: 0 8px;">{{ log.level }}</span>
+                            <span style="color: #aaa;">[{{ log.module }}]</span>
+                            <span style="margin-left: 8px;">{{ log.message }}</span>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p style="color: #666;">{{ _('No log entries yet.') }}</p>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
 </div>
 {% endblock %}

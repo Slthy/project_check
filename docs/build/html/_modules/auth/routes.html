@@ -40,8 +40,7 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../autoapi/index.html">API Reference</a></li>
 </ul>
 
@@ -71,7 +70,14 @@
            <div itemprop="articleBody">
              
   <h1>Source code for auth.routes</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">flask</span><span class="w"> </span><span class="kn">import</span> <span class="n">render_template</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">flash</span><span class="p">,</span> <span class="n">redirect</span><span class="p">,</span> <span class="n">url_for</span>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Authentication routes: registration, login, logout, and admin user creation.</span>
+
+<span class="sd">All routes in this module are registered on the &#39;auth&#39; blueprint and are</span>
+<span class="sd">accessible under the /auth URL prefix.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">flask</span><span class="w"> </span><span class="kn">import</span> <span class="n">render_template</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">flash</span><span class="p">,</span> <span class="n">redirect</span><span class="p">,</span> <span class="n">url_for</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">sqlite3</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">bcrypt</span><span class="w"> </span><span class="kn">import</span> <span class="n">hashpw</span><span class="p">,</span> <span class="n">checkpw</span><span class="p">,</span> <span class="n">gensalt</span>
 
@@ -84,6 +90,15 @@
 <div class="viewcode-block" id="register">
 <a class="viewcode-back" href="../../autoapi/auth/routes/index.html#auth.routes.register">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">register</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Handle student self-registration (GET and POST).</span>
+
+<span class="sd">    GET:  Render the registration form.</span>
+<span class="sd">    POST: Validate form data, hash the password, insert a new user row</span>
+<span class="sd">          (role=3), a matching stud_type row, and an address row inside a</span>
+<span class="sd">          single transaction. Redirect to login on success; flash an error</span>
+<span class="sd">          if the email is already taken.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
         <span class="n">fname</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;fname&#39;</span><span class="p">]</span>
         <span class="n">lname</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;lname&#39;</span><span class="p">]</span>
@@ -126,6 +141,14 @@
 <div class="viewcode-block" id="login">
 <a class="viewcode-back" href="../../autoapi/auth/routes/index.html#auth.routes.login">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">login</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Handle user login for all roles (GET and POST).</span>
+
+<span class="sd">    GET:  Render the login form.</span>
+<span class="sd">    POST: Look up the user by email, verify the bcrypt password hash, and</span>
+<span class="sd">          populate the session with user_id, email, and role on success.</span>
+<span class="sd">          Flash an error and re-render the form on failure.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
         <span class="n">email</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;email&#39;</span><span class="p">]</span>
         <span class="n">password</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;password&#39;</span><span class="p">]</span>
@@ -161,6 +184,9 @@
 <div class="viewcode-block" id="logout">
 <a class="viewcode-back" href="../../autoapi/auth/routes/index.html#auth.routes.logout">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">logout</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Clear the session and redirect to the login page.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">session</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;/auth/login&#39;</span><span class="p">)</span></div>
 
@@ -171,6 +197,17 @@
 <div class="viewcode-block" id="sys_admin_register">
 <a class="viewcode-back" href="../../autoapi/auth/routes/index.html#auth.routes.sys_admin_register">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">sys_admin_register</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Allow a system administrator to create a new user account (GET and POST).</span>
+
+<span class="sd">    GET:  Render the admin user-creation form.</span>
+<span class="sd">    POST: Validate the selected role (GS=1, Faculty=2, Student=3), hash the</span>
+<span class="sd">          password, and insert the user. For student accounts, also insert a</span>
+<span class="sd">          stud_type row. Always inserts an address row. Redirects to the user</span>
+<span class="sd">          list on success; flashes errors for duplicate email or invalid role.</span>
+
+<span class="sd">    Requires: system_admin role.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
         <span class="n">fname</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;fname&#39;</span><span class="p">]</span>
         <span class="n">lname</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;lname&#39;</span><span class="p">]</span>

@@ -1,21 +1,21 @@
 {% extends "base.html" %}
-{% block title %}Login{% endblock %}
+{% block title %}{{ _('Login') }}{% endblock %}
 
 {% block content %}
 <div class="card" style="max-width: 500px; margin: 0 auto;">
-    <h1>Login</h1>
+    <h1>{{ _('Login') }}</h1>
     <form method="POST" action="/auth/login">
         <div>
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" placeholder="Enter your email" required>
+            <label for="email">{{ _('Email') }}</label>
+            <input type="email" id="email" name="email" placeholder="{{ _('Enter your email') }}" required>
         </div>
 
         <div>
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" placeholder="Enter your password" required>
+            <label for="password">{{ _('Password') }}</label>
+            <input type="password" id="password" name="password" placeholder="{{ _('Enter your password') }}" required>
         </div>
 
-        <button type="submit">Login</button>
+        <button type="submit">{{ _('Login') }}</button>
     </form>
 </div>
 {% endblock %}

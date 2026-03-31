@@ -1,10 +1,10 @@
 {% extends "base.html" %}
-{% block title %}Home{% endblock %}
+{% block title %}{{ _('Home') }}{% endblock %}
 
 {% block content %}
 <div class="card">
-    <h1>Welcome to REGS</h1>
-    <p>This is a demo front-end template for the registration system project.</p>
-    <p>Use the navigation bar to preview the required pages for each user role.</p>
+    <h1>{{ _('Welcome to REGS') }}</h1>
+    <p>{{ _('This is a demo front-end template for the registration system project.') }}</p>
+    <p>{{ _('Use the navigation bar to preview the required pages for each user role.') }}</p>
 </div>
 {% endblock %}

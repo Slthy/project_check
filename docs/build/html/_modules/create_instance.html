@@ -40,8 +40,7 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="../autoapi/index.html">API Reference</a></li>
 </ul>
 
@@ -70,7 +69,14 @@
            <div itemprop="articleBody">
              
   <h1>Source code for create_instance</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">flask</span><span class="w"> </span><span class="kn">import</span> <span class="n">Flask</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">render_template</span><span class="p">,</span> <span class="n">redirect</span>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Flask application factory.</span>
+
+<span class="sd">Call instance() to create and configure the Flask app with all blueprints</span>
+<span class="sd">registered and the two app-level routes (home dashboard and about me) attached.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">flask</span><span class="w"> </span><span class="kn">import</span> <span class="n">Flask</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">render_template</span><span class="p">,</span> <span class="n">redirect</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">blueprints.auth</span><span class="w"> </span><span class="kn">import</span> <span class="n">auth</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">blueprints.faculty_instructor</span><span class="w"> </span><span class="kn">import</span> <span class="n">faculty_instructor</span>
@@ -84,6 +90,16 @@
 <div class="viewcode-block" id="instance">
 <a class="viewcode-back" href="../autoapi/create_instance/index.html#create_instance.instance">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">instance</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create, configure, and return the Flask application.</span>
+
+<span class="sd">    Registers all blueprints under their respective URL prefixes, sets the</span>
+<span class="sd">    secret key, and defines the &#39;/&#39; and &#39;/about_me&#39; routes directly on the</span>
+<span class="sd">    app (since they are role-agnostic and do not belong to any blueprint).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Flask: The fully configured application instance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
     <span class="n">app</span><span class="o">.</span><span class="n">secret_key</span> <span class="o">=</span> <span class="s1">&#39;birdsarentreal&#39;</span>  <span class="c1"># no enviromental variables for now, i don&#39;t wanna mess up with others machines [for now :)]</span>
 

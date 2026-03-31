@@ -1,80 +1,80 @@
 {% extends "base.html" %}
-{% block title %}Register{% endblock %}
+{% block title %}{{ _('Register') }}{% endblock %}
 
 {% block content %}
 <div class="card" style="max-width: 700px; margin: 0 auto;">
-    <h1>Student Registration</h1>
+    <h1>{{ _('Student Registration') }}</h1>
     <form method="POST" action="{{ url_for('auth.register') }}">
         <div>
-            <label for="fname">First Name</label>
+            <label for="fname">{{ _('First Name') }}</label>
             <input type="text" id="fname" name="fname" required>
         </div>
 
         <div>
-            <label for="mname">Middle Name</label>
+            <label for="mname">{{ _('Middle Name') }}</label>
             <input type="text" id="mname" name="mname">
         </div>
 
         <div>
-            <label for="lname">Last Name</label>
+            <label for="lname">{{ _('Last Name') }}</label>
             <input type="text" id="lname" name="lname" required>
         </div>
 
         <div>
-            <label for="email">Email</label>
+            <label for="email">{{ _('Email') }}</label>
             <input type="email" id="email" name="email" required>
         </div>
 
         <div>
-            <label for="password">Password</label>
+            <label for="password">{{ _('Password') }}</label>
             <input type="password" id="password" name="password" required>
         </div>
 
         <div>
-            <label for="track">Program Track</label>
+            <label for="track">{{ _('Program Track') }}</label>
             <select id="track" name="track" required>
-                <option value="">Select program</option>
-                <option value="Masters">Masters</option>
-                <option value="PhD">PhD</option>
+                <option value="">{{ _('Select program') }}</option>
+                <option value="Masters">{{ _('Masters') }}</option>
+                <option value="PhD">{{ _('PhD') }}</option>
             </select>
         </div>
 
         <div>
-            <label for="admit_year">Admit Year</label>
+            <label for="admit_year">{{ _('Admit Year') }}</label>
             <input type="number" id="admit_year" name="admit_year" min="2000" max="2100" required>
         </div>
 
         <div>
-            <label for="line_one">Address Line 1</label>
+            <label for="line_one">{{ _('Address Line 1') }}</label>
             <input type="text" id="line_one" name="line_one" required>
         </div>
 
         <div>
-            <label for="line_two">Address Line 2</label>
+            <label for="line_two">{{ _('Address Line 2') }}</label>
             <input type="text" id="line_two" name="line_two">
         </div>
 
         <div>
-            <label for="city">City</label>
+            <label for="city">{{ _('City') }}</label>
             <input type="text" id="city" name="city" required>
         </div>
 
         <div>
-            <label for="state">State</label>
+            <label for="state">{{ _('State') }}</label>
             <input type="text" id="state" name="state" required>
         </div>
 
         <div>
-            <label for="zip">ZIP Code</label>
+            <label for="zip">{{ _('ZIP Code') }}</label>
             <input type="text" id="zip" name="zip" required>
         </div>
 
         <div>
-            <label for="country_code">Country Code</label>
+            <label for="country_code">{{ _('Country Code') }}</label>
             <input type="text" id="country_code" name="country_code" value="US" required>
         </div>
 
-        <button type="submit">Create Account</button>
+        <button type="submit">{{ _('Create Account') }}</button>
     </form>
 </div>
 {% endblock %}
