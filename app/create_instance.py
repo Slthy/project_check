@@ -6,7 +6,7 @@ registered and the two app-level routes (home dashboard and about me) attached.
 """
 
 from flask import Flask, session, render_template, redirect, request, flash, url_for
-import sqlite3
+import pymysql
 
 from blueprints.auth import auth
 from blueprints.faculty_instructor import faculty_instructor
@@ -75,9 +75,10 @@ def instance():
 
         conn = get_db_connection()
         cursor = conn.cursor()
-        user = cursor.execute(
-            'SELECT * FROM users WHERE id = ?', (session['user_id'],)
-        ).fetchone()
+        cursor.execute(
+            'SELECT * FROM users WHERE id = %s', (session['user_id'],)
+        )
+        user = cursor.fetchone() # 
         conn.close()
 
         logs = []
@@ -105,31 +106,33 @@ def instance():
 
                 try:
                     cursor.execute(
-                        'UPDATE users SET email = ? WHERE id = ?',
+                        'UPDATE users SET email = %s WHERE id = %s',
                         (email, session['user_id'])
                     )
                     cursor.execute('''
-                        UPDATE addresses SET line_one = ?, line_two = ?,
-                            city = ?, state = ?, zip = ?, country_code = ?
-                        WHERE a_id = ?
+                        UPDATE addresses SET line_one = %s, line_two = %s,
+                            city = %s, state = %s, zip = %s, country_code = %s
+                        WHERE a_id = %s
                     ''', (line_one, line_two, city, state, zip_code,
                         country_code, session['user_id']))
                     conn.commit()
                     flash(_("Profile updated successfully."), "success")
                     app.logger.info(f"User {session['user_id']}'s account has been updated successfully.")
                     session['email'] = email
-                except sqlite3.IntegrityError:
+                except pymysql.IntegrityError:
                     flash(_("That email is already in use."), "error")
                     app.logger.warning(f"User {session['user_id']}'s account update has failed. constraint: email")
 
-            user = cursor.execute(
-                'SELECT * FROM users WHERE id = ?', (session['user_id'],)
-            ).fetchone()
-            address = cursor.execute(
-                'SELECT * FROM addresses WHERE a_id = ?', (session['user_id'],)
-            ).fetchone()
+            cursor.execute(
+                'SELECT * FROM users WHERE id = %s', (session['user_id'],)
+            )
+            user = cursor.fetchone()
+            cursor.execute(
+                'SELECT * FROM addresses WHERE a_id = %s', (session['user_id'],)
+            )
+            address = cursor.fetchone()
 
-        except sqlite3.Error as e:
+        except pymysql.Error as e:
             flash(_("Error loading profile."), "error")
             app.logger.error(f"DB error in view_users: {e}")
             user = None

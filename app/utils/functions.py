@@ -2,39 +2,42 @@
 Shared utility functions used across all blueprints.
 """
 
-import sqlite3
-import os
+import pymysql
+import pymysql.cursors
+
+DB_CONFIG = {
+    'host':     'regs26-borsato.cng0skw0wk8a.us-east-1.rds.amazonaws.com',
+    'port':     3306,
+    'database': 'university',
+    'user':     'birdsarenotreal',
+    'password': 'birdsarenotreal123',
+    'cursorclass': pymysql.cursors.DictCursor,
+    'charset':  'utf8mb4',
+}
 
 def get_db_connection():
     """
-    Open and return a connection to the SQLite database.
+    Open and return a connection to the MySQL database on AWS RDS.
 
-    The database path is resolved relative to this file's location,
-    two directories up (i.e., the project root). The connection uses
-    sqlite3.Row as its row factory so columns are accessible by name.
+    Uses DictCursor so columns are accessible by name, matching the
+    sqlite3.Row behaviour used throughout the application.
 
     Returns:
-        sqlite3.Connection: An open database connection.
+        pymysql.connections.Connection: An open database connection.
     """
-    base_dir = os.path.dirname(os.path.abspath(__file__))
-    db_path = os.path.join(base_dir, '..', '..', 'database.db')
-    conn = sqlite3.connect(db_path)
-    conn.row_factory = sqlite3.Row
-    return conn
+    return pymysql.connect(**DB_CONFIG)
 
 def has_time_conflict(current_schedule, new_times):
     """
     Determine whether a set of new course times conflicts with an existing schedule.
 
     Two time slots conflict if they share the same day and do not have at least
-    a 30-minute gap between them (i.e., one must end at least 30 minutes before
-    the other begins).
+    a 30-minute gap between them.
 
     Args:
-        current_schedule (list[sqlite3.Row]): Rows containing 'day', 'start_time',
+        current_schedule (list[dict]): Dicts containing 'day', 'start_time',
             and 'end_time' for each currently enrolled course.
-        new_times (list[sqlite3.Row | dict]): Rows or dicts with the same keys
-            for the course being evaluated.
+        new_times (list[dict]): Dicts with the same keys for the course being evaluated.
 
     Returns:
         bool: True if a conflict is detected, False otherwise.
@@ -51,7 +54,6 @@ def has_time_conflict(current_schedule, new_times):
                 continue
             ex_start = to_minutes(existing['start_time'])
             ex_end = to_minutes(existing['end_time'])
-            # must have at least 30 min gap
             if not (new_start >= ex_end + 30 or new_end <= ex_start - 30):
                 return True
     return False

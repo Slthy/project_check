@@ -1,18 +1,98 @@
--- ADD `.read schemas/*.sql` for every new schema
--- RUN with `sqlite3 database.db < create_db.sql`
+-- RUN with: mysql -h regs26-borsato.cng0skw0wk8a.us-east-1.rds.amazonaws.com -u birdsarenotreal -p university < create_db.sql
 
-PRAGMA foreign_keys = ON;
+SET FOREIGN_KEY_CHECKS = 0;
 
-.read schemas/users.sql
-.read schemas/catalog.sql
-.read schemas/schedule.sql
-.read schemas/enrollment.sql
---- .read schemas/seed_users.sql
---- .read schemas/seed_catalog.sql
---- .read schemas/seed_offerings.sql
---- .read schemas/seed_enrollment.sql
+CREATE TABLE IF NOT EXISTS users (
+    id          INT          PRIMARY KEY,
+    fname       VARCHAR(100) NOT NULL,
+    lname       VARCHAR(100) NOT NULL,
+    mname       VARCHAR(100),
+    email       VARCHAR(255) NOT NULL UNIQUE,
+    password    VARCHAR(255) NOT NULL,
+    role        TINYINT      NOT NULL CHECK (role IN (0, 1, 2, 3)),
+    created_at  DATETIME     DEFAULT CURRENT_TIMESTAMP
+);
 
+CREATE TABLE IF NOT EXISTS stud_type (
+    id          INT         PRIMARY KEY,
+    track       VARCHAR(20) NOT NULL CHECK (track IN ('Masters', 'PhD')),
+    admit_year  INT,
+    FOREIGN KEY (id) REFERENCES users(id) ON DELETE CASCADE
+);
 
+CREATE TABLE IF NOT EXISTS addresses (
+    id           INT          PRIMARY KEY AUTO_INCREMENT,
+    a_id         INT          NOT NULL,
+    line_one     VARCHAR(255) NOT NULL,
+    line_two     VARCHAR(255),
+    city         VARCHAR(100),
+    state        VARCHAR(100),
+    zip          VARCHAR(20)  NOT NULL,
+    country_code VARCHAR(10)  NOT NULL DEFAULT 'US',
+    FOREIGN KEY (a_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS c_catalog (
+    c_id        INT          PRIMARY KEY AUTO_INCREMENT,
+    dept        VARCHAR(10)  NOT NULL,
+    number      INT          NOT NULL,
+    name        VARCHAR(255) NOT NULL,
+    credits     INT          NOT NULL,
+    description TEXT,
+    prereq1_id  INT,
+    prereq2_id  INT,
+    UNIQUE (dept, number),
+    FOREIGN KEY (prereq1_id) REFERENCES c_catalog(c_id),
+    FOREIGN KEY (prereq2_id) REFERENCES c_catalog(c_id)
+);
+
+CREATE TABLE IF NOT EXISTS c_offering (
+    o_id        INT         PRIMARY KEY AUTO_INCREMENT,
+    c_id        INT         NOT NULL,
+    semester    VARCHAR(10) NOT NULL CHECK (semester IN ('Fall', 'Spring', 'Summer')),
+    year        INT         NOT NULL,
+    section     INT         NOT NULL DEFAULT 1,
+    i_id        INT,
+    location    VARCHAR(255),
+    capacity    INT,
+    UNIQUE (c_id, semester, year, section),
+    FOREIGN KEY (c_id) REFERENCES c_catalog(c_id),
+    FOREIGN KEY (i_id) REFERENCES users(id)
+);
+
+CREATE TABLE IF NOT EXISTS schedule (
+    s_id        INT        PRIMARY KEY AUTO_INCREMENT,
+    o_id        INT        NOT NULL,
+    day         VARCHAR(1) NOT NULL CHECK (day IN ('M', 'T', 'W', 'R', 'F')),
+    start_time  VARCHAR(5) NOT NULL,
+    end_time    VARCHAR(5) NOT NULL,
+    UNIQUE (o_id, day),
+    FOREIGN KEY (o_id) REFERENCES c_offering(o_id)
+);
+
+CREATE TABLE IF NOT EXISTS plan (
+    plan_id     INT      PRIMARY KEY AUTO_INCREMENT,
+    owner_id    INT      NOT NULL,
+    enrolled_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    is_approved TINYINT  DEFAULT 0 CHECK (is_approved IN (0, 1)),
+    FOREIGN KEY (owner_id) REFERENCES users(id)
+);
+
+CREATE TABLE IF NOT EXISTS enrollment (
+    enroll_id   INT        PRIMARY KEY AUTO_INCREMENT,
+    plan_id     INT        NOT NULL,
+    o_id        INT        NOT NULL,
+    grade       VARCHAR(2) DEFAULT 'IP'
+                    CHECK (grade IN ('A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'F', 'IP')),
+    enrolled_at DATETIME   DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (plan_id, o_id),
+    FOREIGN KEY (plan_id) REFERENCES plan(plan_id),
+    FOREIGN KEY (o_id)    REFERENCES c_offering(o_id)
+);
+
+SET FOREIGN_KEY_CHECKS = 1;
+
+-- seed users (id manually assigned, not AUTO_INCREMENT)
 INSERT INTO users (id, fname, lname, email, password, role) VALUES
 (10000001, 'System', 'Admin',     'admin@regs.edu',    '$2b$12$L.cI2ivPf84OBlhc75OgmOhfmsXfsbN2GMqVXhSKTBzk8r8mPzb0C', 0),  
 (10000002, 'Grace',  'Secretary', 'gs1@regs.edu',      '$2b$12$AEEkdKf7kdVujNcH0s/Ete9a1xQwXVVWwAxQ387aoQQx5WX9Lfopq', 1),  

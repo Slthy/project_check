@@ -9,7 +9,7 @@ from flask import render_template, session, flash, redirect, url_for, current_ap
 from utils.decorators import role_required, login_required
 from utils.functions import get_db_connection, has_time_conflict
 from . import student
-import sqlite3
+import pymysql
 from flask_babel import _
 
 @student.route('/')
@@ -41,7 +41,7 @@ def index():
             JOIN plan p ON e.plan_id = p.plan_id
             JOIN c_offering o ON e.o_id = o.o_id
             JOIN schedule s ON o.o_id = s.o_id
-            WHERE p.owner_id = ? AND e.grade = 'IP'
+            WHERE p.owner_id = %s AND e.grade = 'IP'
         ''', (uid,)).fetchall()
 
         current_o_ids = {row['o_id'] for row in current_schedule}
@@ -52,7 +52,7 @@ def index():
             FROM enrollment e
             JOIN plan p ON e.plan_id = p.plan_id
             JOIN c_offering o ON e.o_id = o.o_id
-            WHERE p.owner_id = ? AND e.grade != 'IP'
+            WHERE p.owner_id = %s AND e.grade != 'IP'
         ''', (uid,)).fetchall()}
 
         # get all offerings with instructor and schedule
@@ -60,7 +60,7 @@ def index():
             SELECT o.o_id, o.c_id, o.semester, o.year,
                    c.dept, c.number, c.name, c.credits,
                    c.prereq1_id, c.prereq2_id,
-                   u.fname || ' ' || u.lname AS instructor,
+                   CONCAT(u.fname, " ", u.lname) AS instructor,
                    s.day, s.start_time, s.end_time
             FROM c_offering o
             JOIN c_catalog c ON o.c_id = c.c_id
@@ -73,9 +73,10 @@ def index():
             missing = []
             for prereq_id in [course['prereq1_id'], course['prereq2_id']]:
                 if prereq_id and prereq_id not in completed_cids:
-                    prereq = cursor.execute(
-                        'SELECT dept, number FROM c_catalog WHERE c_id = ?', (prereq_id,)
-                    ).fetchone()
+                    cursor.execute(
+                        'SELECT dept, number FROM c_catalog WHERE c_id = %s', (prereq_id,)
+                    )
+                    prereq = cursor.fetchone()
                     if prereq:
                         missing.append(f"{prereq['dept']} {prereq['number']}")
 
@@ -99,12 +100,12 @@ def index():
             JOIN c_offering o ON e.o_id = o.o_id
             JOIN c_catalog c ON o.c_id = c.c_id
             LEFT JOIN schedule s ON o.o_id = s.o_id
-            WHERE p.owner_id = ? AND e.grade = 'IP'
+            WHERE p.owner_id = %s AND e.grade = 'IP'
         ''', (uid,)).fetchall()
 
         current_app.logger.info(f"Student {uid} accessed the course browser.")
 
-    except sqlite3.Error as e:
+    except pymysql.Error as e:
         flash(_("Error loading courses."), "error")
         current_app.logger.error(f"DB error in index: {e}")
     finally:
@@ -145,14 +146,14 @@ def transcript():
             JOIN c_offering o ON e.o_id = o.o_id
             JOIN c_catalog c ON o.c_id = c.c_id
             JOIN plan p ON e.plan_id = p.plan_id
-            WHERE p.owner_id = ?
+            WHERE p.owner_id = %s
             ORDER BY o.year, o.semester
         ''', (uid,))
         all_courses = cursor.fetchall()
         
         current_app.logger.info(f"Student {uid} accessed their academic transcript.")
         
-    except sqlite3.Error as e:
+    except pymysql.Error as e:
         current_app.logger.error(f"DB error in index: {e}")
     finally:
         if conn:
@@ -199,8 +200,8 @@ def drop_course(o_id):
         cursor = conn.cursor()
         cursor.execute('''
             DELETE FROM enrollment
-            WHERE o_id = ?
-              AND plan_id = (SELECT plan_id FROM plan WHERE owner_id = ?)
+            WHERE o_id = %s
+              AND plan_id = (SELECT plan_id FROM plan WHERE owner_id = %s)
         ''', (o_id, uid))
         conn.commit()
 
@@ -209,11 +210,11 @@ def drop_course(o_id):
             
             current_app.logger.info(f"Student {uid} successfully dropped offering {o_id}.")
         else:
-            flash(_("Could not drop the course. Are you sure you are enrolled?"), "error")
+            flash(_("Could not drop the course. Are you sure you are enrolled%s"), "error")
             
             current_app.logger.warning(f"Student {uid} failed to drop offering {o_id} (not enrolled).")
 
-    except sqlite3.Error as e:
+    except pymysql.Error as e:
         flash(_("A database error occurred while dropping the course."), "error")
         current_app.logger.error(f"DB error dropping course {o_id} for user {uid}: {e}")
     finally:
@@ -254,12 +255,13 @@ def add_course(o_id):
             JOIN plan p ON e.plan_id = p.plan_id
             JOIN c_offering o ON e.o_id = o.o_id
             JOIN schedule s ON o.o_id = s.o_id
-            WHERE p.owner_id = ? AND e.grade = 'IP'
+            WHERE p.owner_id = %s AND e.grade = 'IP'
         ''', (uid,)).fetchall()
 
-        course_info = cursor.execute(
-            'SELECT c_id FROM c_offering WHERE o_id = ?', (o_id,)
-        ).fetchone()
+        cursor.execute(
+            'SELECT c_id FROM c_offering WHERE o_id = %s', (o_id,)
+        )
+        course_info = cursor.fetchone()
 
         if not course_info:
             flash(_("Course offering not found."), "error")
@@ -270,23 +272,25 @@ def add_course(o_id):
         c_id = course_info['c_id']
 
         # check prereqs
-        prereqs = cursor.execute(
-            'SELECT prereq1_id, prereq2_id FROM c_catalog WHERE c_id = ?', (c_id,)
-        ).fetchone()
+        cursor.execute(
+            'SELECT prereq1_id, prereq2_id FROM c_catalog WHERE c_id = %s', (c_id,)
+        )
+        prereqs = cursor.fetchone()
 
         completed_cids = {row['c_id'] for row in cursor.execute('''
             SELECT o.c_id FROM enrollment e
             JOIN plan p ON e.plan_id = p.plan_id
             JOIN c_offering o ON e.o_id = o.o_id
-            WHERE p.owner_id = ? AND e.grade != 'IP'
+            WHERE p.owner_id = %s AND e.grade != 'IP'
         ''', (uid,)).fetchall()}
 
         missing = []
         for prereq_id in [prereqs['prereq1_id'], prereqs['prereq2_id']]:
             if prereq_id and prereq_id not in completed_cids:
-                prereq = cursor.execute(
-                    'SELECT dept, number FROM c_catalog WHERE c_id = ?', (prereq_id,)
-                ).fetchone()
+                cursor.execute(
+                    'SELECT dept, number FROM c_catalog WHERE c_id = %s', (prereq_id,)
+                )
+                prereq = cursor.fetchone()
                 if prereq:
                     missing.append(f"{prereq['dept']} {prereq['number']}")
 
@@ -297,7 +301,7 @@ def add_course(o_id):
             return redirect(url_for('student.index'))
 
         new_course_times = cursor.execute(
-            'SELECT day, start_time, end_time FROM schedule WHERE o_id = ?', (o_id,)
+            'SELECT day, start_time, end_time FROM schedule WHERE o_id = %s', (o_id,)
         ).fetchall()
 
         if has_time_conflict(current_schedule, new_course_times):
@@ -308,18 +312,18 @@ def add_course(o_id):
 
         cursor.execute('''
             INSERT INTO enrollment (plan_id, o_id, grade)
-            VALUES ((SELECT plan_id FROM plan WHERE owner_id = ?), ?, 'IP')
+            VALUES ((SELECT plan_id FROM plan WHERE owner_id = %s), %s, 'IP')
         ''', (uid, o_id))
         conn.commit()
         flash(_("Course successfully added!"), "success")
         
         current_app.logger.info(f"Student {uid} successfully enrolled in offering {o_id}.")
 
-    except sqlite3.IntegrityError:
+    except pymysql.IntegrityError:
         flash(_("You are already enrolled in this course."), "error")
         
         current_app.logger.warning(f"Student {uid} attempted to enroll in offering {o_id} but is already enrolled.")
-    except sqlite3.Error as e:
+    except pymysql.Error as e:
         flash(_("A database error occurred."), "error")
         current_app.logger.error(f"DB error in add_course: {e}")
     finally:

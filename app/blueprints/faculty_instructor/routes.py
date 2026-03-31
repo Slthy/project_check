@@ -9,7 +9,7 @@ from flask import render_template, session, flash, redirect, url_for, request, c
 from utils.decorators import role_required, login_required
 from utils.functions import get_db_connection
 from . import faculty_instructor
-import sqlite3
+import pymysql
 
 from flask_babel import _
 
@@ -46,12 +46,12 @@ def courses():
             FROM c_offering o
             JOIN c_catalog c ON o.c_id = c.c_id
             LEFT JOIN schedule s ON o.o_id = s.o_id
-            WHERE o.i_id = ?
+            WHERE o.i_id = %s
         ''', (uid,)).fetchall()
 
         current_app.logger.info(f"Instructor {uid} accessed their assigned courses list.")
         
-    except sqlite3.Error as e:
+    except pymysql.Error as e:
         flash(_("Error loading courses."), "error")
         current_app.logger.error(f"DB error in faculty courses: {e}")
     finally:
@@ -80,20 +80,20 @@ def roster():
         cursor = conn.cursor()
         roster_data = cursor.execute('''
             SELECT c.dept, c.number, c.name,
-                   u.fname || ' ' || u.lname AS student_name,
+                   CONCAT(u.fname, " ", u.lname) AS student_name,
                    u.email, e.grade
             FROM c_offering o
             JOIN c_catalog c ON o.c_id = c.c_id
             JOIN enrollment e ON o.o_id = e.o_id
             JOIN plan p ON e.plan_id = p.plan_id
             JOIN users u ON p.owner_id = u.id
-            WHERE o.i_id = ?
+            WHERE o.i_id = %s
             ORDER BY c.dept, c.number, u.lname
         ''', (uid,)).fetchall()
         
         current_app.logger.info(f"Instructor {uid} accessed their class roster.")
         
-    except sqlite3.Error as e:
+    except pymysql.Error as e:
         flash(_("Error loading roster."), "error")
         current_app.logger.error(f"DB error in faculty roster: {e}")
     finally:
@@ -123,20 +123,20 @@ def grades():
         # only show IP grades — faculty cannot change already submitted grades
         students = cursor.execute('''
             SELECT e.enroll_id, c.dept, c.number, c.name,
-                   u.fname || ' ' || u.lname AS student_name,
+                   CONCAT(u.fname, " ", u.lname) AS student_name,
                    e.grade
             FROM c_offering o
             JOIN c_catalog c ON o.c_id = c.c_id
             JOIN enrollment e ON o.o_id = e.o_id
             JOIN plan p ON e.plan_id = p.plan_id
             JOIN users u ON p.owner_id = u.id
-            WHERE o.i_id = ? AND e.grade = 'IP'
+            WHERE o.i_id = %s AND e.grade = 'IP'
             ORDER BY c.dept, c.number, u.lname
         ''', (uid,)).fetchall()
 
         current_app.logger.info(f"Instructor {uid} accessed the pending grades entry sheet.")
         
-    except sqlite3.Error as e:
+    except pymysql.Error as e:
         flash(_("Error loading grades."), "error")
         current_app.logger.error(f"DB error in faculty grades: {e}")
     finally:
@@ -182,7 +182,7 @@ def submit_grade(enroll_id):
             SELECT e.enroll_id, e.grade
             FROM enrollment e
             JOIN c_offering o ON e.o_id = o.o_id
-            WHERE e.enroll_id = ? AND o.i_id = ?
+            WHERE e.enroll_id = %s AND o.i_id = %s
         ''', (enroll_id, uid)).fetchone()
 
         if not enrollment:
@@ -198,13 +198,13 @@ def submit_grade(enroll_id):
             return redirect(url_for('faculty_instructor.grades'))
 
         cursor.execute('''
-            UPDATE enrollment SET grade = ? WHERE enroll_id = ?
+            UPDATE enrollment SET grade = %s WHERE enroll_id = %s
         ''', (grade, enroll_id))
         conn.commit()
         flash(_("Grade submitted successfully."), "success")
         current_app.logger.info(f"Instructor {uid} successfully submitted grade '{grade}' for enrollment {enroll_id}.")
 
-    except sqlite3.Error as e:
+    except pymysql.Error as e:
         flash(_("A database error occurred."), "error")
         current_app.logger.error(f"DB error submitting grade: {e}")
     finally:

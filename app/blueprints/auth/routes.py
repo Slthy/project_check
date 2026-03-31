@@ -6,7 +6,7 @@ accessible under the /auth URL prefix.
 """
 
 from flask import render_template, request, session, flash, redirect, url_for, current_app
-import sqlite3
+import pymysql
 from bcrypt import hashpw, checkpw, gensalt
 
 from utils.functions import get_db_connection
@@ -33,7 +33,8 @@ def sys_admin_register():
             conn = get_db_connection()
             cursor = conn.cursor()
 
-            existing_user = cursor.execute("SELECT id FROM users WHERE email = ?", (email,)).fetchone()
+            cursor.execute("SELECT id FROM users WHERE email = %s", (email,))
+            existing_user = cursor.fetchone()
             if existing_user:
                 flash(_("Email already exists."), "error")
                 current_app.logger.warning(f"Admin {admin_id} failed to create user: Email '{email}' is already in use.")
@@ -44,19 +45,19 @@ def sys_admin_register():
                 max_id_row = cursor.execute("SELECT MAX(id) FROM users WHERE id < 90000000").fetchone()
                 new_id = (max_id_row[0] + 1) if max_id_row[0] else 10000000
                 cursor.execute(
-                    "INSERT INTO users (id, fname, lname, mname, email, password, role) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                    "INSERT INTO users (id, fname, lname, mname, email, password, role) VALUES (%s, %s, %s, %s, %s, %s, %s)",
                     (new_id, fname, lname, mname, email, password_hash, role)
                 )
                 last_id = cursor.lastrowid
 
                 if role == 3:
                     cursor.execute(
-                        "INSERT INTO stud_type (id, track, admit_year) VALUES (?, ?, ?)",
+                        "INSERT INTO stud_type (id, track, admit_year) VALUES (%s, %s, %s)",
                         (last_id, request.form['track'], request.form['admit_year'])
                     )
 
                 cursor.execute(
-                    "INSERT INTO addresses (a_id, line_one, line_two, city, state, zip, country_code) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                    "INSERT INTO addresses (a_id, line_one, line_two, city, state, zip, country_code) VALUES (%s, %s, %s, %s, %s, %s, %s)",
                     (last_id, request.form['line_one'], request.form.get('line_two'),
                     request.form['city'], request.form['state'], request.form['zip'], request.form['country_code'])
                 )
@@ -67,7 +68,7 @@ def sys_admin_register():
                 
                 return redirect(url_for('system_admin.view_users'))
             
-            except sqlite3.IntegrityError as e:
+            except pymysql.IntegrityError as e:
                 flash(_("A database error occurred. Ensure all required fields are filled."), "error")
                 current_app.logger.error(f"IntegrityError during admin user creation: {e}")
                 
@@ -94,7 +95,7 @@ def register():
         conn = get_db_connection()
         cursor = conn.cursor()
 
-        existing_user = cursor.execute("SELECT id FROM users WHERE email = ?", (email,)).fetchone()
+        existing_user = cursor.execute("SELECT id FROM users WHERE email = %s", (email,)).fetchone()
         if existing_user:
             flash(_("Email already exists."), "error")
             current_app.logger.warning(f"Self-registration failed: Email '{email}' is already in use.")
@@ -102,19 +103,20 @@ def register():
             return render_template('auth/register.html')
 
         try:
-            max_id_row = cursor.execute("SELECT MAX(id) FROM users WHERE id < 90000000").fetchone()
-            new_id = (max_id_row[0] + 1) if max_id_row[0] else 10000000
+            cursor.execute("SELECT MAX(id) AS max_id FROM users WHERE id < 90000000")
+            max_id_row = cursor.fetchone()
+            new_id = (max_id_row['max_id'] + 1) if max_id_row['max_id'] else 10000000
             cursor.execute(
-                "INSERT INTO users (id, fname, lname, mname, email, password, role) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                "INSERT INTO users (id, fname, lname, mname, email, password, role) VALUES (%s, %s, %s, %s, %s, %s, %s)",
                 (new_id, fname, lname, mname, email, password_hash, role)
             )
             last_id = cursor.lastrowid
             cursor.execute(
-                "INSERT INTO stud_type (id, track, admit_year) VALUES (?, ?, ?)",
+                "INSERT INTO stud_type (id, track, admit_year) VALUES (%s, %s, %s)",
                 (last_id, request.form['track'], request.form['admit_year'])
             )
             cursor.execute(
-                "INSERT INTO addresses (a_id, line_one, line_two, city, state, zip, country_code) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                "INSERT INTO addresses (a_id, line_one, line_two, city, state, zip, country_code) VALUES (%s, %s, %s, %s, %s, %s, %s)",
                 (last_id, request.form['line_one'], request.form.get('line_two'),
                 request.form['city'], request.form['state'], request.form['zip'], request.form['country_code'])
             )
@@ -124,7 +126,7 @@ def register():
             
             return redirect('/auth/login')
             
-        except sqlite3.IntegrityError as e:
+        except pymysql.IntegrityError as e:
             flash(_("A database error occurred. Ensure all required fields are filled."), "error")
             current_app.logger.error(f"IntegrityError during self-registration: {e}")
             
@@ -143,7 +145,7 @@ def login():
         conn = get_db_connection()
         cursor = conn.cursor()
         user = cursor.execute(
-            'SELECT * FROM users WHERE email = ?', (email,)
+            'SELECT * FROM users WHERE email = %s', (email,)
         ).fetchone()
         conn.close()
 

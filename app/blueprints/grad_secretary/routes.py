@@ -9,7 +9,7 @@ from flask import render_template, request, flash, redirect, url_for, current_ap
 from utils.decorators import role_required, login_required
 from utils.functions import get_db_connection
 from . import grad_secretary
-import sqlite3
+import pymysql
 
 from flask_babel import _
 
@@ -40,7 +40,7 @@ def records():
         conn = get_db_connection()
         cursor = conn.cursor()
         students = cursor.execute('''
-            SELECT u.id, u.fname || ' ' || u.lname AS name,
+            SELECT u.id, CONCAT(u.fname, " ", u.lname) AS name,
                    u.email, st.track, st.admit_year
             FROM users u
             JOIN stud_type st ON u.id = st.id
@@ -50,7 +50,7 @@ def records():
 
         current_app.logger.info(f"Grad Secretary {gs_id} accessed the global student records list.")
         
-    except sqlite3.Error as e:
+    except pymysql.Error as e:
         flash(_("Error loading student records."), "error")
         current_app.logger.error(f"DB error in gs records: {e}")
     finally:
@@ -82,7 +82,7 @@ def student_transcript(uid):
         conn = get_db_connection()
         cursor = conn.cursor()
         student = cursor.execute(
-            'SELECT fname, lname, email FROM users WHERE id = ?', (uid,)
+            'SELECT fname, lname, email FROM users WHERE id = %s', (uid,)
         ).fetchone()
         courses = cursor.execute('''
             SELECT c.dept, c.number, c.name, c.credits,
@@ -91,13 +91,13 @@ def student_transcript(uid):
             JOIN c_offering o ON e.o_id = o.o_id
             JOIN c_catalog c ON o.c_id = c.c_id
             JOIN plan p ON e.plan_id = p.plan_id
-            WHERE p.owner_id = ?
+            WHERE p.owner_id = %s
             ORDER BY o.year, o.semester
         ''', (uid,)).fetchall()
 
         current_app.logger.info(f"Grad Secretary {gs_id} accessed the transcript for student ID {uid}.")
         
-    except sqlite3.Error as e:
+    except pymysql.Error as e:
         flash(_("Error loading transcript."), "error")
         current_app.logger.error(f"DB error in gs transcript: {e}")
     finally:
@@ -128,7 +128,7 @@ def schedule():
         courses = cursor.execute('''
             SELECT c.dept, c.number, c.name, c.credits,
                    o.semester, o.year, s.day, s.start_time, s.end_time,
-                   u.fname || ' ' || u.lname AS instructor
+                   CONCAT(u.fname, " ", u.lname) AS instructor
             FROM c_offering o
             JOIN c_catalog c ON o.c_id = c.c_id
             LEFT JOIN schedule s ON o.o_id = s.o_id
@@ -137,7 +137,7 @@ def schedule():
         ''').fetchall()
         current_app.logger.info(f"Grad Secretary {gs_id} accessed the full course schedule.")
         
-    except sqlite3.Error as e:
+    except pymysql.Error as e:
         flash(_("Error loading schedule."), "error")
         current_app.logger.error(f"DB error in gs schedule: {e}")
     finally:
@@ -165,7 +165,7 @@ def override_grades():
         conn = get_db_connection()
         cursor = conn.cursor()
         enrollments = cursor.execute('''
-            SELECT e.enroll_id, u.fname || ' ' || u.lname AS student_name,
+            SELECT e.enroll_id, CONCAT(u.fname, " ", u.lname) AS student_name,
                    c.dept, c.number, c.name, e.grade
             FROM enrollment e
             JOIN plan p ON e.plan_id = p.plan_id
@@ -177,7 +177,7 @@ def override_grades():
 
         current_app.logger.info(f"Grad Secretary {gs_id} accessed the grade override master list.")
         
-    except sqlite3.Error as e:
+    except pymysql.Error as e:
         flash(_("Error loading grades."), "error")
         current_app.logger.error(f"DB error in gs override grades: {e}")
     finally:
@@ -216,7 +216,7 @@ def submit_override(enroll_id):
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute(
-            'UPDATE enrollment SET grade = ? WHERE enroll_id = ?',
+            'UPDATE enrollment SET grade = %s WHERE enroll_id = %s',
             (grade, enroll_id)
         )
         conn.commit()
@@ -224,7 +224,7 @@ def submit_override(enroll_id):
 
         current_app.logger.info(f"Grad Secretary {gs_id} successfully overrode grade to '{grade}' for enrollment {enroll_id}.")
         
-    except sqlite3.Error as e:
+    except pymysql.Error as e:
         flash(_("A database error occurred."), "error")
         current_app.logger.error(f"DB error in gs submit_override: {e}")
     finally:
