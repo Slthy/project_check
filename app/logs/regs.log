@@ -58,3 +58,62 @@
 [2026-03-31 11:37:49] INFO in routes: Admin 10000001 accessed the global user list.
 [2026-03-31 11:37:52] INFO in routes: Grad Secretary 10000001 accessed the global student records list.
 [2026-03-31 11:37:54] INFO in routes: Grad Secretary 10000001 accessed the full course schedule.
+[2026-03-31 18:59:58] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-03-31 20:06:40] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-03-31 20:20:59] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-03-31 20:21:09] INFO in routes: Admin 10000001 accessed the edit page for user ID 10000005.
+[2026-03-31 20:21:12] INFO in routes: Admin 10000001 unassigned course offering 18 from faculty ID 10000005.
+[2026-03-31 20:21:12] INFO in routes: Admin 10000001 accessed the edit page for user ID 10000005.
+[2026-03-31 20:21:34] INFO in routes: Admin 10000001 accessed the edit page for user ID 10000005.
+[2026-03-31 20:24:18] ERROR in routes: IntegrityError during self-registration: (1452, 'Cannot add or update a child row: a foreign key constraint fails (`university`.`stud_type`, CONSTRAINT `stud_type_ibfk_1` FOREIGN KEY (`id`) REFERENCES `users` (`id`) ON DELETE CASCADE)')
+[2026-03-31 20:29:48] INFO in routes: New student successfully self-registered with ID 88888889 (Email: adafadfcda@gmail.com)
+[2026-03-31 20:54:33] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-03-31 20:54:36] ERROR in routes: DB error in delete_user: (1451, 'Cannot delete or update a parent row: a foreign key constraint fails (`university`.`plan`, CONSTRAINT `plan_ibfk_1` FOREIGN KEY (`owner_id`) REFERENCES `users` (`id`))')
+[2026-03-31 20:54:36] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-03-31 20:54:39] ERROR in routes: DB error in delete_user: (1451, 'Cannot delete or update a parent row: a foreign key constraint fails (`university`.`plan`, CONSTRAINT `plan_ibfk_1` FOREIGN KEY (`owner_id`) REFERENCES `users` (`id`))')
+[2026-03-31 20:54:39] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-03-31 20:54:41] ERROR in routes: DB error in delete_user: (1451, 'Cannot delete or update a parent row: a foreign key constraint fails (`university`.`c_offering`, CONSTRAINT `c_offering_ibfk_2` FOREIGN KEY (`i_id`) REFERENCES `users` (`id`))')
+[2026-03-31 20:54:41] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-03-31 20:54:44] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-03-31 21:49:41] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-03-31 21:49:43] ERROR in routes: DB error in delete_user: (1451, 'Cannot delete or update a parent row: a foreign key constraint fails (`university`.`plan`, CONSTRAINT `plan_ibfk_1` FOREIGN KEY (`owner_id`) REFERENCES `users` (`id`))')
+[2026-03-31 21:49:43] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-03-31 21:49:46] ERROR in routes: DB error in delete_user: (1451, 'Cannot delete or update a parent row: a foreign key constraint fails (`university`.`c_offering`, CONSTRAINT `c_offering_ibfk_2` FOREIGN KEY (`i_id`) REFERENCES `users` (`id`))')
+[2026-03-31 21:49:46] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-03-31 21:52:36] ERROR in routes: DB error in delete_user: (1451, 'Cannot delete or update a parent row: a foreign key constraint fails (`university`.`plan`, CONSTRAINT `plan_ibfk_1` FOREIGN KEY (`owner_id`) REFERENCES `users` (`id`))')
+[2026-03-31 21:52:36] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-03-31 21:52:37] ERROR in routes: DB error in delete_user: (1451, 'Cannot delete or update a parent row: a foreign key constraint fails (`university`.`plan`, CONSTRAINT `plan_ibfk_1` FOREIGN KEY (`owner_id`) REFERENCES `users` (`id`))')
+[2026-03-31 21:52:37] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-03-31 21:53:24] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-03-31 21:53:26] INFO in routes: Admin 10000001 securely deleted user ID 10000002.
+[2026-03-31 21:53:26] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-03-31 21:53:27] ERROR in routes: DB error in delete_user: (1451, 'Cannot delete or update a parent row: a foreign key constraint fails (`university`.`c_offering`, CONSTRAINT `c_offering_ibfk_2` FOREIGN KEY (`i_id`) REFERENCES `users` (`id`))')
+[2026-03-31 21:53:27] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-03-31 21:53:30] ERROR in routes: DB error in delete_user: (1451, 'Cannot delete or update a parent row: a foreign key constraint fails (`university`.`c_offering`, CONSTRAINT `c_offering_ibfk_2` FOREIGN KEY (`i_id`) REFERENCES `users` (`id`))')
+[2026-03-31 21:53:30] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-03-31 21:53:32] ERROR in routes: DB error in delete_user: (1451, 'Cannot delete or update a parent row: a foreign key constraint fails (`university`.`c_offering`, CONSTRAINT `c_offering_ibfk_2` FOREIGN KEY (`i_id`) REFERENCES `users` (`id`))')
+[2026-03-31 21:53:32] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-03-31 21:53:34] ERROR in routes: DB error in delete_user: (1451, 'Cannot delete or update a parent row: a foreign key constraint fails (`university`.`c_offering`, CONSTRAINT `c_offering_ibfk_2` FOREIGN KEY (`i_id`) REFERENCES `users` (`id`))')
+[2026-03-31 21:53:34] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-03-31 21:53:35] ERROR in routes: DB error in delete_user: (1451, 'Cannot delete or update a parent row: a foreign key constraint fails (`university`.`c_offering`, CONSTRAINT `c_offering_ibfk_2` FOREIGN KEY (`i_id`) REFERENCES `users` (`id`))')
+[2026-03-31 21:53:35] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-03-31 21:56:21] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-03-31 21:56:23] INFO in routes: Admin 10000001 securely deleted user ID 10000007.
+[2026-03-31 21:56:23] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-03-31 21:56:24] INFO in routes: Admin 10000001 securely deleted user ID 10000005.
+[2026-03-31 21:56:25] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-03-31 21:56:51] INFO in routes: Admin 10000001 successfully created user 88888889 (Role: 0, Email: fadfadfadf@gmail.com)
+[2026-03-31 21:56:51] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-03-31 21:56:54] INFO in routes: Admin 10000001 securely deleted user ID 88888889.
+[2026-03-31 21:56:54] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-04-01 00:22:02] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-04-01 00:22:09] INFO in routes: Grad Secretary 10000001 accessed the full course schedule.
+[2026-04-01 00:22:26] INFO in routes: Grad Secretary 10000001 accessed the global student records list.
+[2026-04-01 00:22:27] INFO in routes: Grad Secretary 10000001 accessed the transcript for student ID 88888888.
+[2026-04-01 00:22:30] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-04-01 00:22:32] INFO in routes: Admin 10000001 accessed the edit page for user ID 88888888.
+[2026-04-01 00:22:36] INFO in routes: Admin 10000001 accessed the edit page for user ID 88888888.
+[2026-04-01 00:22:40] INFO in routes: Admin 10000001 accessed the edit page for user ID 88888888.
+[2026-04-01 00:22:44] INFO in routes: Admin 10000001 accessed the edit page for user ID 88888888.
+[2026-04-01 00:25:08] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-04-01 00:25:11] INFO in routes: Grad Secretary 10000001 accessed the full course schedule.

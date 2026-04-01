@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-03-29 20:10-0400\n"
+"POT-Creation-Date: 2026-03-31 23:21-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,42 +17,46 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
 
-#: create_instance.py:95
+#: create_instance.py:119
 msgid "Profile updated successfully."
 msgstr ""
 
-#: create_instance.py:98
+#: create_instance.py:123
 msgid "That email is already in use."
 msgstr ""
 
-#: create_instance.py:108
+#: create_instance.py:136
 msgid "Error loading profile."
 msgstr ""
 
-#: blueprints/auth/routes.py:60 blueprints/auth/routes.py:165
+#: blueprints/auth/routes.py:39 blueprints/auth/routes.py:99
 msgid "Email already exists."
 msgstr ""
 
-#: blueprints/auth/routes.py:99
+#: blueprints/auth/routes.py:65
+msgid "User created successfully."
+msgstr ""
+
+#: blueprints/auth/routes.py:70 blueprints/auth/routes.py:126
+msgid "A database error occurred. Ensure all required fields are filled."
+msgstr ""
+
+#: blueprints/auth/routes.py:76
+msgid "Invalid role selected."
+msgstr ""
+
+#: blueprints/auth/routes.py:158
 #, python-format
 msgid "Welcome back, %(name)s!"
 msgstr ""
 
-#: blueprints/auth/routes.py:102
+#: blueprints/auth/routes.py:161
 msgid "Invalid email or password."
-msgstr ""
-
-#: blueprints/auth/routes.py:162
-msgid "User created successfully."
-msgstr ""
-
-#: blueprints/auth/routes.py:169
-msgid "Invalid role selected."
 msgstr ""
 
 #: blueprints/auth/templates/auth/login.html:2
 #: blueprints/auth/templates/auth/login.html:6
-#: blueprints/auth/templates/auth/login.html:18 templates/base.html:391
+#: blueprints/auth/templates/auth/login.html:18 templates/base.html:451
 msgid "Login"
 msgstr ""
 
@@ -61,7 +65,7 @@ msgstr ""
 #: blueprints/auth/templates/auth/sys_admin_register.html:19
 #: blueprints/faculty_instructor/templates/faculty_roster.html:14
 #: blueprints/grad_secretary/templates/gs_records.html:14
-#: blueprints/system_admin/templates/edit_user.html:16
+#: blueprints/system_admin/templates/edit_user.html:18
 #: blueprints/system_admin/templates/view_users.html:15
 #: templates/about_me.html:29
 msgid "Email"
@@ -81,7 +85,7 @@ msgstr ""
 msgid "Enter your password"
 msgstr ""
 
-#: blueprints/auth/templates/auth/register.html:2 templates/base.html:392
+#: blueprints/auth/templates/auth/register.html:2 templates/base.html:452
 msgid "Register"
 msgstr ""
 
@@ -91,7 +95,7 @@ msgstr ""
 
 #: blueprints/auth/templates/auth/register.html:9
 #: blueprints/auth/templates/auth/sys_admin_register.html:10
-#: blueprints/system_admin/templates/edit_user.html:10
+#: blueprints/system_admin/templates/edit_user.html:12
 #: blueprints/system_admin/templates/view_users.html:13
 msgid "First Name"
 msgstr ""
@@ -102,7 +106,7 @@ msgstr ""
 
 #: blueprints/auth/templates/auth/register.html:19
 #: blueprints/auth/templates/auth/sys_admin_register.html:16
-#: blueprints/system_admin/templates/edit_user.html:13
+#: blueprints/system_admin/templates/edit_user.html:15
 #: blueprints/system_admin/templates/view_users.html:14
 msgid "Last Name"
 msgstr ""
@@ -134,7 +138,7 @@ msgstr ""
 
 #: blueprints/auth/templates/auth/register.html:48
 #: blueprints/auth/templates/auth/sys_admin_register.html:46
-#: blueprints/system_admin/templates/edit_user.html:19
+#: blueprints/system_admin/templates/edit_user.html:21
 #: templates/about_me.html:32
 msgid "Address Line 1"
 msgstr ""
@@ -145,28 +149,28 @@ msgstr ""
 
 #: blueprints/auth/templates/auth/register.html:58
 #: blueprints/auth/templates/auth/sys_admin_register.html:52
-#: blueprints/system_admin/templates/edit_user.html:25
+#: blueprints/system_admin/templates/edit_user.html:27
 #: templates/about_me.html:38
 msgid "City"
 msgstr ""
 
 #: blueprints/auth/templates/auth/register.html:63
 #: blueprints/auth/templates/auth/sys_admin_register.html:55
-#: blueprints/system_admin/templates/edit_user.html:28
+#: blueprints/system_admin/templates/edit_user.html:30
 #: templates/about_me.html:41
 msgid "State"
 msgstr ""
 
 #: blueprints/auth/templates/auth/register.html:68
 #: blueprints/auth/templates/auth/sys_admin_register.html:58
-#: blueprints/system_admin/templates/edit_user.html:31
+#: blueprints/system_admin/templates/edit_user.html:33
 #: templates/about_me.html:44
 msgid "ZIP Code"
 msgstr ""
 
 #: blueprints/auth/templates/auth/register.html:73
 #: blueprints/auth/templates/auth/sys_admin_register.html:61
-#: blueprints/system_admin/templates/edit_user.html:34
+#: blueprints/system_admin/templates/edit_user.html:36
 #: templates/about_me.html:47
 msgid "Country Code"
 msgstr ""
@@ -178,7 +182,7 @@ msgstr ""
 #: blueprints/auth/templates/auth/sys_admin_register.html:2
 #: blueprints/auth/templates/auth/sys_admin_register.html:6
 #: blueprints/auth/templates/auth/sys_admin_register.html:64
-#: templates/base.html:414 templates/dashboard.html:49
+#: templates/base.html:474 templates/dashboard.html:49
 msgid "Create User"
 msgstr ""
 
@@ -227,50 +231,50 @@ msgid "Select track"
 msgstr ""
 
 #: blueprints/auth/templates/auth/sys_admin_register.html:49
-#: blueprints/system_admin/templates/edit_user.html:22
+#: blueprints/system_admin/templates/edit_user.html:24
 #: templates/about_me.html:35
 msgid "Address Line 2 (optional)"
 msgstr ""
 
-#: blueprints/faculty_instructor/routes.py:52 blueprints/student/routes.py:106
+#: blueprints/faculty_instructor/routes.py:44 blueprints/student/routes.py:100
 msgid "Error loading courses."
 msgstr ""
 
-#: blueprints/faculty_instructor/routes.py:91
+#: blueprints/faculty_instructor/routes.py:77
 msgid "Error loading roster."
 msgstr ""
 
-#: blueprints/faculty_instructor/routes.py:131
-#: blueprints/grad_secretary/routes.py:162
+#: blueprints/faculty_instructor/routes.py:110
+#: blueprints/grad_secretary/routes.py:139
 msgid "Error loading grades."
 msgstr ""
 
-#: blueprints/faculty_instructor/routes.py:160
-#: blueprints/grad_secretary/routes.py:189
+#: blueprints/faculty_instructor/routes.py:127
+#: blueprints/grad_secretary/routes.py:156
 msgid "Invalid grade selected."
 msgstr ""
 
-#: blueprints/faculty_instructor/routes.py:178
+#: blueprints/faculty_instructor/routes.py:144
 msgid "You are not authorized to grade this student."
 msgstr ""
 
-#: blueprints/faculty_instructor/routes.py:182
+#: blueprints/faculty_instructor/routes.py:149
 msgid "Grade already submitted and cannot be changed."
 msgstr ""
 
-#: blueprints/faculty_instructor/routes.py:189
+#: blueprints/faculty_instructor/routes.py:158
 msgid "Grade submitted successfully."
 msgstr ""
 
-#: blueprints/faculty_instructor/routes.py:192
-#: blueprints/grad_secretary/routes.py:203 blueprints/student/routes.py:304
+#: blueprints/faculty_instructor/routes.py:161
+#: blueprints/grad_secretary/routes.py:172 blueprints/student/routes.py:273
 msgid "A database error occurred."
 msgstr ""
 
 #: blueprints/faculty_instructor/templates/faculty_courses.html:2
 #: blueprints/faculty_instructor/templates/faculty_courses.html:6
 #: blueprints/faculty_instructor/templates/faculty_instructor.html:11
-#: templates/base.html:402 templates/dashboard.html:21
+#: templates/base.html:462 templates/dashboard.html:21
 msgid "My Courses"
 msgstr ""
 
@@ -287,6 +291,10 @@ msgstr ""
 #: blueprints/student/templates/courses.html:12
 #: blueprints/student/templates/courses.html:50
 #: blueprints/student/templates/transcript.html:12
+#: blueprints/system_admin/templates/edit_user.html:51
+#: blueprints/system_admin/templates/edit_user.html:79
+#: blueprints/system_admin/templates/edit_user.html:104
+#: blueprints/system_admin/templates/edit_user.html:132
 msgid "Course"
 msgstr ""
 
@@ -317,6 +325,8 @@ msgstr ""
 #: blueprints/grad_secretary/templates/gs_schedule.html:16
 #: blueprints/student/templates/courses.html:14
 #: blueprints/student/templates/courses.html:52
+#: blueprints/system_admin/templates/edit_user.html:52
+#: blueprints/system_admin/templates/edit_user.html:105
 msgid "Day"
 msgstr ""
 
@@ -324,10 +334,13 @@ msgstr ""
 #: blueprints/grad_secretary/templates/gs_schedule.html:17
 #: blueprints/student/templates/courses.html:15
 #: blueprints/student/templates/courses.html:53
+#: blueprints/system_admin/templates/edit_user.html:53
+#: blueprints/system_admin/templates/edit_user.html:106
 msgid "Time"
 msgstr ""
 
 #: blueprints/faculty_instructor/templates/faculty_courses.html:31
+#: blueprints/system_admin/templates/edit_user.html:73
 msgid "No courses assigned."
 msgstr ""
 
@@ -407,19 +420,19 @@ msgstr ""
 msgid "No students enrolled in your courses."
 msgstr ""
 
-#: blueprints/grad_secretary/routes.py:49
+#: blueprints/grad_secretary/routes.py:43
 msgid "Error loading student records."
 msgstr ""
 
-#: blueprints/grad_secretary/routes.py:91
+#: blueprints/grad_secretary/routes.py:77
 msgid "Error loading transcript."
 msgstr ""
 
-#: blueprints/grad_secretary/routes.py:127
+#: blueprints/grad_secretary/routes.py:108
 msgid "Error loading schedule."
 msgstr ""
 
-#: blueprints/grad_secretary/routes.py:201
+#: blueprints/grad_secretary/routes.py:169
 msgid "Grade updated successfully."
 msgstr ""
 
@@ -474,7 +487,7 @@ msgid "Program"
 msgstr ""
 
 #: blueprints/grad_secretary/templates/gs_records.html:17
-#: blueprints/student/templates/transcript.html:2 templates/base.html:398
+#: blueprints/student/templates/transcript.html:2 templates/base.html:458
 #: templates/dashboard.html:15
 msgid "Transcript"
 msgstr ""
@@ -522,40 +535,40 @@ msgstr ""
 msgid "Transcript — %(fname)s %(lname)s"
 msgstr ""
 
-#: blueprints/student/routes.py:203
+#: blueprints/student/routes.py:178
 msgid "Course successfully dropped."
 msgstr ""
 
-#: blueprints/student/routes.py:205
+#: blueprints/student/routes.py:181
 msgid "Could not drop the course. Are you sure you are enrolled?"
 msgstr ""
 
-#: blueprints/student/routes.py:208
+#: blueprints/student/routes.py:185
 msgid "A database error occurred while dropping the course."
 msgstr ""
 
-#: blueprints/student/routes.py:256
+#: blueprints/student/routes.py:217
 msgid "Course offering not found."
 msgstr ""
 
-#: blueprints/student/routes.py:283
+#: blueprints/student/routes.py:247
 #, python-format
 msgid "Missing prerequisites: %(prereqs)s"
 msgstr ""
 
-#: blueprints/student/routes.py:291
+#: blueprints/student/routes.py:257
 msgid "Time conflict! You must have at least 30 minutes between classes."
 msgstr ""
 
-#: blueprints/student/routes.py:299
+#: blueprints/student/routes.py:266
 msgid "Course successfully added!"
 msgstr ""
 
-#: blueprints/student/routes.py:302
+#: blueprints/student/routes.py:270
 msgid "You are already enrolled in this course."
 msgstr ""
 
-#: blueprints/student/templates/courses.html:2 templates/base.html:397
+#: blueprints/student/templates/courses.html:2 templates/base.html:457
 #: templates/dashboard.html:11
 msgid "Courses"
 msgstr ""
@@ -574,11 +587,14 @@ msgstr ""
 
 #: blueprints/student/templates/courses.html:18
 #: blueprints/student/templates/courses.html:54
+#: blueprints/system_admin/templates/edit_user.html:54
+#: blueprints/system_admin/templates/edit_user.html:107
 #: blueprints/system_admin/templates/view_users.html:17
 msgid "Action"
 msgstr ""
 
 #: blueprints/student/templates/courses.html:33
+#: blueprints/system_admin/templates/edit_user.html:141
 msgid "Add"
 msgstr ""
 
@@ -591,10 +607,12 @@ msgid "Current Schedule"
 msgstr ""
 
 #: blueprints/student/templates/courses.html:66
+#: blueprints/system_admin/templates/edit_user.html:118
 msgid "Drop"
 msgstr ""
 
 #: blueprints/student/templates/courses.html:71
+#: blueprints/system_admin/templates/edit_user.html:126
 msgid "No courses currently enrolled."
 msgstr ""
 
@@ -619,20 +637,57 @@ msgid "Current GPA"
 msgstr ""
 
 #: blueprints/system_admin/templates/edit_user.html:2
-#: blueprints/system_admin/templates/edit_user.html:6
+#: blueprints/system_admin/templates/edit_user.html:8
 msgid "Edit User"
 msgstr ""
 
-#: blueprints/system_admin/templates/edit_user.html:7
+#: blueprints/system_admin/templates/edit_user.html:9
 msgid "Update user information below."
 msgstr ""
 
-#: blueprints/system_admin/templates/edit_user.html:37
+#: blueprints/system_admin/templates/edit_user.html:39
 #: templates/about_me.html:50
 msgid "Save Changes"
 msgstr ""
 
-#: blueprints/system_admin/templates/view_users.html:2 templates/base.html:415
+#: blueprints/system_admin/templates/edit_user.html:45
+msgid "Assigned Courses"
+msgstr ""
+
+#: blueprints/system_admin/templates/edit_user.html:65
+msgid "Unassign"
+msgstr ""
+
+#: blueprints/system_admin/templates/edit_user.html:76
+msgid "Assign New Course"
+msgstr ""
+
+#: blueprints/system_admin/templates/edit_user.html:81
+#: blueprints/system_admin/templates/edit_user.html:134
+msgid "Select a course"
+msgstr ""
+
+#: blueprints/system_admin/templates/edit_user.html:88
+msgid "Assign"
+msgstr ""
+
+#: blueprints/system_admin/templates/edit_user.html:91
+msgid "No available courses to assign."
+msgstr ""
+
+#: blueprints/system_admin/templates/edit_user.html:98
+msgid "Current Enrollments"
+msgstr ""
+
+#: blueprints/system_admin/templates/edit_user.html:129
+msgid "Add Course"
+msgstr ""
+
+#: blueprints/system_admin/templates/edit_user.html:144
+msgid "No available courses to add."
+msgstr ""
+
+#: blueprints/system_admin/templates/view_users.html:2 templates/base.html:475
 #: templates/dashboard.html:53
 msgid "View Users"
 msgstr ""
@@ -643,6 +698,10 @@ msgstr ""
 
 #: blueprints/system_admin/templates/view_users.html:7
 msgid "View all registered users in the system."
+msgstr ""
+
+#: blueprints/system_admin/templates/view_users.html:8
+msgid "Search by name, email, or role..."
 msgstr ""
 
 #: blueprints/system_admin/templates/view_users.html:12
@@ -710,51 +769,47 @@ msgstr ""
 msgid "You may update your email and address below."
 msgstr ""
 
-#: templates/base.html:363
+#: templates/base.html:434
 msgid "ADMIN PORTAL"
 msgstr ""
 
-#: templates/base.html:364
+#: templates/base.html:435
 msgid "GRAD SECRETARY PORTAL"
 msgstr ""
 
-#: templates/base.html:365
+#: templates/base.html:436
 msgid "FACULTY PORTAL"
 msgstr ""
 
-#: templates/base.html:366
+#: templates/base.html:437
 msgid "STUDENT PORTAL"
 msgstr ""
 
-#: templates/base.html:381 templates/base.html:440
-msgid "Search courses..."
-msgstr ""
-
-#: templates/base.html:394 templates/index.html:2
+#: templates/base.html:454 templates/index.html:2
 msgid "Home"
 msgstr ""
 
-#: templates/base.html:403
+#: templates/base.html:463
 msgid "Roster"
 msgstr ""
 
-#: templates/base.html:404 templates/base.html:410 templates/base.html:417
+#: templates/base.html:464 templates/base.html:470 templates/base.html:477
 msgid "Grades"
 msgstr ""
 
-#: templates/base.html:408 templates/base.html:416
+#: templates/base.html:468 templates/base.html:476
 msgid "Students"
 msgstr ""
 
-#: templates/base.html:409
+#: templates/base.html:469
 msgid "Schedule"
 msgstr ""
 
-#: templates/base.html:421
+#: templates/base.html:481
 msgid "Warning: this will wipe all data. Are you sure?"
 msgstr ""
 
-#: templates/base.html:424
+#: templates/base.html:484
 msgid "Reset DB"
 msgstr ""
 
@@ -821,6 +876,18 @@ msgstr ""
 
 #: templates/dashboard.html:70
 msgid "View the system API documentation."
+msgstr ""
+
+#: templates/dashboard.html:77
+msgid "Application Logs"
+msgstr ""
+
+#: templates/dashboard.html:80
+msgid "Clear Logs"
+msgstr ""
+
+#: templates/dashboard.html:105
+msgid "No log entries yet."
 msgstr ""
 
 #: templates/index.html:6

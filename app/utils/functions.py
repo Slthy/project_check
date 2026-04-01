@@ -4,6 +4,7 @@ Shared utility functions used across all blueprints.
 
 import pymysql
 import pymysql.cursors
+from datetime import timedelta
 
 DB_CONFIG = {
     'host':     'regs26-borsato.cng0skw0wk8a.us-east-1.rds.amazonaws.com',
@@ -27,6 +28,24 @@ def get_db_connection():
     """
     return pymysql.connect(**DB_CONFIG)
 
+def to_minutes(t):
+    """
+    Convert a time value to total minutes since midnight.
+
+    Accepts either a ``datetime.timedelta`` (as returned by PyMySQL for TIME
+    columns) or a ``'HH:MM'`` / ``'HH:MM:SS'`` string.
+
+    Args:
+        t (timedelta | str): The time value to convert.
+
+    Returns:
+        int: Total minutes since midnight.
+    """
+    if isinstance(t, timedelta):
+        return int(t.total_seconds() // 60)
+    parts = str(t).split(':')
+    return int(parts[0]) * 60 + int(parts[1])
+
 def has_time_conflict(current_schedule, new_times):
     """
     Determine whether a set of new course times conflicts with an existing schedule.
@@ -42,22 +61,18 @@ def has_time_conflict(current_schedule, new_times):
     Returns:
         bool: True if a conflict is detected, False otherwise.
     """
-    def to_minutes(t):
-        h, m = map(int, t.split(':'))
-        return h * 60 + m
-
     for new in new_times:
+        if not new.get('start_time') or not new.get('end_time'):
+            continue
         new_start = to_minutes(new['start_time'])
-        new_end = to_minutes(new['end_time'])
+        new_end   = to_minutes(new['end_time'])
         for existing in current_schedule:
+            if not existing.get('start_time') or not existing.get('end_time'):
+                continue
             if existing['day'] != new['day']:
                 continue
             ex_start = to_minutes(existing['start_time'])
-            ex_end = to_minutes(existing['end_time'])
+            ex_end   = to_minutes(existing['end_time'])
             if not (new_start >= ex_end + 30 or new_end <= ex_start - 30):
                 return True
     return False
-
-def to_minutes(t):
-    h, m = map(int, t.split(':'))
-    return h * 60 + m

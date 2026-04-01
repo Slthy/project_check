@@ -19,6 +19,95 @@
             </tr>
         </thead>
         <tbody>
+            <tr>
+                <form method="POST" action="{{ url_for('grad_secretary.add_offering') }}">
+                <td>
+                    <input type="text" name="dept" style="width:55px;" required>
+                    <input type="text" name="number" style="width:65px;" required>
+                </td>
+                <td>
+                    <input type="text" name="name" style="width:120px;" required>                </td>
+                <td>
+                    <input type="number" name="credits" placeholder="3" style="width:50px;" required>
+                </td>
+                <td style="white-space:nowrap;">
+                    <select name="semester" style="width:80px;" required>
+                        <option value="">—</option>
+                        <option value="Fall">Fall</option>
+                        <option value="Spring">Spring</option>
+                        <option value="Summer">Summer</option>
+                    </select>
+                    <input type="text" name="year" style="width:65px;" required>
+                </td>
+                <td>
+                    <select name="day" required>
+                        <option value="">—</option>
+                        <option value="M">M</option>
+                        <option value="T">T</option>
+                        <option value="W">W</option>
+                        <option value="R">R</option>
+                        <option value="F">F</option>
+                    </select>
+                </td>
+                <td style="white-space:nowrap;">
+                    <select name="start_time" style="width:70px;" required>
+                        <option value="">—</option>
+                        <option value="09:00">09:00</option>
+                        <option value="09:30">09:30</option>
+                        <option value="10:00">10:00</option>
+                        <option value="10:30">10:30</option>
+                        <option value="11:00">11:00</option>
+                        <option value="11:30">11:30</option>
+                        <option value="12:00">12:00</option>
+                        <option value="12:30">12:30</option>
+                        <option value="13:00">13:00</option>
+                        <option value="13:30">13:30</option>
+                        <option value="14:00">14:00</option>
+                        <option value="14:30">14:30</option>
+                        <option value="15:00">15:00</option>
+                        <option value="15:30">15:30</option>
+                        <option value="16:00">16:00</option>
+                        <option value="16:30">16:30</option>
+                        <option value="17:00">17:00</option>
+                        <option value="17:30">17:30</option>
+                        <option value="18:00">18:00</option>
+                        <option value="18:30">18:30</option>
+                        <option value="19:00">19:00</option>
+                        <option value="19:30">19:30</option>
+                        <option value="20:00">20:00</option>
+                        <option value="20:30">20:30</option>
+                    </select>
+                    <select name="end_time" style="width:70px;" required>
+                        <option value="">—</option>
+                        <option value="09:00">09:00</option>
+                        <option value="09:30">09:30</option>
+                        <option value="10:00">10:00</option>
+                        <option value="10:30">10:30</option>
+                        <option value="11:00">11:00</option>
+                        <option value="11:30">11:30</option>
+                        <option value="12:00">12:00</option>
+                        <option value="12:30">12:30</option>
+                        <option value="13:00">13:00</option>
+                        <option value="13:30">13:30</option>
+                        <option value="14:00">14:00</option>
+                        <option value="14:30">14:30</option>
+                        <option value="15:00">15:00</option>
+                        <option value="15:30">15:30</option>
+                        <option value="16:00">16:00</option>
+                        <option value="16:30">16:30</option>
+                        <option value="17:00">17:00</option>
+                        <option value="17:30">17:30</option>
+                        <option value="18:00">18:00</option>
+                        <option value="18:30">18:30</option>
+                        <option value="19:00">19:00</option>
+                        <option value="19:30">19:30</option>
+                        <option value="20:00">20:00</option>
+                        <option value="20:30">20:30</option>
+                    </select>
+                </td>
+                <td><button type="submit">Add</button></td>
+                </form>
+            </tr>
             {% for course in courses %}
             <tr>
                 <td>{{ course['dept'] }} {{ course['number'] }}</td>

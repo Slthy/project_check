@@ -6,9 +6,10 @@ role 'system_admin'. Routes are registered on the 'system_admin' blueprint
 under /system_admin.
 """
 
-from flask import render_template, request, redirect, url_for, flash, session, send_from_directory, current_app 
+from flask import render_template, request, redirect, url_for, flash, session, send_from_directory, current_app
 from utils.decorators import role_required, login_required
 from utils.functions import get_db_connection, to_minutes
+from utils.create_db import run
 from utils.log_collector import admin_log_handler
 from . import system_admin
 import pymysql, shutil, os
@@ -20,11 +21,13 @@ def inject_admin_logs():
         return dict(logs=admin_log_handler.get_records())
     return dict(logs=[])
 
+
 @system_admin.route('/')
 @login_required
 @role_required('system_admin')
 def index():
     return redirect(url_for('home'))
+
 
 @system_admin.route('/users')
 @login_required
@@ -36,9 +39,8 @@ def view_users():
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
-        users = cursor.execute(
-            'SELECT id, fname, lname, email, role FROM users ORDER BY id'
-        ).fetchall()
+        cursor.execute('SELECT id, fname, lname, email, role FROM users ORDER BY id')
+        users = cursor.fetchall()
         current_app.logger.info(f"Admin {admin_id} accessed the global user list.")
     except pymysql.Error as e:
         flash("Error loading users.", "error")
@@ -74,15 +76,19 @@ def delete_user():
 
 @system_admin.route('/reset')
 def shutdown():
-    admin_id = session.get('user_id', 'Unknown')
-    base = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
-    live_db = os.path.join(base, 'database.db')
-    backup_db = os.path.join(base, 'reset', 'database.db')
-    if os.path.exists(live_db):
-        os.remove(live_db)
-    shutil.copy(backup_db, base)
-    current_app.logger.critical(f"Admin {admin_id} INITIATED A FULL DATABASE RESET.")
+    run();
     return redirect(url_for('auth.login'))
+
+@system_admin.route('/fix_fk')
+@role_required('system_admin')
+def fix_fk():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("ALTER TABLE c_offering DROP FOREIGN KEY c_offering_ibfk_2")
+    cursor.execute("ALTER TABLE c_offering ADD CONSTRAINT c_offering_ibfk_2 FOREIGN KEY (i_id) REFERENCES users(id) ON DELETE SET NULL")
+    conn.commit()
+    conn.close()
+    return "done"
 
 
 @system_admin.route('/docs/')
@@ -147,14 +153,15 @@ def edit_user(uid):
         available_student_courses = []
 
         if user and user['role'] == 2:
-            assigned_courses = cursor.execute('''
+            cursor.execute('''
                 SELECT o.o_id, c.dept, c.number, c.name,
                        s.day, s.start_time, s.end_time
                 FROM c_offering o
                 JOIN c_catalog c ON o.c_id = c.c_id
                 LEFT JOIN schedule s ON o.o_id = s.o_id
                 WHERE o.i_id = %s
-            ''', (uid,)).fetchall()
+            ''', (uid,))
+            assigned_courses = cursor.fetchall()
 
             assigned_o_ids = {c['o_id'] for c in assigned_courses}
             assigned_times = [
@@ -162,14 +169,16 @@ def edit_user(uid):
                 for c in assigned_courses
                 if c['day'] and c['start_time'] and c['end_time']
             ]
-            all_courses = cursor.execute('''
+
+            cursor.execute('''
                 SELECT o.o_id, c.dept, c.number, c.name,
                        s.day, s.start_time, s.end_time
                 FROM c_offering o
                 JOIN c_catalog c ON o.c_id = c.c_id
                 LEFT JOIN schedule s ON o.o_id = s.o_id
                 WHERE o.i_id IS NULL OR o.i_id != %s
-            ''', (uid,)).fetchall()
+            ''', (uid,))
+            all_courses = cursor.fetchall()
 
             for course in all_courses:
                 if course['o_id'] in assigned_o_ids:
@@ -191,7 +200,7 @@ def edit_user(uid):
                     available_courses.append(course)
 
         if user and user['role'] == 3:
-            student_courses = cursor.execute('''
+            cursor.execute('''
                 SELECT e.enroll_id, o.o_id, c.dept, c.number, c.name,
                        s.day, s.start_time, s.end_time, e.grade
                 FROM enrollment e
@@ -200,28 +209,31 @@ def edit_user(uid):
                 JOIN c_catalog c ON o.c_id = c.c_id
                 LEFT JOIN schedule s ON o.o_id = s.o_id
                 WHERE p.owner_id = %s AND e.grade = 'IP'
-            ''', (uid,)).fetchall()
+            ''', (uid,))
+            student_courses = cursor.fetchall()
 
             current_o_ids = {c['o_id'] for c in student_courses}
             current_schedule = [(c['day'], c['start_time'], c['end_time'])
                                 for c in student_courses
                                 if c['day'] and c['start_time'] and c['end_time']]
 
-            completed_cids = {row['c_id'] for row in cursor.execute('''
+            cursor.execute('''
                 SELECT o.c_id FROM enrollment e
                 JOIN plan p ON e.plan_id = p.plan_id
                 JOIN c_offering o ON e.o_id = o.o_id
                 WHERE p.owner_id = %s AND e.grade != 'IP'
-            ''', (uid,)).fetchall()}
+            ''', (uid,))
+            completed_cids = {row['c_id'] for row in cursor.fetchall()}
 
-            all_offerings = cursor.execute('''
+            cursor.execute('''
                 SELECT o.o_id, c.c_id, c.dept, c.number, c.name,
                        c.prereq1_id, c.prereq2_id,
                        s.day, s.start_time, s.end_time
                 FROM c_offering o
                 JOIN c_catalog c ON o.c_id = c.c_id
                 LEFT JOIN schedule s ON o.o_id = s.o_id
-            ''').fetchall()
+            ''')
+            all_offerings = cursor.fetchall()
 
             for course in all_offerings:
                 if course['o_id'] in current_o_ids:

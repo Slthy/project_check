@@ -42,43 +42,41 @@ def sys_admin_register():
                 return render_template('auth/sys_admin_register.html')
 
             try:
-                max_id_row = cursor.execute("SELECT MAX(id) FROM users WHERE id < 90000000").fetchone()
-                new_id = (max_id_row[0] + 1) if max_id_row[0] else 10000000
+                cursor.execute("SELECT MAX(id) AS max_id FROM users WHERE id < 90000000")
+                max_id_row = cursor.fetchone()
+                new_id = (max_id_row['max_id'] + 1) if max_id_row['max_id'] else 10000000
                 cursor.execute(
                     "INSERT INTO users (id, fname, lname, mname, email, password, role) VALUES (%s, %s, %s, %s, %s, %s, %s)",
                     (new_id, fname, lname, mname, email, password_hash, role)
                 )
-                last_id = cursor.lastrowid
-
                 if role == 3:
                     cursor.execute(
                         "INSERT INTO stud_type (id, track, admit_year) VALUES (%s, %s, %s)",
-                        (last_id, request.form['track'], request.form['admit_year'])
+                        (new_id, request.form['track'], request.form['admit_year'])
                     )
 
                 cursor.execute(
                     "INSERT INTO addresses (a_id, line_one, line_two, city, state, zip, country_code) VALUES (%s, %s, %s, %s, %s, %s, %s)",
-                    (last_id, request.form['line_one'], request.form.get('line_two'),
+                    (new_id, request.form['line_one'], request.form.get('line_two'),
                     request.form['city'], request.form['state'], request.form['zip'], request.form['country_code'])
                 )
+
                 conn.commit()
                 flash(_("User created successfully."), "success")
-                
-                current_app.logger.info(f"Admin {admin_id} successfully created user {last_id} (Role: {role}, Email: {email})")
-                
+                current_app.logger.info(f"Admin {admin_id} successfully created user {new_id} (Role: {role}, Email: {email})")
                 return redirect(url_for('system_admin.view_users'))
-            
+
             except pymysql.IntegrityError as e:
                 flash(_("A database error occurred. Ensure all required fields are filled."), "error")
                 current_app.logger.error(f"IntegrityError during admin user creation: {e}")
-                
+
             finally:
                 conn.close()
         else:
             flash(_("Invalid role selected."), "error")
             current_app.logger.warning(f"Admin {admin_id} attempted to create a user with invalid role '{request.form.get('role')}'.")
 
-    return render_template('auth/sys_admin_register.html') 
+    return render_template('auth/sys_admin_register.html')
 
 
 @auth.route('/register', methods=['GET', 'POST'])
@@ -95,7 +93,8 @@ def register():
         conn = get_db_connection()
         cursor = conn.cursor()
 
-        existing_user = cursor.execute("SELECT id FROM users WHERE email = %s", (email,)).fetchone()
+        cursor.execute("SELECT id FROM users WHERE email = %s", (email,))
+        existing_user = cursor.fetchone()
         if existing_user:
             flash(_("Email already exists."), "error")
             current_app.logger.warning(f"Self-registration failed: Email '{email}' is already in use.")
@@ -110,26 +109,23 @@ def register():
                 "INSERT INTO users (id, fname, lname, mname, email, password, role) VALUES (%s, %s, %s, %s, %s, %s, %s)",
                 (new_id, fname, lname, mname, email, password_hash, role)
             )
-            last_id = cursor.lastrowid
             cursor.execute(
                 "INSERT INTO stud_type (id, track, admit_year) VALUES (%s, %s, %s)",
-                (last_id, request.form['track'], request.form['admit_year'])
+                (new_id, request.form['track'], request.form['admit_year'])
             )
             cursor.execute(
                 "INSERT INTO addresses (a_id, line_one, line_two, city, state, zip, country_code) VALUES (%s, %s, %s, %s, %s, %s, %s)",
-                (last_id, request.form['line_one'], request.form.get('line_two'),
+                (new_id, request.form['line_one'], request.form.get('line_two'),
                 request.form['city'], request.form['state'], request.form['zip'], request.form['country_code'])
             )
             conn.commit()
-
-            current_app.logger.info(f"New student successfully self-registered with ID {last_id} (Email: {email})")
-            
+            current_app.logger.info(f"New student successfully self-registered with ID {new_id} (Email: {email})")
             return redirect('/auth/login')
-            
+
         except pymysql.IntegrityError as e:
             flash(_("A database error occurred. Ensure all required fields are filled."), "error")
             current_app.logger.error(f"IntegrityError during self-registration: {e}")
-            
+
         finally:
             conn.close()
 
@@ -144,9 +140,8 @@ def login():
 
         conn = get_db_connection()
         cursor = conn.cursor()
-        user = cursor.execute(
-            'SELECT * FROM users WHERE email = %s', (email,)
-        ).fetchone()
+        cursor.execute('SELECT * FROM users WHERE email = %s', (email,))
+        user = cursor.fetchone()
         conn.close()
 
         stored_password: bytes = b''
