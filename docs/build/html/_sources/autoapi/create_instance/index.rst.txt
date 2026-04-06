@@ -12,6 +12,14 @@ create_instance
 
 
 
+Attributes
+----------
+
+.. autoapisummary::
+
+   create_instance.babel
+
+
 Functions
 ---------
 
@@ -22,6 +30,8 @@ Functions
 
 Module Contents
 ---------------
+
+.. py:data:: babel
 
 .. py:function:: instance()
 

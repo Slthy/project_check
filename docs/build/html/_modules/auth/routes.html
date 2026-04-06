@@ -77,28 +77,87 @@
 <span class="sd">accessible under the /auth URL prefix.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">flask</span><span class="w"> </span><span class="kn">import</span> <span class="n">render_template</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">flash</span><span class="p">,</span> <span class="n">redirect</span><span class="p">,</span> <span class="n">url_for</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">sqlite3</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">flask</span><span class="w"> </span><span class="kn">import</span> <span class="n">render_template</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">flash</span><span class="p">,</span> <span class="n">redirect</span><span class="p">,</span> <span class="n">url_for</span><span class="p">,</span> <span class="n">current_app</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pymysql</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">bcrypt</span><span class="w"> </span><span class="kn">import</span> <span class="n">hashpw</span><span class="p">,</span> <span class="n">checkpw</span><span class="p">,</span> <span class="n">gensalt</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">utils.functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_db_connection</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">utils.decorators</span><span class="w"> </span><span class="kn">import</span> <span class="n">role_required</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">flask_babel</span><span class="w"> </span><span class="kn">import</span> <span class="n">_</span>
+
 <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">auth</span>
+
+<span class="nd">@auth</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/sys_admin/register&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@role_required</span><span class="p">(</span><span class="s1">&#39;system_admin&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="sys_admin_register">
+<a class="viewcode-back" href="../../autoapi/auth/routes/index.html#auth.routes.sys_admin_register">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">sys_admin_register</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
+        <span class="n">fname</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;fname&#39;</span><span class="p">]</span>
+        <span class="n">lname</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;lname&#39;</span><span class="p">]</span>
+        <span class="n">mname</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;mname&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;mname&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="n">email</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;email&#39;</span><span class="p">]</span>
+        <span class="n">password</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;password&#39;</span><span class="p">]</span>
+        <span class="n">password_hash</span> <span class="o">=</span> <span class="n">hashpw</span><span class="p">(</span><span class="n">password</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">),</span> <span class="n">gensalt</span><span class="p">())</span>
+        <span class="n">admin_id</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;user_id&#39;</span><span class="p">,</span> <span class="s1">&#39;Unknown&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;role&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="s1">&#39;3&#39;</span><span class="p">]:</span>
+            <span class="n">role</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;role&#39;</span><span class="p">])</span>
+            <span class="n">conn</span> <span class="o">=</span> <span class="n">get_db_connection</span><span class="p">()</span>
+            <span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+
+            <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT id FROM users WHERE email = </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">email</span><span class="p">,))</span>
+            <span class="n">existing_user</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">existing_user</span><span class="p">:</span>
+                <span class="n">flash</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Email already exists.&quot;</span><span class="p">),</span> <span class="s2">&quot;error&quot;</span><span class="p">)</span>
+                <span class="n">current_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Admin </span><span class="si">{</span><span class="n">admin_id</span><span class="si">}</span><span class="s2"> failed to create user: Email &#39;</span><span class="si">{</span><span class="n">email</span><span class="si">}</span><span class="s2">&#39; is already in use.&quot;</span><span class="p">)</span>
+                <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;auth/sys_admin_register.html&#39;</span><span class="p">)</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT MAX(id) AS max_id FROM users WHERE id &lt; 90000000&quot;</span><span class="p">)</span>
+                <span class="n">max_id_row</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
+                <span class="n">new_id</span> <span class="o">=</span> <span class="p">(</span><span class="n">max_id_row</span><span class="p">[</span><span class="s1">&#39;max_id&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">max_id_row</span><span class="p">[</span><span class="s1">&#39;max_id&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="mi">10000000</span>
+                <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                    <span class="s2">&quot;INSERT INTO users (id, fname, lname, mname, email, password, role) VALUES (</span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">)&quot;</span><span class="p">,</span>
+                    <span class="p">(</span><span class="n">new_id</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">lname</span><span class="p">,</span> <span class="n">mname</span><span class="p">,</span> <span class="n">email</span><span class="p">,</span> <span class="n">password_hash</span><span class="p">,</span> <span class="n">role</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">role</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                    <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                        <span class="s2">&quot;INSERT INTO stud_type (id, track, admit_year) VALUES (</span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">)&quot;</span><span class="p">,</span>
+                        <span class="p">(</span><span class="n">new_id</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;track&#39;</span><span class="p">],</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;admit_year&#39;</span><span class="p">])</span>
+                    <span class="p">)</span>
+
+                <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                    <span class="s2">&quot;INSERT INTO addresses (a_id, line_one, line_two, city, state, zip, country_code) VALUES (</span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">)&quot;</span><span class="p">,</span>
+                    <span class="p">(</span><span class="n">new_id</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;line_one&#39;</span><span class="p">],</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;line_two&#39;</span><span class="p">),</span>
+                    <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;city&#39;</span><span class="p">],</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">],</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;zip&#39;</span><span class="p">],</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;country_code&#39;</span><span class="p">])</span>
+                <span class="p">)</span>
+
+                <span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+                <span class="n">flash</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;User created successfully.&quot;</span><span class="p">),</span> <span class="s2">&quot;success&quot;</span><span class="p">)</span>
+                <span class="n">current_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Admin </span><span class="si">{</span><span class="n">admin_id</span><span class="si">}</span><span class="s2"> successfully created user </span><span class="si">{</span><span class="n">new_id</span><span class="si">}</span><span class="s2"> (Role: </span><span class="si">{</span><span class="n">role</span><span class="si">}</span><span class="s2">, Email: </span><span class="si">{</span><span class="n">email</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;system_admin.view_users&#39;</span><span class="p">))</span>
+
+            <span class="k">except</span> <span class="n">pymysql</span><span class="o">.</span><span class="n">IntegrityError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">flash</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;A database error occurred. Ensure all required fields are filled.&quot;</span><span class="p">),</span> <span class="s2">&quot;error&quot;</span><span class="p">)</span>
+                <span class="n">current_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;IntegrityError during admin user creation: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="k">finally</span><span class="p">:</span>
+                <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">flash</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Invalid role selected.&quot;</span><span class="p">),</span> <span class="s2">&quot;error&quot;</span><span class="p">)</span>
+            <span class="n">current_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Admin </span><span class="si">{</span><span class="n">admin_id</span><span class="si">}</span><span class="s2"> attempted to create a user with invalid role &#39;</span><span class="si">{</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;role&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;auth/sys_admin_register.html&#39;</span><span class="p">)</span></div>
+
+
 
 <span class="nd">@auth</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/register&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
 <div class="viewcode-block" id="register">
 <a class="viewcode-back" href="../../autoapi/auth/routes/index.html#auth.routes.register">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">register</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Handle student self-registration (GET and POST).</span>
-
-<span class="sd">    GET:  Render the registration form.</span>
-<span class="sd">    POST: Validate form data, hash the password, insert a new user row</span>
-<span class="sd">          (role=3), a matching stud_type row, and an address row inside a</span>
-<span class="sd">          single transaction. Redirect to login on success; flash an error</span>
-<span class="sd">          if the email is already taken.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
         <span class="n">fname</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;fname&#39;</span><span class="p">]</span>
         <span class="n">lname</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;lname&#39;</span><span class="p">]</span>
@@ -111,25 +170,39 @@
         <span class="n">conn</span> <span class="o">=</span> <span class="n">get_db_connection</span><span class="p">()</span>
         <span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
 
+        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT id FROM users WHERE email = </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">email</span><span class="p">,))</span>
+        <span class="n">existing_user</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">existing_user</span><span class="p">:</span>
+            <span class="n">flash</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Email already exists.&quot;</span><span class="p">),</span> <span class="s2">&quot;error&quot;</span><span class="p">)</span>
+            <span class="n">current_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Self-registration failed: Email &#39;</span><span class="si">{</span><span class="n">email</span><span class="si">}</span><span class="s2">&#39; is already in use.&quot;</span><span class="p">)</span>
+            <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;auth/register.html&#39;</span><span class="p">)</span>
+
         <span class="k">try</span><span class="p">:</span>
+            <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT MAX(id) AS max_id FROM users WHERE id &lt; 90000000&quot;</span><span class="p">)</span>
+            <span class="n">max_id_row</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
+            <span class="n">new_id</span> <span class="o">=</span> <span class="p">(</span><span class="n">max_id_row</span><span class="p">[</span><span class="s1">&#39;max_id&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">max_id_row</span><span class="p">[</span><span class="s1">&#39;max_id&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="mi">10000000</span>
             <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
-                <span class="s2">&quot;INSERT INTO users (fname, lname, mname, email, password, role) VALUES (?, ?, ?, ?, ?, ?)&quot;</span><span class="p">,</span>
-                <span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">lname</span><span class="p">,</span> <span class="n">mname</span><span class="p">,</span> <span class="n">email</span><span class="p">,</span> <span class="n">password_hash</span><span class="p">,</span> <span class="n">role</span><span class="p">)</span>
-            <span class="p">)</span>
-            <span class="n">last_id</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">lastrowid</span>
-            <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
-                <span class="s2">&quot;INSERT INTO stud_type (id, track, admit_year) VALUES (?, ?, ?)&quot;</span><span class="p">,</span>
-                <span class="p">(</span><span class="n">last_id</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;track&#39;</span><span class="p">],</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;admit_year&#39;</span><span class="p">])</span>
+                <span class="s2">&quot;INSERT INTO users (id, fname, lname, mname, email, password, role) VALUES (</span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">)&quot;</span><span class="p">,</span>
+                <span class="p">(</span><span class="n">new_id</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">lname</span><span class="p">,</span> <span class="n">mname</span><span class="p">,</span> <span class="n">email</span><span class="p">,</span> <span class="n">password_hash</span><span class="p">,</span> <span class="n">role</span><span class="p">)</span>
             <span class="p">)</span>
             <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
-                <span class="s2">&quot;INSERT INTO addresses (a_id, line_one, line_two, city, state, zip, country_code) VALUES (?, ?, ?, ?, ?, ?, ?)&quot;</span><span class="p">,</span>
-                <span class="p">(</span><span class="n">last_id</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;line_one&#39;</span><span class="p">],</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;line_two&#39;</span><span class="p">),</span>
+                <span class="s2">&quot;INSERT INTO stud_type (id, track, admit_year) VALUES (</span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">)&quot;</span><span class="p">,</span>
+                <span class="p">(</span><span class="n">new_id</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;track&#39;</span><span class="p">],</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;admit_year&#39;</span><span class="p">])</span>
+            <span class="p">)</span>
+            <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                <span class="s2">&quot;INSERT INTO addresses (a_id, line_one, line_two, city, state, zip, country_code) VALUES (</span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">)&quot;</span><span class="p">,</span>
+                <span class="p">(</span><span class="n">new_id</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;line_one&#39;</span><span class="p">],</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;line_two&#39;</span><span class="p">),</span>
                 <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;city&#39;</span><span class="p">],</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">],</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;zip&#39;</span><span class="p">],</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;country_code&#39;</span><span class="p">])</span>
             <span class="p">)</span>
             <span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+            <span class="n">current_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;New student successfully self-registered with ID </span><span class="si">{</span><span class="n">new_id</span><span class="si">}</span><span class="s2"> (Email: </span><span class="si">{</span><span class="n">email</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;/auth/login&#39;</span><span class="p">)</span>
-        <span class="k">except</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">IntegrityError</span><span class="p">:</span>
-            <span class="n">flash</span><span class="p">(</span><span class="s2">&quot;Email already exists.&quot;</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="n">pymysql</span><span class="o">.</span><span class="n">IntegrityError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">flash</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;A database error occurred. Ensure all required fields are filled.&quot;</span><span class="p">),</span> <span class="s2">&quot;error&quot;</span><span class="p">)</span>
+            <span class="n">current_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;IntegrityError during self-registration: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
         <span class="k">finally</span><span class="p">:</span>
             <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
@@ -141,23 +214,14 @@
 <div class="viewcode-block" id="login">
 <a class="viewcode-back" href="../../autoapi/auth/routes/index.html#auth.routes.login">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">login</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Handle user login for all roles (GET and POST).</span>
-
-<span class="sd">    GET:  Render the login form.</span>
-<span class="sd">    POST: Look up the user by email, verify the bcrypt password hash, and</span>
-<span class="sd">          populate the session with user_id, email, and role on success.</span>
-<span class="sd">          Flash an error and re-render the form on failure.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
         <span class="n">email</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;email&#39;</span><span class="p">]</span>
         <span class="n">password</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;password&#39;</span><span class="p">]</span>
 
         <span class="n">conn</span> <span class="o">=</span> <span class="n">get_db_connection</span><span class="p">()</span>
         <span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
-        <span class="n">user</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
-            <span class="s1">&#39;SELECT * FROM users WHERE email = ?&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">email</span><span class="p">,)</span>
-        <span class="p">)</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;SELECT * FROM users WHERE email = </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">email</span><span class="p">,))</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
         <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
         <span class="n">stored_password</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span>
@@ -171,10 +235,10 @@
             <span class="n">session</span><span class="p">[</span><span class="s1">&#39;email&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">user</span><span class="p">[</span><span class="s1">&#39;email&#39;</span><span class="p">]</span>
             <span class="n">session</span><span class="p">[</span><span class="s1">&#39;user_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">user</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span>
             <span class="n">session</span><span class="p">[</span><span class="s1">&#39;role&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">user</span><span class="p">[</span><span class="s1">&#39;role&#39;</span><span class="p">]</span>
-            <span class="n">flash</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Welcome back, </span><span class="si">{</span><span class="n">user</span><span class="p">[</span><span class="s1">&#39;fname&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">!&quot;</span><span class="p">,</span> <span class="s2">&quot;success&quot;</span><span class="p">)</span>
+            <span class="n">flash</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Welcome back, </span><span class="si">%(name)s</span><span class="s2">!&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">user</span><span class="p">[</span><span class="s1">&#39;fname&#39;</span><span class="p">]),</span> <span class="s2">&quot;success&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">flash</span><span class="p">(</span><span class="s2">&quot;Invalid email or password.&quot;</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">)</span>
+            <span class="n">flash</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Invalid email or password.&quot;</span><span class="p">),</span> <span class="s2">&quot;error&quot;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;auth/login.html&#39;</span><span class="p">)</span></div>
 
@@ -184,75 +248,9 @@
 <div class="viewcode-block" id="logout">
 <a class="viewcode-back" href="../../autoapi/auth/routes/index.html#auth.routes.logout">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">logout</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Clear the session and redirect to the login page.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">session</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;/auth/login&#39;</span><span class="p">)</span></div>
 
-
-
-<span class="nd">@auth</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/sys_admin/register&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
-<span class="nd">@role_required</span><span class="p">(</span><span class="s1">&#39;system_admin&#39;</span><span class="p">)</span>
-<div class="viewcode-block" id="sys_admin_register">
-<a class="viewcode-back" href="../../autoapi/auth/routes/index.html#auth.routes.sys_admin_register">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">sys_admin_register</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Allow a system administrator to create a new user account (GET and POST).</span>
-
-<span class="sd">    GET:  Render the admin user-creation form.</span>
-<span class="sd">    POST: Validate the selected role (GS=1, Faculty=2, Student=3), hash the</span>
-<span class="sd">          password, and insert the user. For student accounts, also insert a</span>
-<span class="sd">          stud_type row. Always inserts an address row. Redirects to the user</span>
-<span class="sd">          list on success; flashes errors for duplicate email or invalid role.</span>
-
-<span class="sd">    Requires: system_admin role.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
-        <span class="n">fname</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;fname&#39;</span><span class="p">]</span>
-        <span class="n">lname</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;lname&#39;</span><span class="p">]</span>
-        <span class="n">mname</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;mname&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;mname&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="kc">None</span>
-        <span class="n">email</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;email&#39;</span><span class="p">]</span>
-        <span class="n">password</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;password&#39;</span><span class="p">]</span>
-        <span class="n">password_hash</span> <span class="o">=</span> <span class="n">hashpw</span><span class="p">(</span><span class="n">password</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">),</span> <span class="n">gensalt</span><span class="p">())</span>
-
-        <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;role&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="s1">&#39;3&#39;</span><span class="p">]:</span>
-            <span class="n">role</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;role&#39;</span><span class="p">])</span>
-            <span class="n">conn</span> <span class="o">=</span> <span class="n">get_db_connection</span><span class="p">()</span>
-            <span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
-
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
-                    <span class="s2">&quot;INSERT INTO users (fname, lname, mname, email, password, role) VALUES (?, ?, ?, ?, ?, ?)&quot;</span><span class="p">,</span>
-                    <span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">lname</span><span class="p">,</span> <span class="n">mname</span><span class="p">,</span> <span class="n">email</span><span class="p">,</span> <span class="n">password_hash</span><span class="p">,</span> <span class="n">role</span><span class="p">)</span>
-                <span class="p">)</span>
-                <span class="n">last_id</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">lastrowid</span>
-
-                <span class="k">if</span> <span class="n">role</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
-                    <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
-                        <span class="s2">&quot;INSERT INTO stud_type (id, track, admit_year) VALUES (?, ?, ?)&quot;</span><span class="p">,</span>
-                        <span class="p">(</span><span class="n">last_id</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;track&#39;</span><span class="p">],</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;admit_year&#39;</span><span class="p">])</span>
-                    <span class="p">)</span>
-
-                <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
-                    <span class="s2">&quot;INSERT INTO addresses (a_id, line_one, line_two, city, state, zip, country_code) VALUES (?, ?, ?, ?, ?, ?, ?)&quot;</span><span class="p">,</span>
-                    <span class="p">(</span><span class="n">last_id</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;line_one&#39;</span><span class="p">],</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;line_two&#39;</span><span class="p">),</span>
-                    <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;city&#39;</span><span class="p">],</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">],</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;zip&#39;</span><span class="p">],</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;country_code&#39;</span><span class="p">])</span>
-                <span class="p">)</span>
-                <span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
-                <span class="n">flash</span><span class="p">(</span><span class="s2">&quot;User created successfully.&quot;</span><span class="p">,</span> <span class="s2">&quot;success&quot;</span><span class="p">)</span>
-                <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;system_admin.view_users&#39;</span><span class="p">))</span>
-            <span class="k">except</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">IntegrityError</span><span class="p">:</span>
-                <span class="n">flash</span><span class="p">(</span><span class="s2">&quot;Email already exists.&quot;</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">)</span>
-            <span class="k">finally</span><span class="p">:</span>
-                <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">flash</span><span class="p">(</span><span class="s2">&quot;Invalid role selected.&quot;</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;auth/sys_admin_register.html&#39;</span><span class="p">)</span>  <span class="c1"># Ahmad, you can probably play a little with </span></div>
-
-                                                            <span class="c1"># templates and create a base login template that extents the base app template</span>
-                                                            <span class="c1"># and two different login variations: students and sys-admin</span>
 </pre></div>
 
            </div>

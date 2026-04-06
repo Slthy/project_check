@@ -77,11 +77,13 @@
 <span class="sd">&#39;system_admin&#39;. Routes are registered on the &#39;faculty_instructor&#39; blueprint.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">flask</span><span class="w"> </span><span class="kn">import</span> <span class="n">render_template</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">flash</span><span class="p">,</span> <span class="n">redirect</span><span class="p">,</span> <span class="n">url_for</span><span class="p">,</span> <span class="n">request</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">flask</span><span class="w"> </span><span class="kn">import</span> <span class="n">render_template</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">flash</span><span class="p">,</span> <span class="n">redirect</span><span class="p">,</span> <span class="n">url_for</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">current_app</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">utils.decorators</span><span class="w"> </span><span class="kn">import</span> <span class="n">role_required</span><span class="p">,</span> <span class="n">login_required</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">utils.functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_db_connection</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">faculty_instructor</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">sqlite3</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pymysql</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">flask_babel</span><span class="w"> </span><span class="kn">import</span> <span class="n">_</span>
 
 <span class="nd">@faculty_instructor</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
 <span class="nd">@login_required</span>
@@ -89,9 +91,6 @@
 <div class="viewcode-block" id="index">
 <a class="viewcode-back" href="../../autoapi/faculty_instructor/routes/index.html#faculty_instructor.routes.index">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">index</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Render the faculty home dashboard.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;faculty_instructor.html&#39;</span><span class="p">)</span></div>
 
 
@@ -102,34 +101,28 @@
 <div class="viewcode-block" id="courses">
 <a class="viewcode-back" href="../../autoapi/faculty_instructor/routes/index.html#faculty_instructor.routes.courses">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">courses</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Render a list of course offerings assigned to the logged-in instructor.</span>
-
-<span class="sd">    Joins c_offering with c_catalog and schedule to display course code,</span>
-<span class="sd">    title, credits, semester, day, and time for each assigned section.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">uid</span> <span class="o">=</span> <span class="n">session</span><span class="p">[</span><span class="s1">&#39;user_id&#39;</span><span class="p">]</span>
     <span class="n">my_courses</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">conn</span> <span class="o">=</span> <span class="kc">None</span>
-
     <span class="k">try</span><span class="p">:</span>
         <span class="n">conn</span> <span class="o">=</span> <span class="n">get_db_connection</span><span class="p">()</span>
         <span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
-        <span class="n">my_courses</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;</span>
 <span class="s1">            SELECT o.o_id, c.dept, c.number, c.name, c.credits,</span>
 <span class="s1">                   o.semester, o.year, s.day, s.start_time, s.end_time</span>
 <span class="s1">            FROM c_offering o</span>
 <span class="s1">            JOIN c_catalog c ON o.c_id = c.c_id</span>
 <span class="s1">            LEFT JOIN schedule s ON o.o_id = s.o_id</span>
-<span class="s1">            WHERE o.i_id = ?</span>
-<span class="s1">        &#39;&#39;&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">uid</span><span class="p">,))</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
-    <span class="k">except</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="n">flash</span><span class="p">(</span><span class="s2">&quot;Error loading courses.&quot;</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;DB error in faculty courses: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="s1">            WHERE o.i_id = </span><span class="si">%s</span>
+<span class="s1">        &#39;&#39;&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">uid</span><span class="p">,))</span>
+        <span class="n">my_courses</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+        <span class="n">current_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Instructor </span><span class="si">{</span><span class="n">uid</span><span class="si">}</span><span class="s2"> accessed their assigned courses list.&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">pymysql</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">flash</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Error loading courses.&quot;</span><span class="p">),</span> <span class="s2">&quot;error&quot;</span><span class="p">)</span>
+        <span class="n">current_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;DB error in faculty courses: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="k">finally</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">conn</span><span class="p">:</span>
             <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-
     <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;faculty_courses.html&#39;</span><span class="p">,</span> <span class="n">courses</span><span class="o">=</span><span class="n">my_courses</span><span class="p">)</span></div>
 
 
@@ -140,38 +133,32 @@
 <div class="viewcode-block" id="roster">
 <a class="viewcode-back" href="../../autoapi/faculty_instructor/routes/index.html#faculty_instructor.routes.roster">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">roster</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Render the class roster for all courses taught by the logged-in instructor.</span>
-
-<span class="sd">    Joins offerings, catalog, enrollment, plan, and users tables to list</span>
-<span class="sd">    each enrolled student&#39;s name, email, and current grade, grouped by course.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">uid</span> <span class="o">=</span> <span class="n">session</span><span class="p">[</span><span class="s1">&#39;user_id&#39;</span><span class="p">]</span>
     <span class="n">roster_data</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">conn</span> <span class="o">=</span> <span class="kc">None</span>
-
     <span class="k">try</span><span class="p">:</span>
         <span class="n">conn</span> <span class="o">=</span> <span class="n">get_db_connection</span><span class="p">()</span>
         <span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
-        <span class="n">roster_data</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;</span>
 <span class="s1">            SELECT c.dept, c.number, c.name,</span>
-<span class="s1">                   u.fname || &#39; &#39; || u.lname AS student_name,</span>
+<span class="s1">                   CONCAT(u.fname, &quot; &quot;, u.lname) AS student_name,</span>
 <span class="s1">                   u.email, e.grade</span>
 <span class="s1">            FROM c_offering o</span>
 <span class="s1">            JOIN c_catalog c ON o.c_id = c.c_id</span>
 <span class="s1">            JOIN enrollment e ON o.o_id = e.o_id</span>
 <span class="s1">            JOIN plan p ON e.plan_id = p.plan_id</span>
 <span class="s1">            JOIN users u ON p.owner_id = u.id</span>
-<span class="s1">            WHERE o.i_id = ?</span>
+<span class="s1">            WHERE o.i_id = </span><span class="si">%s</span>
 <span class="s1">            ORDER BY c.dept, c.number, u.lname</span>
-<span class="s1">        &#39;&#39;&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">uid</span><span class="p">,))</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
-    <span class="k">except</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="n">flash</span><span class="p">(</span><span class="s2">&quot;Error loading roster.&quot;</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;DB error in faculty roster: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="s1">        &#39;&#39;&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">uid</span><span class="p">,))</span>
+        <span class="n">roster_data</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+        <span class="n">current_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Instructor </span><span class="si">{</span><span class="n">uid</span><span class="si">}</span><span class="s2"> accessed their class roster.&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">pymysql</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">flash</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Error loading roster.&quot;</span><span class="p">),</span> <span class="s2">&quot;error&quot;</span><span class="p">)</span>
+        <span class="n">current_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;DB error in faculty roster: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="k">finally</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">conn</span><span class="p">:</span>
             <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-
     <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;faculty_roster.html&#39;</span><span class="p">,</span> <span class="n">roster</span><span class="o">=</span><span class="n">roster_data</span><span class="p">)</span></div>
 
 
@@ -182,39 +169,32 @@
 <div class="viewcode-block" id="grades">
 <a class="viewcode-back" href="../../autoapi/faculty_instructor/routes/index.html#faculty_instructor.routes.grades">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">grades</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Render the grade entry form for students with in-progress (IP) grades.</span>
-
-<span class="sd">    Only shows enrollments where grade=&#39;IP&#39;, preventing faculty from seeing</span>
-<span class="sd">    or interacting with already-submitted grades.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">uid</span> <span class="o">=</span> <span class="n">session</span><span class="p">[</span><span class="s1">&#39;user_id&#39;</span><span class="p">]</span>
     <span class="n">students</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">conn</span> <span class="o">=</span> <span class="kc">None</span>
-
     <span class="k">try</span><span class="p">:</span>
         <span class="n">conn</span> <span class="o">=</span> <span class="n">get_db_connection</span><span class="p">()</span>
         <span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
-        <span class="c1"># only show IP grades — faculty cannot change already submitted grades</span>
-        <span class="n">students</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;</span>
 <span class="s1">            SELECT e.enroll_id, c.dept, c.number, c.name,</span>
-<span class="s1">                   u.fname || &#39; &#39; || u.lname AS student_name,</span>
+<span class="s1">                   CONCAT(u.fname, &quot; &quot;, u.lname) AS student_name,</span>
 <span class="s1">                   e.grade</span>
 <span class="s1">            FROM c_offering o</span>
 <span class="s1">            JOIN c_catalog c ON o.c_id = c.c_id</span>
 <span class="s1">            JOIN enrollment e ON o.o_id = e.o_id</span>
 <span class="s1">            JOIN plan p ON e.plan_id = p.plan_id</span>
 <span class="s1">            JOIN users u ON p.owner_id = u.id</span>
-<span class="s1">            WHERE o.i_id = ? AND e.grade = &#39;IP&#39;</span>
+<span class="s1">            WHERE o.i_id = </span><span class="si">%s</span><span class="s1"> AND e.grade = &#39;IP&#39;</span>
 <span class="s1">            ORDER BY c.dept, c.number, u.lname</span>
-<span class="s1">        &#39;&#39;&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">uid</span><span class="p">,))</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
-    <span class="k">except</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="n">flash</span><span class="p">(</span><span class="s2">&quot;Error loading grades.&quot;</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;DB error in faculty grades: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="s1">        &#39;&#39;&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">uid</span><span class="p">,))</span>
+        <span class="n">students</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+        <span class="n">current_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Instructor </span><span class="si">{</span><span class="n">uid</span><span class="si">}</span><span class="s2"> accessed the pending grades entry sheet.&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">pymysql</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">flash</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Error loading grades.&quot;</span><span class="p">),</span> <span class="s2">&quot;error&quot;</span><span class="p">)</span>
+        <span class="n">current_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;DB error in faculty grades: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="k">finally</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">conn</span><span class="p">:</span>
             <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-
     <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;faculty_grades.html&#39;</span><span class="p">,</span> <span class="n">students</span><span class="o">=</span><span class="n">students</span><span class="p">)</span></div>
 
 
@@ -225,60 +205,50 @@
 <div class="viewcode-block" id="submit_grade">
 <a class="viewcode-back" href="../../autoapi/faculty_instructor/routes/index.html#faculty_instructor.routes.submit_grade">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">submit_grade</span><span class="p">(</span><span class="n">enroll_id</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Submit a final grade for a specific enrollment record (POST only).</span>
-
-<span class="sd">    Validates that the grade value is in the allowed set, verifies that the</span>
-<span class="sd">    enrollment belongs to a course taught by the requesting instructor, and</span>
-<span class="sd">    confirms the grade is still &#39;IP&#39; before updating. Rejects attempts to</span>
-<span class="sd">    overwrite an already-submitted grade.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        enroll_id (int): The enrollment record to update.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">uid</span> <span class="o">=</span> <span class="n">session</span><span class="p">[</span><span class="s1">&#39;user_id&#39;</span><span class="p">]</span>
     <span class="n">grade</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;grade&#39;</span><span class="p">)</span>
 
     <span class="n">valid_grades</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;A-&#39;</span><span class="p">,</span> <span class="s1">&#39;B+&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;B-&#39;</span><span class="p">,</span> <span class="s1">&#39;C+&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">}</span>
     <span class="k">if</span> <span class="n">grade</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">valid_grades</span><span class="p">:</span>
-        <span class="n">flash</span><span class="p">(</span><span class="s2">&quot;Invalid grade selected.&quot;</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">)</span>
+        <span class="n">flash</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Invalid grade selected.&quot;</span><span class="p">),</span> <span class="s2">&quot;error&quot;</span><span class="p">)</span>
+        <span class="n">current_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Instructor </span><span class="si">{</span><span class="n">uid</span><span class="si">}</span><span class="s2"> attempted to submit an invalid grade (&#39;</span><span class="si">{</span><span class="n">grade</span><span class="si">}</span><span class="s2">&#39;) for enrollment </span><span class="si">{</span><span class="n">enroll_id</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;faculty_instructor.grades&#39;</span><span class="p">))</span>
 
     <span class="n">conn</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">conn</span> <span class="o">=</span> <span class="n">get_db_connection</span><span class="p">()</span>
         <span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
-
-        <span class="c1"># verify this enrollment belongs to a course taught by this faculty</span>
-        <span class="c1"># and that the grade is still IP (cannot overwrite a submitted grade)</span>
-        <span class="n">enrollment</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;</span>
 <span class="s1">            SELECT e.enroll_id, e.grade</span>
 <span class="s1">            FROM enrollment e</span>
 <span class="s1">            JOIN c_offering o ON e.o_id = o.o_id</span>
-<span class="s1">            WHERE e.enroll_id = ? AND o.i_id = ?</span>
-<span class="s1">        &#39;&#39;&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">enroll_id</span><span class="p">,</span> <span class="n">uid</span><span class="p">))</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
+<span class="s1">            WHERE e.enroll_id = </span><span class="si">%s</span><span class="s1"> AND o.i_id = </span><span class="si">%s</span>
+<span class="s1">        &#39;&#39;&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">enroll_id</span><span class="p">,</span> <span class="n">uid</span><span class="p">))</span>
+        <span class="n">enrollment</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">enrollment</span><span class="p">:</span>
-            <span class="n">flash</span><span class="p">(</span><span class="s2">&quot;You are not authorized to grade this student.&quot;</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">)</span>
+            <span class="n">flash</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;You are not authorized to grade this student.&quot;</span><span class="p">),</span> <span class="s2">&quot;error&quot;</span><span class="p">)</span>
+            <span class="n">current_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Instructor </span><span class="si">{</span><span class="n">uid</span><span class="si">}</span><span class="s2"> attempted to submit a grade for enrollment </span><span class="si">{</span><span class="n">enroll_id</span><span class="si">}</span><span class="s2"> without authorization.&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;faculty_instructor.grades&#39;</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="n">enrollment</span><span class="p">[</span><span class="s1">&#39;grade&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;IP&#39;</span><span class="p">:</span>
-            <span class="n">flash</span><span class="p">(</span><span class="s2">&quot;Grade already submitted and cannot be changed.&quot;</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">)</span>
+            <span class="n">flash</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Grade already submitted and cannot be changed.&quot;</span><span class="p">),</span> <span class="s2">&quot;error&quot;</span><span class="p">)</span>
+            <span class="n">current_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Instructor </span><span class="si">{</span><span class="n">uid</span><span class="si">}</span><span class="s2"> attempted to overwrite a locked grade for enrollment </span><span class="si">{</span><span class="n">enroll_id</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;faculty_instructor.grades&#39;</span><span class="p">))</span>
 
-        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;</span>
-<span class="s1">            UPDATE enrollment SET grade = ? WHERE enroll_id = ?</span>
-<span class="s1">        &#39;&#39;&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">grade</span><span class="p">,</span> <span class="n">enroll_id</span><span class="p">))</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+            <span class="s1">&#39;UPDATE enrollment SET grade = </span><span class="si">%s</span><span class="s1"> WHERE enroll_id = </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">grade</span><span class="p">,</span> <span class="n">enroll_id</span><span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
-        <span class="n">flash</span><span class="p">(</span><span class="s2">&quot;Grade submitted successfully.&quot;</span><span class="p">,</span> <span class="s2">&quot;success&quot;</span><span class="p">)</span>
-
-    <span class="k">except</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="n">flash</span><span class="p">(</span><span class="s2">&quot;A database error occurred.&quot;</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;DB error submitting grade: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">flash</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Grade submitted successfully.&quot;</span><span class="p">),</span> <span class="s2">&quot;success&quot;</span><span class="p">)</span>
+        <span class="n">current_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Instructor </span><span class="si">{</span><span class="n">uid</span><span class="si">}</span><span class="s2"> successfully submitted grade &#39;</span><span class="si">{</span><span class="n">grade</span><span class="si">}</span><span class="s2">&#39; for enrollment </span><span class="si">{</span><span class="n">enroll_id</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">pymysql</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">flash</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;A database error occurred.&quot;</span><span class="p">),</span> <span class="s2">&quot;error&quot;</span><span class="p">)</span>
+        <span class="n">current_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;DB error submitting grade: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="k">finally</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">conn</span><span class="p">:</span>
             <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-
     <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;faculty_instructor.grades&#39;</span><span class="p">))</span></div>
 
 </pre></div>

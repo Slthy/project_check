@@ -23,6 +23,7 @@ Functions
    grad_secretary.routes.schedule
    grad_secretary.routes.override_grades
    grad_secretary.routes.submit_override
+   grad_secretary.routes.add_offering
 
 
 Module Contents
@@ -30,54 +31,15 @@ Module Contents
 
 .. py:function:: index()
 
-   Redirect to the student records list.
-
-
 .. py:function:: records()
-
-   Render a list of all registered graduate students.
-
-   Joins the users and stud_type tables to display each student's ID,
-   full name, email, program track, and admit year, ordered by last name.
-
 
 .. py:function:: student_transcript(uid)
 
-   Render the academic transcript for a specific student.
-
-   Retrieves the student's name and email alongside all their enrollment
-   records, joined with offering and catalog data, ordered chronologically.
-
-   :param uid: The user ID of the student whose transcript to display.
-   :type uid: int
-
-
 .. py:function:: schedule()
-
-   Render the full course schedule for the current semester.
-
-   Joins offerings, catalog, schedule, and users tables to display each
-   section's course code, title, credits, semester, day, time slot, and
-   instructor name (or 'TBA' if unassigned), ordered by day and start time.
-
 
 .. py:function:: override_grades()
 
-   Render the grade override form listing all enrollment records.
-
-   Unlike the faculty grade view, this includes all grades (not just IP),
-   allowing the GS to correct any submitted grade at any time.
-
-
 .. py:function:: submit_override(enroll_id)
 
-   Apply a grade override for a specific enrollment record (POST only).
-
-   Validates the submitted grade against the full allowed set (including IP),
-   then updates the enrollment row directly. No ownership or lock checks are
-   applied — the GS has unrestricted grade editing authority.
-
-   :param enroll_id: The enrollment record to update.
-   :type enroll_id: int
-
+.. py:function:: add_offering()
 

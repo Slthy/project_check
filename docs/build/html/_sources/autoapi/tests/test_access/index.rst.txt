@@ -1,0 +1,28 @@
+tests.test_access
+=================
+
+.. py:module:: tests.test_access
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tests.test_access.test_to_minutes
+   tests.test_access.test_has_time_conflict
+
+
+Module Contents
+---------------
+
+.. py:function:: test_to_minutes()
+
+   Test that time conversions work perfectly.
+
+
+.. py:function:: test_has_time_conflict()
+
+   Test the 30-minute gap schedule conflict logic.
+
+

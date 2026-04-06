@@ -28,50 +28,9 @@ Module Contents
 
 .. py:function:: index()
 
-   Render the course browser with eligibility status for each offering.
-
-   Fetches the student's current schedule (in-progress enrollments) and
-   completed course IDs to determine, for every available offering, whether
-   the student is already enrolled, is missing prerequisites, has a time
-   conflict, or is eligible to register. Passes both the full offering list
-   (with status) and the current schedule table to the template.
-
-
 .. py:function:: transcript()
-
-   Render the student's academic transcript with GPA summary.
-
-   Retrieves all enrollment records for the logged-in student, filters to
-   completed courses (grade != 'IP') to compute total earned credits and
-   weighted GPA, and passes the full course list and summary stats to the
-   template.
-
 
 .. py:function:: drop_course(o_id)
 
-   Drop the student from a specific course offering (POST only).
-
-   Deletes the enrollment row matching the offering ID and the student's
-   plan. Flashes a success message if a row was deleted, or an error if no
-   matching enrollment was found.
-
-   :param o_id: The offering ID to drop.
-   :type o_id: int
-
-
 .. py:function:: add_course(o_id)
-
-   Enroll the student in a specific course offering (POST only).
-
-   Performs three server-side checks before inserting the enrollment row:
-   1. Verifies the offering exists.
-   2. Checks that all prerequisites have been completed with a non-IP grade.
-   3. Checks for schedule conflicts with the student's current timetable.
-
-   Flashes appropriate error messages if any check fails. On success, inserts
-   an enrollment row with grade='IP' linked to the student's plan.
-
-   :param o_id: The offering ID to enroll in.
-   :type o_id: int
-
 

@@ -18,62 +18,47 @@ Functions
 
 .. autoapisummary::
 
+   system_admin.routes.inject_admin_logs
    system_admin.routes.index
    system_admin.routes.view_users
    system_admin.routes.delete_user
    system_admin.routes.shutdown
+   system_admin.routes.fix_fk
    system_admin.routes.serve_sphinx_docs
+   system_admin.routes.edit_user
+   system_admin.routes.assign_course
+   system_admin.routes.unassign_course
+   system_admin.routes.admin_enroll_student
+   system_admin.routes.admin_drop_student
+   system_admin.routes.clear_logs
 
 
 Module Contents
 ---------------
 
+.. py:function:: inject_admin_logs()
+
 .. py:function:: index()
-
-   Redirect the system admin to the application home page.
-
 
 .. py:function:: view_users()
 
-   Render a paginated list of all users in the system.
-
-   Fetches id, first name, last name, email, and role for every user,
-   ordered by ID.
-
-
 .. py:function:: delete_user()
-
-   Delete a user account by ID (POST only).
-
-   Prevents the currently logged-in admin from deleting their own account.
-   On success, removes the user row (cascading to related tables if
-   foreign key constraints are configured) and flashes a confirmation.
-
-   Requires: system_admin role.
-
 
 .. py:function:: shutdown()
 
-   Reset the database to a clean seed state and redirect to login.
-
-   Removes the live database file and replaces it with the pre-seeded
-   backup stored in the reset/ directory.
-
-   Requires: system_admin role.
-
+.. py:function:: fix_fk()
 
 .. py:function:: serve_sphinx_docs(filename='index.html')
 
-   Serve static files from the Sphinx HTML documentation build.
+.. py:function:: edit_user(uid)
 
-   Handles both the docs root (/docs/) and arbitrary sub-paths
-   (/docs/<path>) by resolving files relative to docs/build/html/.
+.. py:function:: assign_course(uid)
 
-   :param filename: Path to the requested file within the build directory.
-                    Defaults to 'index.html'.
-   :type filename: str
+.. py:function:: unassign_course(uid, o_id)
 
-   :returns: The requested static file served securely via send_from_directory.
-   :rtype: Response
+.. py:function:: admin_enroll_student(uid)
 
+.. py:function:: admin_drop_student(uid, o_id)
+
+.. py:function:: clear_logs()
 

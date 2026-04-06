@@ -47,6 +47,7 @@
 <li class="toctree-l1 current"><a class="reference internal" href="../../index.html">API Reference</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../../run/index.html">run</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../auth/index.html">auth</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tests/index.html">tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../utils/index.html">utils</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../student/index.html">student</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../system_admin/index.html">system_admin</a></li>
@@ -101,22 +102,25 @@
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#grad_secretary.routes.index" title="grad_secretary.routes.index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">index</span></code></a>()</p></td>
-<td><p>Redirect to the student records list.</p></td>
+<td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#grad_secretary.routes.records" title="grad_secretary.routes.records"><code class="xref py py-obj docutils literal notranslate"><span class="pre">records</span></code></a>()</p></td>
-<td><p>Render a list of all registered graduate students.</p></td>
+<td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#grad_secretary.routes.student_transcript" title="grad_secretary.routes.student_transcript"><code class="xref py py-obj docutils literal notranslate"><span class="pre">student_transcript</span></code></a>(uid)</p></td>
-<td><p>Render the academic transcript for a specific student.</p></td>
+<td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#grad_secretary.routes.schedule" title="grad_secretary.routes.schedule"><code class="xref py py-obj docutils literal notranslate"><span class="pre">schedule</span></code></a>()</p></td>
-<td><p>Render the full course schedule for the current semester.</p></td>
+<td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#grad_secretary.routes.override_grades" title="grad_secretary.routes.override_grades"><code class="xref py py-obj docutils literal notranslate"><span class="pre">override_grades</span></code></a>()</p></td>
-<td><p>Render the grade override form listing all enrollment records.</p></td>
+<td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#grad_secretary.routes.submit_override" title="grad_secretary.routes.submit_override"><code class="xref py py-obj docutils literal notranslate"><span class="pre">submit_override</span></code></a>(enroll_id)</p></td>
-<td><p>Apply a grade override for a specific enrollment record (POST only).</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#grad_secretary.routes.add_offering" title="grad_secretary.routes.add_offering"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_offering</span></code></a>()</p></td>
+<td><p></p></td>
 </tr>
 </tbody>
 </table>
@@ -126,60 +130,37 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="grad_secretary.routes.index">
 <span class="sig-prename descclassname"><span class="pre">grad_secretary.routes.</span></span><span class="sig-name descname"><span class="pre">index</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/grad_secretary/routes.html#index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#grad_secretary.routes.index" title="Link to this definition"></a></dt>
-<dd><p>Redirect to the student records list.</p>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="grad_secretary.routes.records">
 <span class="sig-prename descclassname"><span class="pre">grad_secretary.routes.</span></span><span class="sig-name descname"><span class="pre">records</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/grad_secretary/routes.html#records"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#grad_secretary.routes.records" title="Link to this definition"></a></dt>
-<dd><p>Render a list of all registered graduate students.</p>
-<p>Joins the users and stud_type tables to display each student’s ID,
-full name, email, program track, and admit year, ordered by last name.</p>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="grad_secretary.routes.student_transcript">
 <span class="sig-prename descclassname"><span class="pre">grad_secretary.routes.</span></span><span class="sig-name descname"><span class="pre">student_transcript</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/grad_secretary/routes.html#student_transcript"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#grad_secretary.routes.student_transcript" title="Link to this definition"></a></dt>
-<dd><p>Render the academic transcript for a specific student.</p>
-<p>Retrieves the student’s name and email alongside all their enrollment
-records, joined with offering and catalog data, ordered chronologically.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>uid</strong> (<em>int</em>) – The user ID of the student whose transcript to display.</p>
-</dd>
-</dl>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="grad_secretary.routes.schedule">
 <span class="sig-prename descclassname"><span class="pre">grad_secretary.routes.</span></span><span class="sig-name descname"><span class="pre">schedule</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/grad_secretary/routes.html#schedule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#grad_secretary.routes.schedule" title="Link to this definition"></a></dt>
-<dd><p>Render the full course schedule for the current semester.</p>
-<p>Joins offerings, catalog, schedule, and users tables to display each
-section’s course code, title, credits, semester, day, time slot, and
-instructor name (or ‘TBA’ if unassigned), ordered by day and start time.</p>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="grad_secretary.routes.override_grades">
 <span class="sig-prename descclassname"><span class="pre">grad_secretary.routes.</span></span><span class="sig-name descname"><span class="pre">override_grades</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/grad_secretary/routes.html#override_grades"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#grad_secretary.routes.override_grades" title="Link to this definition"></a></dt>
-<dd><p>Render the grade override form listing all enrollment records.</p>
-<p>Unlike the faculty grade view, this includes all grades (not just IP),
-allowing the GS to correct any submitted grade at any time.</p>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="grad_secretary.routes.submit_override">
 <span class="sig-prename descclassname"><span class="pre">grad_secretary.routes.</span></span><span class="sig-name descname"><span class="pre">submit_override</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">enroll_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/grad_secretary/routes.html#submit_override"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#grad_secretary.routes.submit_override" title="Link to this definition"></a></dt>
-<dd><p>Apply a grade override for a specific enrollment record (POST only).</p>
-<p>Validates the submitted grade against the full allowed set (including IP),
-then updates the enrollment row directly. No ownership or lock checks are
-applied — the GS has unrestricted grade editing authority.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>enroll_id</strong> (<em>int</em>) – The enrollment record to update.</p>
-</dd>
-</dl>
-</dd></dl>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="grad_secretary.routes.add_offering">
+<span class="sig-prename descclassname"><span class="pre">grad_secretary.routes.</span></span><span class="sig-name descname"><span class="pre">add_offering</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/grad_secretary/routes.html#add_offering"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#grad_secretary.routes.add_offering" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 </section>
 </section>

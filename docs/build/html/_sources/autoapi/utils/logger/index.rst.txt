@@ -1,0 +1,19 @@
+utils.logger
+============
+
+.. py:module:: utils.logger
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   utils.logger.setup_logger
+
+
+Module Contents
+---------------
+
+.. py:function:: setup_logger(app)
+

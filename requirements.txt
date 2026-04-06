@@ -13,13 +13,17 @@ flask-babel==4.0.0
 idna==3.11
 imagesize==1.5.0
 importlib_metadata==8.7.1
+iniconfig==2.3.0
 itsdangerous==2.2.0
 Jinja2==3.1.6
 MarkupSafe==3.0.3
 packaging==26.0
+pluggy==1.6.0
 pycparser==2.23
 Pygments==2.19.2
 PyMySQL==1.1.2
+pytest==9.0.2
+pytest-mock==3.15.1
 pytz==2026.1.post1
 PyYAML==6.0.3
 requests==2.32.5

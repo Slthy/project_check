@@ -78,11 +78,24 @@
 <span class="sd">under /system_admin.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">flask</span><span class="w"> </span><span class="kn">import</span> <span class="n">render_template</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">redirect</span><span class="p">,</span> <span class="n">url_for</span><span class="p">,</span> <span class="n">flash</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">send_from_directory</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">flask</span><span class="w"> </span><span class="kn">import</span> <span class="n">render_template</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">redirect</span><span class="p">,</span> <span class="n">url_for</span><span class="p">,</span> <span class="n">flash</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">send_from_directory</span><span class="p">,</span> <span class="n">current_app</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">utils.decorators</span><span class="w"> </span><span class="kn">import</span> <span class="n">role_required</span><span class="p">,</span> <span class="n">login_required</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">utils.functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_db_connection</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">utils.functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_db_connection</span><span class="p">,</span> <span class="n">to_minutes</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">utils.create_db</span><span class="w"> </span><span class="kn">import</span> <span class="n">run</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">utils.log_collector</span><span class="w"> </span><span class="kn">import</span> <span class="n">admin_log_handler</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">system_admin</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">sqlite3</span><span class="o">,</span><span class="w"> </span><span class="nn">shutil</span><span class="o">,</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pymysql</span><span class="o">,</span><span class="w"> </span><span class="nn">shutil</span><span class="o">,</span><span class="w"> </span><span class="nn">os</span>
+
+
+<span class="nd">@system_admin</span><span class="o">.</span><span class="n">app_context_processor</span>
+<div class="viewcode-block" id="inject_admin_logs">
+<a class="viewcode-back" href="../../autoapi/system_admin/routes/index.html#system_admin.routes.inject_admin_logs">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">inject_admin_logs</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;role&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">logs</span><span class="o">=</span><span class="n">admin_log_handler</span><span class="o">.</span><span class="n">get_records</span><span class="p">())</span>
+    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">logs</span><span class="o">=</span><span class="p">[])</span></div>
+
+
 
 <span class="nd">@system_admin</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
 <span class="nd">@login_required</span>
@@ -90,10 +103,8 @@
 <div class="viewcode-block" id="index">
 <a class="viewcode-back" href="../../autoapi/system_admin/routes/index.html#system_admin.routes.index">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">index</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Redirect the system admin to the application home page.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;home&#39;</span><span class="p">))</span></div>
+
 
 
 <span class="nd">@system_admin</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/users&#39;</span><span class="p">)</span>
@@ -102,28 +113,23 @@
 <div class="viewcode-block" id="view_users">
 <a class="viewcode-back" href="../../autoapi/system_admin/routes/index.html#system_admin.routes.view_users">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">view_users</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Render a paginated list of all users in the system.</span>
-
-<span class="sd">    Fetches id, first name, last name, email, and role for every user,</span>
-<span class="sd">    ordered by ID.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">admin_id</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;user_id&#39;</span><span class="p">,</span> <span class="s1">&#39;Unknown&#39;</span><span class="p">)</span>
     <span class="n">users</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">conn</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">conn</span> <span class="o">=</span> <span class="n">get_db_connection</span><span class="p">()</span>
         <span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
-        <span class="n">users</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
-            <span class="s1">&#39;SELECT id, fname, lname, email, role FROM users ORDER BY id&#39;</span>
-        <span class="p">)</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
-    <span class="k">except</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;SELECT id, fname, lname, email, role FROM users ORDER BY id&#39;</span><span class="p">)</span>
+        <span class="n">users</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+        <span class="n">current_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Admin </span><span class="si">{</span><span class="n">admin_id</span><span class="si">}</span><span class="s2"> accessed the global user list.&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">pymysql</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="n">flash</span><span class="p">(</span><span class="s2">&quot;Error loading users.&quot;</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;DB error in view_users: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">current_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;DB error in view_users: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="k">finally</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">conn</span><span class="p">:</span>
             <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-
     <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;view_users.html&#39;</span><span class="p">,</span> <span class="n">users</span><span class="o">=</span><span class="n">users</span><span class="p">)</span></div>
+
 
 
 <span class="nd">@system_admin</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/users/delete&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
@@ -132,80 +138,366 @@
 <div class="viewcode-block" id="delete_user">
 <a class="viewcode-back" href="../../autoapi/system_admin/routes/index.html#system_admin.routes.delete_user">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">delete_user</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Delete a user account by ID (POST only).</span>
-
-<span class="sd">    Prevents the currently logged-in admin from deleting their own account.</span>
-<span class="sd">    On success, removes the user row (cascading to related tables if</span>
-<span class="sd">    foreign key constraints are configured) and flashes a confirmation.</span>
-
-<span class="sd">    Requires: system_admin role.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">admin_id</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;user_id&#39;</span><span class="p">,</span> <span class="s1">&#39;Unknown&#39;</span><span class="p">)</span>
     <span class="n">user_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;user_id&#39;</span><span class="p">]</span>
-
-    <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">user_id</span><span class="p">)</span> <span class="o">==</span> <span class="n">session</span><span class="p">[</span><span class="s1">&#39;user_id&#39;</span><span class="p">]:</span>
-        <span class="n">flash</span><span class="p">(</span><span class="s2">&quot;You cannot delete your own account while logged in.&quot;</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;system_admin.view_users&#39;</span><span class="p">))</span>
-
     <span class="n">conn</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">conn</span> <span class="o">=</span> <span class="n">get_db_connection</span><span class="p">()</span>
         <span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
-        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;DELETE FROM users WHERE id = ?&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">user_id</span><span class="p">,))</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;DELETE FROM users WHERE id = </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">user_id</span><span class="p">,))</span>
         <span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
         <span class="n">flash</span><span class="p">(</span><span class="s2">&quot;User deleted successfully.&quot;</span><span class="p">,</span> <span class="s2">&quot;success&quot;</span><span class="p">)</span>
-    <span class="k">except</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">current_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Admin </span><span class="si">{</span><span class="n">admin_id</span><span class="si">}</span><span class="s2"> securely deleted user ID </span><span class="si">{</span><span class="n">user_id</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">pymysql</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="n">flash</span><span class="p">(</span><span class="s2">&quot;Error deleting user.&quot;</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;DB error in delete_user: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">current_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;DB error in delete_user: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="k">finally</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">conn</span><span class="p">:</span>
             <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-
     <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;system_admin.view_users&#39;</span><span class="p">))</span></div>
 
 
+
 <span class="nd">@system_admin</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/reset&#39;</span><span class="p">)</span>
-<span class="nd">@role_required</span><span class="p">(</span><span class="s1">&#39;system_admin&#39;</span><span class="p">)</span>
 <div class="viewcode-block" id="shutdown">
 <a class="viewcode-back" href="../../autoapi/system_admin/routes/index.html#system_admin.routes.shutdown">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">shutdown</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Reset the database to a clean seed state and redirect to login.</span>
-
-<span class="sd">    Removes the live database file and replaces it with the pre-seeded</span>
-<span class="sd">    backup stored in the reset/ directory.</span>
-
-<span class="sd">    Requires: system_admin role.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="s2">&quot;../26-project-phase1-birdsarentreal/database.db&quot;</span><span class="p">):</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s2">&quot;../26-project-phase1-birdsarentreal/database.db&quot;</span><span class="p">)</span>
-    <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="s2">&quot;../26-project-phase1-birdsarentreal/reset/database.db&quot;</span><span class="p">,</span> <span class="s2">&quot;../26-project-phase1-birdsarentreal&quot;</span><span class="p">)</span>
-
+    <span class="n">run</span><span class="p">();</span>
     <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;auth.login&#39;</span><span class="p">))</span></div>
+
+
+<span class="nd">@system_admin</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/fix_fk&#39;</span><span class="p">)</span>
+<span class="nd">@role_required</span><span class="p">(</span><span class="s1">&#39;system_admin&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="fix_fk">
+<a class="viewcode-back" href="../../autoapi/system_admin/routes/index.html#system_admin.routes.fix_fk">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">fix_fk</span><span class="p">():</span>
+    <span class="n">conn</span> <span class="o">=</span> <span class="n">get_db_connection</span><span class="p">()</span>
+    <span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+    <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;ALTER TABLE c_offering DROP FOREIGN KEY c_offering_ibfk_2&quot;</span><span class="p">)</span>
+    <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;ALTER TABLE c_offering ADD CONSTRAINT c_offering_ibfk_2 FOREIGN KEY (i_id) REFERENCES users(id) ON DELETE SET NULL&quot;</span><span class="p">)</span>
+    <span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+    <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span> <span class="s2">&quot;done&quot;</span></div>
+
 
 
 <span class="nd">@system_admin</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/docs/&#39;</span><span class="p">)</span>
 <span class="nd">@system_admin</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/docs/&lt;path:filename&gt;&#39;</span><span class="p">)</span>
+<span class="nd">@login_required</span>
+<span class="nd">@role_required</span><span class="p">(</span><span class="s1">&#39;system_admin&#39;</span><span class="p">)</span>
 <div class="viewcode-block" id="serve_sphinx_docs">
 <a class="viewcode-back" href="../../autoapi/system_admin/routes/index.html#system_admin.routes.serve_sphinx_docs">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">serve_sphinx_docs</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s1">&#39;index.html&#39;</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Serve static files from the Sphinx HTML documentation build.</span>
-
-<span class="sd">    Handles both the docs root (/docs/) and arbitrary sub-paths</span>
-<span class="sd">    (/docs/&lt;path&gt;) by resolving files relative to docs/build/html/.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        filename (str): Path to the requested file within the build directory.</span>
-<span class="sd">                        Defaults to &#39;index.html&#39;.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        Response: The requested static file served securely via send_from_directory.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="n">docs_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s1">&#39;../../../docs/build/html&#39;</span><span class="p">))</span>
-
     <span class="k">return</span> <span class="n">send_from_directory</span><span class="p">(</span><span class="n">docs_dir</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span></div>
+
+
+
+<span class="nd">@system_admin</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/users/edit/&lt;int:uid&gt;&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@login_required</span>
+<span class="nd">@role_required</span><span class="p">(</span><span class="s1">&#39;system_admin&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="edit_user">
+<a class="viewcode-back" href="../../autoapi/system_admin/routes/index.html#system_admin.routes.edit_user">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">edit_user</span><span class="p">(</span><span class="n">uid</span><span class="p">):</span>
+    <span class="n">admin_id</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;user_id&#39;</span><span class="p">,</span> <span class="s1">&#39;Unknown&#39;</span><span class="p">)</span>
+    <span class="n">conn</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">conn</span> <span class="o">=</span> <span class="n">get_db_connection</span><span class="p">()</span>
+        <span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;GET&#39;</span><span class="p">:</span>
+            <span class="n">current_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Admin </span><span class="si">{</span><span class="n">admin_id</span><span class="si">}</span><span class="s2"> accessed the edit page for user ID </span><span class="si">{</span><span class="n">uid</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
+            <span class="n">email</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;email&#39;</span><span class="p">)</span>
+            <span class="n">fname</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;fname&#39;</span><span class="p">)</span>
+            <span class="n">lname</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;lname&#39;</span><span class="p">)</span>
+            <span class="n">line_one</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;line_one&#39;</span><span class="p">)</span>
+            <span class="n">line_two</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;line_two&#39;</span><span class="p">)</span>
+            <span class="n">city</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;city&#39;</span><span class="p">)</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;state&#39;</span><span class="p">)</span>
+            <span class="n">zip_code</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;zip&#39;</span><span class="p">)</span>
+            <span class="n">country_code</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;country_code&#39;</span><span class="p">)</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">                    UPDATE users SET fname = </span><span class="si">%s</span><span class="s1">, lname = </span><span class="si">%s</span><span class="s1">, email = </span><span class="si">%s</span>
+<span class="s1">                    WHERE id = </span><span class="si">%s</span>
+<span class="s1">                &#39;&#39;&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">lname</span><span class="p">,</span> <span class="n">email</span><span class="p">,</span> <span class="n">uid</span><span class="p">))</span>
+                <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">                    UPDATE addresses SET line_one = </span><span class="si">%s</span><span class="s1">, line_two = </span><span class="si">%s</span><span class="s1">,</span>
+<span class="s1">                        city = </span><span class="si">%s</span><span class="s1">, state = </span><span class="si">%s</span><span class="s1">, zip = </span><span class="si">%s</span><span class="s1">, country_code = </span><span class="si">%s</span>
+<span class="s1">                    WHERE a_id = </span><span class="si">%s</span>
+<span class="s1">                &#39;&#39;&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">line_one</span><span class="p">,</span> <span class="n">line_two</span><span class="p">,</span> <span class="n">city</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">zip_code</span><span class="p">,</span> <span class="n">country_code</span><span class="p">,</span> <span class="n">uid</span><span class="p">))</span>
+                <span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+                <span class="n">flash</span><span class="p">(</span><span class="s2">&quot;User updated successfully.&quot;</span><span class="p">,</span> <span class="s2">&quot;success&quot;</span><span class="p">)</span>
+                <span class="n">current_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Admin </span><span class="si">{</span><span class="n">admin_id</span><span class="si">}</span><span class="s2"> successfully updated account details for user ID </span><span class="si">{</span><span class="n">uid</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;system_admin.view_users&#39;</span><span class="p">))</span>
+            <span class="k">except</span> <span class="n">pymysql</span><span class="o">.</span><span class="n">IntegrityError</span><span class="p">:</span>
+                <span class="n">flash</span><span class="p">(</span><span class="s2">&quot;That email is already in use.&quot;</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">)</span>
+                <span class="n">current_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Admin </span><span class="si">{</span><span class="n">admin_id</span><span class="si">}</span><span class="s2"> failed to update user </span><span class="si">{</span><span class="n">uid</span><span class="si">}</span><span class="s2">: Email &#39;</span><span class="si">{</span><span class="n">email</span><span class="si">}</span><span class="s2">&#39; is already in use.&quot;</span><span class="p">)</span>
+
+        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;SELECT * FROM users WHERE id = </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">uid</span><span class="p">,))</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;SELECT * FROM addresses WHERE a_id = </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">uid</span><span class="p">,))</span>
+        <span class="n">address</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
+
+        <span class="n">assigned_courses</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">available_courses</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">student_courses</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">available_student_courses</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="n">user</span> <span class="ow">and</span> <span class="n">user</span><span class="p">[</span><span class="s1">&#39;role&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">                SELECT o.o_id, c.dept, c.number, c.name,</span>
+<span class="s1">                       s.day, s.start_time, s.end_time</span>
+<span class="s1">                FROM c_offering o</span>
+<span class="s1">                JOIN c_catalog c ON o.c_id = c.c_id</span>
+<span class="s1">                LEFT JOIN schedule s ON o.o_id = s.o_id</span>
+<span class="s1">                WHERE o.i_id = </span><span class="si">%s</span>
+<span class="s1">            &#39;&#39;&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">uid</span><span class="p">,))</span>
+            <span class="n">assigned_courses</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+
+            <span class="n">assigned_o_ids</span> <span class="o">=</span> <span class="p">{</span><span class="n">c</span><span class="p">[</span><span class="s1">&#39;o_id&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">assigned_courses</span><span class="p">}</span>
+            <span class="n">assigned_times</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="s1">&#39;day&#39;</span><span class="p">],</span> <span class="n">c</span><span class="p">[</span><span class="s1">&#39;start_time&#39;</span><span class="p">],</span> <span class="n">c</span><span class="p">[</span><span class="s1">&#39;end_time&#39;</span><span class="p">])</span>
+                <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">assigned_courses</span>
+                <span class="k">if</span> <span class="n">c</span><span class="p">[</span><span class="s1">&#39;day&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">c</span><span class="p">[</span><span class="s1">&#39;start_time&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">c</span><span class="p">[</span><span class="s1">&#39;end_time&#39;</span><span class="p">]</span>
+            <span class="p">]</span>
+
+            <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">                SELECT o.o_id, c.dept, c.number, c.name,</span>
+<span class="s1">                       s.day, s.start_time, s.end_time</span>
+<span class="s1">                FROM c_offering o</span>
+<span class="s1">                JOIN c_catalog c ON o.c_id = c.c_id</span>
+<span class="s1">                LEFT JOIN schedule s ON o.o_id = s.o_id</span>
+<span class="s1">                WHERE o.i_id IS NULL OR o.i_id != </span><span class="si">%s</span>
+<span class="s1">            &#39;&#39;&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">uid</span><span class="p">,))</span>
+            <span class="n">all_courses</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+
+            <span class="k">for</span> <span class="n">course</span> <span class="ow">in</span> <span class="n">all_courses</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">course</span><span class="p">[</span><span class="s1">&#39;o_id&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">assigned_o_ids</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">course</span><span class="p">[</span><span class="s1">&#39;day&#39;</span><span class="p">]</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">course</span><span class="p">[</span><span class="s1">&#39;start_time&#39;</span><span class="p">]</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">course</span><span class="p">[</span><span class="s1">&#39;end_time&#39;</span><span class="p">]:</span>
+                    <span class="k">continue</span>
+                <span class="n">conflict</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">for</span> <span class="n">day</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="ow">in</span> <span class="n">assigned_times</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">course</span><span class="p">[</span><span class="s1">&#39;day&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">day</span><span class="p">:</span>
+                        <span class="k">continue</span>
+                    <span class="n">cs</span> <span class="o">=</span> <span class="n">to_minutes</span><span class="p">(</span><span class="n">course</span><span class="p">[</span><span class="s1">&#39;start_time&#39;</span><span class="p">])</span>
+                    <span class="n">ce</span> <span class="o">=</span> <span class="n">to_minutes</span><span class="p">(</span><span class="n">course</span><span class="p">[</span><span class="s1">&#39;end_time&#39;</span><span class="p">])</span>
+                    <span class="n">es</span> <span class="o">=</span> <span class="n">to_minutes</span><span class="p">(</span><span class="n">start</span><span class="p">)</span>
+                    <span class="n">ee</span> <span class="o">=</span> <span class="n">to_minutes</span><span class="p">(</span><span class="n">end</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">cs</span> <span class="o">&gt;=</span> <span class="n">ee</span> <span class="o">+</span> <span class="mi">30</span> <span class="ow">or</span> <span class="n">ce</span> <span class="o">&lt;=</span> <span class="n">es</span> <span class="o">-</span> <span class="mi">30</span><span class="p">):</span>
+                        <span class="n">conflict</span> <span class="o">=</span> <span class="kc">True</span>
+                        <span class="k">break</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">conflict</span><span class="p">:</span>
+                    <span class="n">available_courses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">course</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">user</span> <span class="ow">and</span> <span class="n">user</span><span class="p">[</span><span class="s1">&#39;role&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">                SELECT e.enroll_id, o.o_id, c.dept, c.number, c.name,</span>
+<span class="s1">                       s.day, s.start_time, s.end_time, e.grade</span>
+<span class="s1">                FROM enrollment e</span>
+<span class="s1">                JOIN plan p ON e.plan_id = p.plan_id</span>
+<span class="s1">                JOIN c_offering o ON e.o_id = o.o_id</span>
+<span class="s1">                JOIN c_catalog c ON o.c_id = c.c_id</span>
+<span class="s1">                LEFT JOIN schedule s ON o.o_id = s.o_id</span>
+<span class="s1">                WHERE p.owner_id = </span><span class="si">%s</span><span class="s1"> AND e.grade = &#39;IP&#39;</span>
+<span class="s1">            &#39;&#39;&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">uid</span><span class="p">,))</span>
+            <span class="n">student_courses</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+
+            <span class="n">current_o_ids</span> <span class="o">=</span> <span class="p">{</span><span class="n">c</span><span class="p">[</span><span class="s1">&#39;o_id&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">student_courses</span><span class="p">}</span>
+            <span class="n">current_schedule</span> <span class="o">=</span> <span class="p">[(</span><span class="n">c</span><span class="p">[</span><span class="s1">&#39;day&#39;</span><span class="p">],</span> <span class="n">c</span><span class="p">[</span><span class="s1">&#39;start_time&#39;</span><span class="p">],</span> <span class="n">c</span><span class="p">[</span><span class="s1">&#39;end_time&#39;</span><span class="p">])</span>
+                                <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">student_courses</span>
+                                <span class="k">if</span> <span class="n">c</span><span class="p">[</span><span class="s1">&#39;day&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">c</span><span class="p">[</span><span class="s1">&#39;start_time&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">c</span><span class="p">[</span><span class="s1">&#39;end_time&#39;</span><span class="p">]]</span>
+
+            <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">                SELECT o.c_id FROM enrollment e</span>
+<span class="s1">                JOIN plan p ON e.plan_id = p.plan_id</span>
+<span class="s1">                JOIN c_offering o ON e.o_id = o.o_id</span>
+<span class="s1">                WHERE p.owner_id = </span><span class="si">%s</span><span class="s1"> AND e.grade != &#39;IP&#39;</span>
+<span class="s1">            &#39;&#39;&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">uid</span><span class="p">,))</span>
+            <span class="n">completed_cids</span> <span class="o">=</span> <span class="p">{</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;c_id&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()}</span>
+
+            <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">                SELECT o.o_id, c.c_id, c.dept, c.number, c.name,</span>
+<span class="s1">                       c.prereq1_id, c.prereq2_id,</span>
+<span class="s1">                       s.day, s.start_time, s.end_time</span>
+<span class="s1">                FROM c_offering o</span>
+<span class="s1">                JOIN c_catalog c ON o.c_id = c.c_id</span>
+<span class="s1">                LEFT JOIN schedule s ON o.o_id = s.o_id</span>
+<span class="s1">            &#39;&#39;&#39;</span><span class="p">)</span>
+            <span class="n">all_offerings</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+
+            <span class="k">for</span> <span class="n">course</span> <span class="ow">in</span> <span class="n">all_offerings</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">course</span><span class="p">[</span><span class="s1">&#39;o_id&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">current_o_ids</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">course</span><span class="p">[</span><span class="s1">&#39;day&#39;</span><span class="p">]</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">course</span><span class="p">[</span><span class="s1">&#39;start_time&#39;</span><span class="p">]</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">course</span><span class="p">[</span><span class="s1">&#39;end_time&#39;</span><span class="p">]:</span>
+                    <span class="k">continue</span>
+                <span class="n">missing</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">prereq_id</span> <span class="ow">in</span> <span class="p">[</span><span class="n">course</span><span class="p">[</span><span class="s1">&#39;prereq1_id&#39;</span><span class="p">],</span> <span class="n">course</span><span class="p">[</span><span class="s1">&#39;prereq2_id&#39;</span><span class="p">]]:</span>
+                    <span class="k">if</span> <span class="n">prereq_id</span> <span class="ow">and</span> <span class="n">prereq_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">completed_cids</span><span class="p">:</span>
+                        <span class="n">missing</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">prereq_id</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">missing</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">conflict</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">for</span> <span class="n">day</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="ow">in</span> <span class="n">current_schedule</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">course</span><span class="p">[</span><span class="s1">&#39;day&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">day</span><span class="p">:</span>
+                        <span class="k">continue</span>
+                    <span class="n">cs</span> <span class="o">=</span> <span class="n">to_minutes</span><span class="p">(</span><span class="n">course</span><span class="p">[</span><span class="s1">&#39;start_time&#39;</span><span class="p">])</span>
+                    <span class="n">ce</span> <span class="o">=</span> <span class="n">to_minutes</span><span class="p">(</span><span class="n">course</span><span class="p">[</span><span class="s1">&#39;end_time&#39;</span><span class="p">])</span>
+                    <span class="n">es</span> <span class="o">=</span> <span class="n">to_minutes</span><span class="p">(</span><span class="n">start</span><span class="p">)</span>
+                    <span class="n">ee</span> <span class="o">=</span> <span class="n">to_minutes</span><span class="p">(</span><span class="n">end</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">cs</span> <span class="o">&gt;=</span> <span class="n">ee</span> <span class="o">+</span> <span class="mi">30</span> <span class="ow">or</span> <span class="n">ce</span> <span class="o">&lt;=</span> <span class="n">es</span> <span class="o">-</span> <span class="mi">30</span><span class="p">):</span>
+                        <span class="n">conflict</span> <span class="o">=</span> <span class="kc">True</span>
+                        <span class="k">break</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">conflict</span><span class="p">:</span>
+                    <span class="n">available_student_courses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">course</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="n">pymysql</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">flash</span><span class="p">(</span><span class="s2">&quot;Error loading user.&quot;</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">)</span>
+        <span class="n">current_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;DB error in edit_user: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">address</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">assigned_courses</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">available_courses</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">student_courses</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">available_student_courses</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">conn</span><span class="p">:</span>
+            <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;edit_user.html&#39;</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="n">user</span><span class="p">,</span> <span class="n">address</span><span class="o">=</span><span class="n">address</span><span class="p">,</span>
+                           <span class="n">assigned_courses</span><span class="o">=</span><span class="n">assigned_courses</span><span class="p">,</span>
+                           <span class="n">available_courses</span><span class="o">=</span><span class="n">available_courses</span><span class="p">,</span>
+                           <span class="n">student_courses</span><span class="o">=</span><span class="n">student_courses</span><span class="p">,</span>
+                           <span class="n">available_student_courses</span><span class="o">=</span><span class="n">available_student_courses</span><span class="p">)</span></div>
+
+
+
+<span class="nd">@system_admin</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/users/edit/&lt;int:uid&gt;/assign&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@login_required</span>
+<span class="nd">@role_required</span><span class="p">(</span><span class="s1">&#39;system_admin&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="assign_course">
+<a class="viewcode-back" href="../../autoapi/system_admin/routes/index.html#system_admin.routes.assign_course">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">assign_course</span><span class="p">(</span><span class="n">uid</span><span class="p">):</span>
+    <span class="n">admin_id</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;user_id&#39;</span><span class="p">,</span> <span class="s1">&#39;Unknown&#39;</span><span class="p">)</span>
+    <span class="n">o_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;o_id&#39;</span><span class="p">)</span>
+    <span class="n">conn</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">conn</span> <span class="o">=</span> <span class="n">get_db_connection</span><span class="p">()</span>
+        <span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;UPDATE c_offering SET i_id = </span><span class="si">%s</span><span class="s1"> WHERE o_id = </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">uid</span><span class="p">,</span> <span class="n">o_id</span><span class="p">))</span>
+        <span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="n">flash</span><span class="p">(</span><span class="s2">&quot;Course assigned successfully.&quot;</span><span class="p">,</span> <span class="s2">&quot;success&quot;</span><span class="p">)</span>
+        <span class="n">current_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Admin </span><span class="si">{</span><span class="n">admin_id</span><span class="si">}</span><span class="s2"> assigned course offering </span><span class="si">{</span><span class="n">o_id</span><span class="si">}</span><span class="s2"> to faculty ID </span><span class="si">{</span><span class="n">uid</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">pymysql</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">flash</span><span class="p">(</span><span class="s2">&quot;Error assigning course.&quot;</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">)</span>
+        <span class="n">current_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;DB error in assign_course: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">conn</span><span class="p">:</span>
+            <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;system_admin.edit_user&#39;</span><span class="p">,</span> <span class="n">uid</span><span class="o">=</span><span class="n">uid</span><span class="p">))</span></div>
+
+
+
+<span class="nd">@system_admin</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/users/edit/&lt;int:uid&gt;/unassign/&lt;int:o_id&gt;&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@login_required</span>
+<span class="nd">@role_required</span><span class="p">(</span><span class="s1">&#39;system_admin&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="unassign_course">
+<a class="viewcode-back" href="../../autoapi/system_admin/routes/index.html#system_admin.routes.unassign_course">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">unassign_course</span><span class="p">(</span><span class="n">uid</span><span class="p">,</span> <span class="n">o_id</span><span class="p">):</span>
+    <span class="n">admin_id</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;user_id&#39;</span><span class="p">,</span> <span class="s1">&#39;Unknown&#39;</span><span class="p">)</span>
+    <span class="n">conn</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">conn</span> <span class="o">=</span> <span class="n">get_db_connection</span><span class="p">()</span>
+        <span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;UPDATE c_offering SET i_id = NULL WHERE o_id = </span><span class="si">%s</span><span class="s1"> AND i_id = </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">o_id</span><span class="p">,</span> <span class="n">uid</span><span class="p">))</span>
+        <span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="n">flash</span><span class="p">(</span><span class="s2">&quot;Course unassigned successfully.&quot;</span><span class="p">,</span> <span class="s2">&quot;success&quot;</span><span class="p">)</span>
+        <span class="n">current_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Admin </span><span class="si">{</span><span class="n">admin_id</span><span class="si">}</span><span class="s2"> unassigned course offering </span><span class="si">{</span><span class="n">o_id</span><span class="si">}</span><span class="s2"> from faculty ID </span><span class="si">{</span><span class="n">uid</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">pymysql</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">flash</span><span class="p">(</span><span class="s2">&quot;Error unassigning course.&quot;</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">)</span>
+        <span class="n">current_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;DB error in unassign_course: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">conn</span><span class="p">:</span>
+            <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;system_admin.edit_user&#39;</span><span class="p">,</span> <span class="n">uid</span><span class="o">=</span><span class="n">uid</span><span class="p">))</span></div>
+
+
+
+<span class="nd">@system_admin</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/users/edit/&lt;int:uid&gt;/enroll&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@login_required</span>
+<span class="nd">@role_required</span><span class="p">(</span><span class="s1">&#39;system_admin&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="admin_enroll_student">
+<a class="viewcode-back" href="../../autoapi/system_admin/routes/index.html#system_admin.routes.admin_enroll_student">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">admin_enroll_student</span><span class="p">(</span><span class="n">uid</span><span class="p">):</span>
+    <span class="n">admin_id</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;user_id&#39;</span><span class="p">,</span> <span class="s1">&#39;Unknown&#39;</span><span class="p">)</span>
+    <span class="n">o_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;o_id&#39;</span><span class="p">)</span>
+    <span class="n">conn</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">conn</span> <span class="o">=</span> <span class="n">get_db_connection</span><span class="p">()</span>
+        <span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">            INSERT INTO enrollment (plan_id, o_id, grade)</span>
+<span class="s1">            VALUES ((SELECT plan_id FROM plan WHERE owner_id = </span><span class="si">%s</span><span class="s1">), </span><span class="si">%s</span><span class="s1">, &#39;IP&#39;)</span>
+<span class="s1">        &#39;&#39;&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">uid</span><span class="p">,</span> <span class="n">o_id</span><span class="p">))</span>
+        <span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="n">flash</span><span class="p">(</span><span class="s2">&quot;Course added to student&#39;s plan.&quot;</span><span class="p">,</span> <span class="s2">&quot;success&quot;</span><span class="p">)</span>
+        <span class="n">current_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Admin </span><span class="si">{</span><span class="n">admin_id</span><span class="si">}</span><span class="s2"> enrolled student </span><span class="si">{</span><span class="n">uid</span><span class="si">}</span><span class="s2"> in offering </span><span class="si">{</span><span class="n">o_id</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">pymysql</span><span class="o">.</span><span class="n">IntegrityError</span><span class="p">:</span>
+        <span class="n">flash</span><span class="p">(</span><span class="s2">&quot;Student is already enrolled in this course.&quot;</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">pymysql</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">flash</span><span class="p">(</span><span class="s2">&quot;Error enrolling student.&quot;</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">)</span>
+        <span class="n">current_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;DB error in admin_enroll_student: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">conn</span><span class="p">:</span>
+            <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;system_admin.edit_user&#39;</span><span class="p">,</span> <span class="n">uid</span><span class="o">=</span><span class="n">uid</span><span class="p">))</span></div>
+
+
+
+<span class="nd">@system_admin</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/users/edit/&lt;int:uid&gt;/drop/&lt;int:o_id&gt;&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@login_required</span>
+<span class="nd">@role_required</span><span class="p">(</span><span class="s1">&#39;system_admin&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="admin_drop_student">
+<a class="viewcode-back" href="../../autoapi/system_admin/routes/index.html#system_admin.routes.admin_drop_student">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">admin_drop_student</span><span class="p">(</span><span class="n">uid</span><span class="p">,</span> <span class="n">o_id</span><span class="p">):</span>
+    <span class="n">admin_id</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;user_id&#39;</span><span class="p">,</span> <span class="s1">&#39;Unknown&#39;</span><span class="p">)</span>
+    <span class="n">conn</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">conn</span> <span class="o">=</span> <span class="n">get_db_connection</span><span class="p">()</span>
+        <span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">            DELETE FROM enrollment</span>
+<span class="s1">            WHERE o_id = </span><span class="si">%s</span>
+<span class="s1">            AND plan_id = (SELECT plan_id FROM plan WHERE owner_id = </span><span class="si">%s</span><span class="s1">)</span>
+<span class="s1">        &#39;&#39;&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">o_id</span><span class="p">,</span> <span class="n">uid</span><span class="p">))</span>
+        <span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="n">flash</span><span class="p">(</span><span class="s2">&quot;Course dropped from student&#39;s plan.&quot;</span><span class="p">,</span> <span class="s2">&quot;success&quot;</span><span class="p">)</span>
+        <span class="n">current_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Admin </span><span class="si">{</span><span class="n">admin_id</span><span class="si">}</span><span class="s2"> dropped student </span><span class="si">{</span><span class="n">uid</span><span class="si">}</span><span class="s2"> from offering </span><span class="si">{</span><span class="n">o_id</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">pymysql</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">flash</span><span class="p">(</span><span class="s2">&quot;Error dropping course.&quot;</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">)</span>
+        <span class="n">current_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;DB error in admin_drop_student: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">conn</span><span class="p">:</span>
+            <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;system_admin.edit_user&#39;</span><span class="p">,</span> <span class="n">uid</span><span class="o">=</span><span class="n">uid</span><span class="p">))</span></div>
+
+
+
+<span class="nd">@system_admin</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/logs/clear&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@login_required</span>
+<span class="nd">@role_required</span><span class="p">(</span><span class="s1">&#39;system_admin&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="clear_logs">
+<a class="viewcode-back" href="../../autoapi/system_admin/routes/index.html#system_admin.routes.clear_logs">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">clear_logs</span><span class="p">():</span>
+    <span class="n">admin_id</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;user_id&#39;</span><span class="p">,</span> <span class="s1">&#39;Unknown&#39;</span><span class="p">)</span>
+    <span class="n">admin_log_handler</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="n">flash</span><span class="p">(</span><span class="s2">&quot;Application logs cleared.&quot;</span><span class="p">,</span> <span class="s2">&quot;success&quot;</span><span class="p">)</span>
+    <span class="n">current_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Admin </span><span class="si">{</span><span class="n">admin_id</span><span class="si">}</span><span class="s2"> wiped the in-memory application logs.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">referrer</span> <span class="ow">or</span> <span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;home&#39;</span><span class="p">))</span></div>
 
 </pre></div>
 

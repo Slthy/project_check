@@ -17,51 +17,20 @@ Functions
 
 .. autoapisummary::
 
+   auth.routes.sys_admin_register
    auth.routes.register
    auth.routes.login
    auth.routes.logout
-   auth.routes.sys_admin_register
 
 
 Module Contents
 ---------------
 
+.. py:function:: sys_admin_register()
+
 .. py:function:: register()
-
-   Handle student self-registration (GET and POST).
-
-   GET:  Render the registration form.
-   POST: Validate form data, hash the password, insert a new user row
-         (role=3), a matching stud_type row, and an address row inside a
-         single transaction. Redirect to login on success; flash an error
-         if the email is already taken.
-
 
 .. py:function:: login()
 
-   Handle user login for all roles (GET and POST).
-
-   GET:  Render the login form.
-   POST: Look up the user by email, verify the bcrypt password hash, and
-         populate the session with user_id, email, and role on success.
-         Flash an error and re-render the form on failure.
-
-
 .. py:function:: logout()
-
-   Clear the session and redirect to the login page.
-
-
-.. py:function:: sys_admin_register()
-
-   Allow a system administrator to create a new user account (GET and POST).
-
-   GET:  Render the admin user-creation form.
-   POST: Validate the selected role (GS=1, Faculty=2, Student=3), hash the
-         password, and insert the user. For student accounts, also insert a
-         stud_type row. Always inserts an address row. Redirects to the user
-         list on success; flashes errors for duplicate email or invalid role.
-
-   Requires: system_admin role.
-
 

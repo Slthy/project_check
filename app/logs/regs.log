@@ -117,3 +117,75 @@
 [2026-04-01 00:22:44] INFO in routes: Admin 10000001 accessed the edit page for user ID 88888888.
 [2026-04-01 00:25:08] INFO in routes: Admin 10000001 accessed the global user list.
 [2026-04-01 00:25:11] INFO in routes: Grad Secretary 10000001 accessed the full course schedule.
+[2026-04-01 00:55:48] INFO in routes: Grad Secretary 10000001 accessed the global student records list.
+[2026-04-01 00:55:50] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-04-01 00:55:54] INFO in routes: Admin 10000001 accessed the edit page for user ID 10000004.
+[2026-04-01 00:56:07] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-04-01 00:56:09] INFO in routes: Admin 10000001 securely deleted user ID 10000005.
+[2026-04-01 00:56:09] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-04-01 00:56:10] INFO in routes: Admin 10000001 securely deleted user ID 10000004.
+[2026-04-01 00:56:10] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-04-01 00:56:10] INFO in routes: Admin 10000001 securely deleted user ID 10000006.
+[2026-04-01 00:56:10] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-04-01 00:56:11] INFO in routes: Admin 10000001 securely deleted user ID 10000007.
+[2026-04-01 00:56:11] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-04-01 00:56:12] INFO in routes: Admin 10000001 securely deleted user ID 88888888.
+[2026-04-01 00:56:12] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-04-01 00:56:12] INFO in routes: Admin 10000001 securely deleted user ID 99999999.
+[2026-04-01 00:56:12] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-04-01 00:56:39] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-04-01 00:57:00] INFO in routes: Admin 10000001 accessed the edit page for user ID 10000004.
+[2026-04-01 00:57:10] INFO in routes: Admin 10000001 accessed the edit page for user ID 10000005.
+[2026-04-01 00:57:17] INFO in routes: Admin 10000001 accessed the edit page for user ID 10000006.
+[2026-04-01 00:57:30] INFO in routes: Admin 10000001 accessed the edit page for user ID 10000003.
+[2026-04-01 00:57:37] INFO in routes: Admin 10000001 accessed the edit page for user ID 10000004.
+[2026-04-01 00:59:54] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-04-01 01:00:01] INFO in routes: Admin 10000001 accessed the edit page for user ID 10000004.
+[2026-04-01 01:00:06] INFO in routes: Admin 10000001 accessed the edit page for user ID 10000005.
+[2026-04-01 01:00:19] INFO in routes: Admin 10000001 accessed the edit page for user ID 10000004.
+[2026-04-01 01:03:02] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-04-01 01:03:04] INFO in routes: Admin 10000001 accessed the edit page for user ID 10000004.
+[2026-04-01 01:03:09] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-04-01 01:03:11] INFO in routes: Admin 10000001 accessed the edit page for user ID 10000005.
+[2026-04-01 01:03:39] INFO in routes: Admin 10000001 accessed the edit page for user ID 10000005.
+[2026-04-01 01:03:43] INFO in routes: Admin 10000001 accessed the edit page for user ID 10000006.
+[2026-04-01 01:03:46] INFO in routes: Admin 10000001 accessed the edit page for user ID 10000007.
+[2026-04-01 01:12:01] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-04-01 01:12:04] INFO in routes: Admin 10000001 accessed the edit page for user ID 10000004.
+[2026-04-01 01:18:20] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-04-01 01:18:23] INFO in routes: Admin 10000001 accessed the edit page for user ID 10000004.
+[2026-04-01 01:18:29] INFO in routes: Admin 10000001 accessed the edit page for user ID 10000005.
+[2026-04-01 01:38:58] INFO in routes: Student 88888888 accessed the course browser.
+[2026-04-01 01:39:00] INFO in routes: Student 88888888 accessed their academic transcript.
+[2026-04-01 01:39:02] INFO in routes: Student 88888888 accessed their academic transcript.
+[2026-04-01 12:25:50] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-04-01 12:25:54] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-04-01 12:27:58] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-04-01 12:28:06] INFO in routes: Grad Secretary 10000001 accessed the full course schedule.
+[2026-04-01 12:45:46] INFO in routes: Grad Secretary 10000001 accessed the full course schedule.
+[2026-04-01 12:45:49] INFO in routes: Grad Secretary 10000001 accessed the full course schedule.
+[2026-04-01 13:09:42] WARNING in routes: Admin 10000001 wiped the in-memory application logs.
+[2026-04-01 13:10:36] INFO in routes: New student successfully self-registered with ID 88888889 (Email: j@gmail.com)
+[2026-04-01 13:13:28] INFO in routes: Student 88888888 accessed the course browser.
+[2026-04-01 13:14:52] INFO in routes: Student 88888888 accessed their academic transcript.
+[2026-04-01 13:16:35] INFO in routes: Instructor 10000004 accessed their class roster.
+[2026-04-01 13:17:20] INFO in routes: Admin 10000001 accessed the global user list.
+[2026-04-01 13:17:36] INFO in routes: Student 88888889 accessed the course browser.
+[2026-04-01 13:17:45] WARNING in routes: Student 88888889 attempted to enroll in offering 5 but is already enrolled.
+[2026-04-01 13:17:45] INFO in routes: Student 88888889 accessed the course browser.
+[2026-04-01 13:17:51] WARNING in routes: Student 88888889 attempted to enroll in offering 5 but is already enrolled.
+[2026-04-01 13:17:51] INFO in routes: Student 88888889 accessed the course browser.
+[2026-04-01 13:17:55] INFO in routes: Student 88888889 accessed their academic transcript.
+[2026-04-01 13:18:02] INFO in routes: Student 88888889 accessed the course browser.
+[2026-04-01 13:18:05] WARNING in routes: Student 88888889 attempted to enroll in offering 1 but is already enrolled.
+[2026-04-01 13:18:05] INFO in routes: Student 88888889 accessed the course browser.
+[2026-04-01 13:18:17] INFO in routes: Student 88888889 accessed their academic transcript.
+[2026-04-01 13:20:05] INFO in routes: Student 88888889 accessed the course browser.
+[2026-04-01 13:20:06] WARNING in routes: Student 88888889 attempted to enroll in offering 1 but is already enrolled.
+[2026-04-01 13:20:06] INFO in routes: Student 88888889 accessed the course browser.
+[2026-04-01 13:21:37] INFO in routes: Instructor 10000004 accessed their class roster.
+[2026-04-01 13:21:40] INFO in routes: Instructor 10000004 accessed the pending grades entry sheet.
+[2026-04-01 13:21:46] INFO in routes: Instructor 10000004 successfully submitted grade 'A' for enrollment 1.
+[2026-04-01 13:21:47] INFO in routes: Instructor 10000004 accessed the pending grades entry sheet.
+[2026-04-01 13:21:52] INFO in routes: Instructor 10000004 accessed their assigned courses list.
+[2026-04-01 13:21:55] INFO in routes: Instructor 10000004 accessed their class roster.

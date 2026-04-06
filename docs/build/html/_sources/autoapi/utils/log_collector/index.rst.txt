@@ -1,0 +1,58 @@
+utils.log_collector
+===================
+
+.. py:module:: utils.log_collector
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   utils.log_collector.admin_log_handler
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   utils.log_collector.AdminLogHandler
+
+
+Module Contents
+---------------
+
+.. py:class:: AdminLogHandler(max_entries=200)
+
+   Bases: :py:obj:`logging.Handler`
+
+
+   Handler instances dispatch logging events to specific destinations.
+
+   The base handler class. Acts as a placeholder which defines the Handler
+   interface. Handlers can optionally use Formatter instances to format
+   records as desired. By default, no formatter is specified; in this case,
+   the 'raw' message as determined by record.message is logged.
+
+
+   .. py:attribute:: records
+
+
+   .. py:method:: emit(record)
+
+      Do whatever it takes to actually log the specified logging record.
+
+      This version is intended to be implemented by subclasses and so
+      raises a NotImplementedError.
+
+
+
+   .. py:method:: get_records()
+
+
+   .. py:method:: clear()
+
+
+.. py:data:: admin_log_handler
+

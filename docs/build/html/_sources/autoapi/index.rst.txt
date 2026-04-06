@@ -8,6 +8,7 @@ This page contains auto-generated API reference documentation [#f1]_.
 
    /autoapi/run/index
    /autoapi/auth/index
+   /autoapi/tests/index
    /autoapi/utils/index
    /autoapi/student/index
    /autoapi/system_admin/index
