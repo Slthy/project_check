@@ -1,0 +1,28 @@
+faculty_instructor
+==================
+
+.. py:module:: faculty_instructor
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/faculty_instructor/routes/index
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   faculty_instructor.faculty_instructor
+
+
+Package Contents
+----------------
+
+.. py:data:: faculty_instructor
+

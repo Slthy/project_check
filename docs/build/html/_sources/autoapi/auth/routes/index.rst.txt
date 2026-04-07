@@ -1,0 +1,36 @@
+auth.routes
+===========
+
+.. py:module:: auth.routes
+
+.. autoapi-nested-parse::
+
+   Authentication routes: registration, login, logout, and admin user creation.
+
+   All routes in this module are registered on the 'auth' blueprint and are
+   accessible under the /auth URL prefix.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   auth.routes.sys_admin_register
+   auth.routes.register
+   auth.routes.login
+   auth.routes.logout
+
+
+Module Contents
+---------------
+
+.. py:function:: sys_admin_register()
+
+.. py:function:: register()
+
+.. py:function:: login()
+
+.. py:function:: logout()
+

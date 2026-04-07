@@ -28,8 +28,7 @@ CREATE TABLE IF NOT EXISTS stud_type (
 );
 
 CREATE TABLE IF NOT EXISTS addresses (
-    id           INT          PRIMARY KEY AUTO_INCREMENT,
-    a_id         INT          NOT NULL,
+    a_id         INT          PRIMARY KEY,
     line_one     VARCHAR(255) NOT NULL,
     line_two     VARCHAR(255),
     city         VARCHAR(100),

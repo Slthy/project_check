@@ -477,14 +477,17 @@
             <li><a href="{{ url_for('grad_secretary.override_grades') }}">{{ _('Grades') }}</a></li>        
         {% endif %}
     {% endif %}
-        <li>
-            {% set confirm_msg = _('Warning: this will wipe all data. Are you sure?') %}
-            <form class="reset-form" action="{{ url_for('system_admin.shutdown') }}" method="GET"
-                onsubmit="return confirm('{{ confirm_msg }}')">
-                <button type="submit" class="reset-btn">{{ _('Reset DB') }}</button>
-            </form>
-        </li>
-</ul>        <div class="nav-bottom-icons">
+        {% if session.get('role') == 0 %}
+            <li>
+                {% set confirm_msg = _('Warning: this will wipe all data. Are you sure?') %}
+                <form class="reset-form" action="{{ url_for('system_admin.shutdown') }}" method="GET"
+                    onsubmit="return confirm('{{ confirm_msg }}')">
+                    <button type="submit" class="reset-btn">{{ _('Reset DB') }}</button>
+                </form>
+            </li>
+        {% endif %}
+        </ul>
+        <div class="nav-bottom-icons">
             <a class="icon-btn" href="{{ url_for('about_me') }}">
                 <img class="icon-nav-profile" src="{{ url_for('static', filename='profile.png') }}" alt="Profile">
             </a>

@@ -61,6 +61,10 @@ def sys_admin_register():
                     request.form['city'], request.form['state'], request.form['zip'], request.form['country_code'])
                 )
 
+                cursor.execute(
+                    "INSERT INTO plan (owner_id, is_approved) VALUES (%s, 1)",
+                    (new_id,)
+                )
                 conn.commit()
                 flash(_("User created successfully."), "success")
                 current_app.logger.info(f"Admin {admin_id} successfully created user {new_id} (Role: {role}, Email: {email})")
@@ -117,6 +121,10 @@ def register():
                 "INSERT INTO addresses (a_id, line_one, line_two, city, state, zip, country_code) VALUES (%s, %s, %s, %s, %s, %s, %s)",
                 (new_id, request.form['line_one'], request.form.get('line_two'),
                 request.form['city'], request.form['state'], request.form['zip'], request.form['country_code'])
+            )
+            cursor.execute(
+                "INSERT INTO plan (owner_id, is_approved) VALUES (%s, 1)",
+                (new_id,)
             )
             conn.commit()
             current_app.logger.info(f"New student successfully self-registered with ID {new_id} (Email: {email})")

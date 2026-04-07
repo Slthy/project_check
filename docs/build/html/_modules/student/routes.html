@@ -1,0 +1,392 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>student.routes &mdash; birdsarentreal 1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=fd3f3429" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=f2a433a1"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            birdsarentreal
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">birdsarentreal</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../student.html">student</a></li>
+      <li class="breadcrumb-item active">student.routes</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for student.routes</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Student-facing routes: course browser, transcript, add course, and drop course.</span>
+
+<span class="sd">All routes require an authenticated session with role &#39;student&#39; or</span>
+<span class="sd">&#39;system_admin&#39;. Routes are registered on the &#39;student&#39; blueprint under /student.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">flask</span><span class="w"> </span><span class="kn">import</span> <span class="n">render_template</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">flash</span><span class="p">,</span> <span class="n">redirect</span><span class="p">,</span> <span class="n">url_for</span><span class="p">,</span> <span class="n">current_app</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">utils.decorators</span><span class="w"> </span><span class="kn">import</span> <span class="n">role_required</span><span class="p">,</span> <span class="n">login_required</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">utils.functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_db_connection</span><span class="p">,</span> <span class="n">has_time_conflict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">student</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pymysql</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">flask_babel</span><span class="w"> </span><span class="kn">import</span> <span class="n">_</span>
+
+
+<span class="nd">@student</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+<span class="nd">@login_required</span>
+<span class="nd">@role_required</span><span class="p">(</span><span class="s1">&#39;system_admin&#39;</span><span class="p">,</span> <span class="s1">&#39;student&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="index">
+<a class="viewcode-back" href="../../autoapi/student/routes/index.html#student.routes.index">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">index</span><span class="p">():</span>
+    <span class="n">uid</span> <span class="o">=</span> <span class="n">session</span><span class="p">[</span><span class="s1">&#39;user_id&#39;</span><span class="p">]</span>
+    <span class="n">conn</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">all_courses</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">current_courses</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">conn</span> <span class="o">=</span> <span class="n">get_db_connection</span><span class="p">()</span>
+        <span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+
+        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">            SELECT s.day, s.start_time, s.end_time, o.o_id</span>
+<span class="s1">            FROM enrollment e</span>
+<span class="s1">            JOIN plan p ON e.plan_id = p.plan_id</span>
+<span class="s1">            JOIN c_offering o ON e.o_id = o.o_id</span>
+<span class="s1">            JOIN schedule s ON o.o_id = s.o_id</span>
+<span class="s1">            WHERE p.owner_id = </span><span class="si">%s</span><span class="s1"> AND e.grade = &#39;IP&#39;</span>
+<span class="s1">        &#39;&#39;&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">uid</span><span class="p">,))</span>
+        <span class="n">current_schedule</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+
+        <span class="n">current_o_ids</span> <span class="o">=</span> <span class="p">{</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;o_id&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">current_schedule</span><span class="p">}</span>
+
+        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">            SELECT o.c_id</span>
+<span class="s1">            FROM enrollment e</span>
+<span class="s1">            JOIN plan p ON e.plan_id = p.plan_id</span>
+<span class="s1">            JOIN c_offering o ON e.o_id = o.o_id</span>
+<span class="s1">            WHERE p.owner_id = </span><span class="si">%s</span><span class="s1"> AND e.grade != &#39;IP&#39;</span>
+<span class="s1">        &#39;&#39;&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">uid</span><span class="p">,))</span>
+        <span class="n">completed_cids</span> <span class="o">=</span> <span class="p">{</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;c_id&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()}</span>
+
+        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">            SELECT o.o_id, o.c_id, o.semester, o.year,</span>
+<span class="s1">                   c.dept, c.number, c.name, c.credits,</span>
+<span class="s1">                   c.prereq1_id, c.prereq2_id,</span>
+<span class="s1">                   CONCAT(u.fname, &quot; &quot;, u.lname) AS instructor,</span>
+<span class="s1">                   s.day, s.start_time, s.end_time</span>
+<span class="s1">            FROM c_offering o</span>
+<span class="s1">            JOIN c_catalog c ON o.c_id = c.c_id</span>
+<span class="s1">            LEFT JOIN users u ON o.i_id = u.id</span>
+<span class="s1">            LEFT JOIN schedule s ON o.o_id = s.o_id</span>
+<span class="s1">        &#39;&#39;&#39;</span><span class="p">)</span>
+        <span class="n">offerings</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">course</span> <span class="ow">in</span> <span class="n">offerings</span><span class="p">:</span>
+            <span class="n">missing</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">prereq_id</span> <span class="ow">in</span> <span class="p">[</span><span class="n">course</span><span class="p">[</span><span class="s1">&#39;prereq1_id&#39;</span><span class="p">],</span> <span class="n">course</span><span class="p">[</span><span class="s1">&#39;prereq2_id&#39;</span><span class="p">]]:</span>
+                <span class="k">if</span> <span class="n">prereq_id</span> <span class="ow">and</span> <span class="n">prereq_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">completed_cids</span><span class="p">:</span>
+                    <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                        <span class="s1">&#39;SELECT dept, number FROM c_catalog WHERE c_id = </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">prereq_id</span><span class="p">,)</span>
+                    <span class="p">)</span>
+                    <span class="n">prereq</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">prereq</span><span class="p">:</span>
+                        <span class="n">missing</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prereq</span><span class="p">[</span><span class="s1">&#39;dept&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">prereq</span><span class="p">[</span><span class="s1">&#39;number&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">course</span><span class="p">[</span><span class="s1">&#39;o_id&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">current_o_ids</span><span class="p">:</span>
+                <span class="n">status</span> <span class="o">=</span> <span class="s1">&#39;Enrolled&#39;</span>
+            <span class="k">elif</span> <span class="n">missing</span><span class="p">:</span>
+                <span class="n">status</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Missing: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">missing</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">elif</span> <span class="n">has_time_conflict</span><span class="p">(</span><span class="n">current_schedule</span><span class="p">,</span> <span class="p">[</span><span class="n">course</span><span class="p">]):</span>
+                <span class="n">status</span> <span class="o">=</span> <span class="s1">&#39;Time conflict&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">status</span> <span class="o">=</span> <span class="s1">&#39;Eligible&#39;</span>
+
+            <span class="n">all_courses</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="o">**</span><span class="nb">dict</span><span class="p">(</span><span class="n">course</span><span class="p">),</span> <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="n">status</span><span class="p">})</span>
+
+        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">            SELECT o.o_id, c.dept, c.number, c.name,</span>
+<span class="s1">                   s.day, s.start_time, s.end_time</span>
+<span class="s1">            FROM enrollment e</span>
+<span class="s1">            JOIN plan p ON e.plan_id = p.plan_id</span>
+<span class="s1">            JOIN c_offering o ON e.o_id = o.o_id</span>
+<span class="s1">            JOIN c_catalog c ON o.c_id = c.c_id</span>
+<span class="s1">            LEFT JOIN schedule s ON o.o_id = s.o_id</span>
+<span class="s1">            WHERE p.owner_id = </span><span class="si">%s</span><span class="s1"> AND e.grade = &#39;IP&#39;</span>
+<span class="s1">        &#39;&#39;&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">uid</span><span class="p">,))</span>
+        <span class="n">current_courses</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+
+        <span class="n">current_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Student </span><span class="si">{</span><span class="n">uid</span><span class="si">}</span><span class="s2"> accessed the course browser.&quot;</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="n">pymysql</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">flash</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Error loading courses.&quot;</span><span class="p">),</span> <span class="s2">&quot;error&quot;</span><span class="p">)</span>
+        <span class="n">current_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;DB error in index: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">conn</span><span class="p">:</span>
+            <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;courses.html&#39;</span><span class="p">,</span> <span class="n">all_courses</span><span class="o">=</span><span class="n">all_courses</span><span class="p">,</span> <span class="n">current_courses</span><span class="o">=</span><span class="n">current_courses</span><span class="p">)</span></div>
+
+
+
+<span class="nd">@student</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/transcript&#39;</span><span class="p">)</span>
+<span class="nd">@login_required</span>
+<span class="nd">@role_required</span><span class="p">(</span><span class="s1">&#39;system_admin&#39;</span><span class="p">,</span> <span class="s1">&#39;student&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="transcript">
+<a class="viewcode-back" href="../../autoapi/student/routes/index.html#student.routes.transcript">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">transcript</span><span class="p">():</span>
+    <span class="n">uid</span> <span class="o">=</span> <span class="n">session</span><span class="p">[</span><span class="s1">&#39;user_id&#39;</span><span class="p">]</span>
+    <span class="n">all_courses</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">conn</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="n">GRADE_POINTS</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;A&#39;</span><span class="p">:</span> <span class="mf">4.0</span><span class="p">,</span> <span class="s1">&#39;A-&#39;</span><span class="p">:</span> <span class="mf">3.7</span><span class="p">,</span> <span class="s1">&#39;B+&#39;</span><span class="p">:</span> <span class="mf">3.3</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">:</span> <span class="mf">3.0</span><span class="p">,</span>
+        <span class="s1">&#39;B-&#39;</span><span class="p">:</span> <span class="mf">2.7</span><span class="p">,</span> <span class="s1">&#39;C+&#39;</span><span class="p">:</span> <span class="mf">2.3</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">:</span> <span class="mf">2.0</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">:</span> <span class="mf">0.0</span>
+    <span class="p">}</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">conn</span> <span class="o">=</span> <span class="n">get_db_connection</span><span class="p">()</span>
+        <span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">            SELECT c.dept, c.number, c.name, c.credits,</span>
+<span class="s1">                   e.grade, o.semester, o.year</span>
+<span class="s1">            FROM enrollment e</span>
+<span class="s1">            JOIN c_offering o ON e.o_id = o.o_id</span>
+<span class="s1">            JOIN c_catalog c ON o.c_id = c.c_id</span>
+<span class="s1">            JOIN plan p ON e.plan_id = p.plan_id</span>
+<span class="s1">            WHERE p.owner_id = </span><span class="si">%s</span>
+<span class="s1">            ORDER BY o.year, o.semester</span>
+<span class="s1">        &#39;&#39;&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">uid</span><span class="p">,))</span>
+        <span class="n">all_courses</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+        <span class="n">current_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Student </span><span class="si">{</span><span class="n">uid</span><span class="si">}</span><span class="s2"> accessed their academic transcript.&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">pymysql</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">current_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;DB error in index: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">conn</span><span class="p">:</span>
+            <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="n">total_credits</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">total_points</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">completed</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">all_courses</span> <span class="k">if</span> <span class="n">c</span><span class="p">[</span><span class="s1">&#39;grade&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;IP&#39;</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">course</span> <span class="ow">in</span> <span class="n">completed</span><span class="p">:</span>
+        <span class="n">credits</span> <span class="o">=</span> <span class="n">course</span><span class="p">[</span><span class="s1">&#39;credits&#39;</span><span class="p">]</span>
+        <span class="n">grade_pts</span> <span class="o">=</span> <span class="n">GRADE_POINTS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">course</span><span class="p">[</span><span class="s1">&#39;grade&#39;</span><span class="p">],</span> <span class="mf">0.0</span><span class="p">)</span>
+        <span class="n">total_credits</span> <span class="o">+=</span> <span class="n">credits</span>
+        <span class="n">total_points</span> <span class="o">+=</span> <span class="n">grade_pts</span> <span class="o">*</span> <span class="n">credits</span>
+
+    <span class="n">gpa</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">total_points</span> <span class="o">/</span> <span class="n">total_credits</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="k">if</span> <span class="n">total_credits</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">0.0</span>
+
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;transcript.html&#39;</span><span class="p">,</span>
+                           <span class="n">all_courses</span><span class="o">=</span><span class="n">all_courses</span><span class="p">,</span>
+                           <span class="n">total_credits</span><span class="o">=</span><span class="n">total_credits</span><span class="p">,</span>
+                           <span class="n">gpa</span><span class="o">=</span><span class="n">gpa</span><span class="p">)</span></div>
+
+
+
+<span class="nd">@student</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/drop_course/&lt;int:o_id&gt;&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@login_required</span>
+<span class="nd">@role_required</span><span class="p">(</span><span class="s1">&#39;system_admin&#39;</span><span class="p">,</span> <span class="s1">&#39;student&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="drop_course">
+<a class="viewcode-back" href="../../autoapi/student/routes/index.html#student.routes.drop_course">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">drop_course</span><span class="p">(</span><span class="n">o_id</span><span class="p">):</span>
+    <span class="n">uid</span> <span class="o">=</span> <span class="n">session</span><span class="p">[</span><span class="s1">&#39;user_id&#39;</span><span class="p">]</span>
+    <span class="n">conn</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">conn</span> <span class="o">=</span> <span class="n">get_db_connection</span><span class="p">()</span>
+        <span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">            DELETE FROM enrollment</span>
+<span class="s1">            WHERE o_id = </span><span class="si">%s</span>
+<span class="s1">              AND plan_id = (SELECT plan_id FROM plan WHERE owner_id = </span><span class="si">%s</span><span class="s1">)</span>
+<span class="s1">        &#39;&#39;&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">o_id</span><span class="p">,</span> <span class="n">uid</span><span class="p">))</span>
+        <span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">cursor</span><span class="o">.</span><span class="n">rowcount</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">flash</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Course successfully dropped.&quot;</span><span class="p">),</span> <span class="s2">&quot;success&quot;</span><span class="p">)</span>
+            <span class="n">current_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Student </span><span class="si">{</span><span class="n">uid</span><span class="si">}</span><span class="s2"> successfully dropped offering </span><span class="si">{</span><span class="n">o_id</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">flash</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Could not drop the course. Are you sure you are enrolled?&quot;</span><span class="p">),</span> <span class="s2">&quot;error&quot;</span><span class="p">)</span>
+            <span class="n">current_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Student </span><span class="si">{</span><span class="n">uid</span><span class="si">}</span><span class="s2"> failed to drop offering </span><span class="si">{</span><span class="n">o_id</span><span class="si">}</span><span class="s2"> (not enrolled).&quot;</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="n">pymysql</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">flash</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;A database error occurred while dropping the course.&quot;</span><span class="p">),</span> <span class="s2">&quot;error&quot;</span><span class="p">)</span>
+        <span class="n">current_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;DB error dropping course </span><span class="si">{</span><span class="n">o_id</span><span class="si">}</span><span class="s2"> for user </span><span class="si">{</span><span class="n">uid</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">conn</span><span class="p">:</span>
+            <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;student.index&#39;</span><span class="p">))</span></div>
+
+
+
+<span class="nd">@student</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/add_course/&lt;int:o_id&gt;&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@login_required</span>
+<span class="nd">@role_required</span><span class="p">(</span><span class="s1">&#39;system_admin&#39;</span><span class="p">,</span> <span class="s1">&#39;student&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="add_course">
+<a class="viewcode-back" href="../../autoapi/student/routes/index.html#student.routes.add_course">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_course</span><span class="p">(</span><span class="n">o_id</span><span class="p">):</span>
+    <span class="n">uid</span> <span class="o">=</span> <span class="n">session</span><span class="p">[</span><span class="s1">&#39;user_id&#39;</span><span class="p">]</span>
+    <span class="n">conn</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">conn</span> <span class="o">=</span> <span class="n">get_db_connection</span><span class="p">()</span>
+        <span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+
+        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">            SELECT s.day, s.start_time, s.end_time</span>
+<span class="s1">            FROM enrollment e</span>
+<span class="s1">            JOIN plan p ON e.plan_id = p.plan_id</span>
+<span class="s1">            JOIN c_offering o ON e.o_id = o.o_id</span>
+<span class="s1">            JOIN schedule s ON o.o_id = s.o_id</span>
+<span class="s1">            WHERE p.owner_id = </span><span class="si">%s</span><span class="s1"> AND e.grade = &#39;IP&#39;</span>
+<span class="s1">        &#39;&#39;&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">uid</span><span class="p">,))</span>
+        <span class="n">current_schedule</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+
+        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;SELECT c_id FROM c_offering WHERE o_id = </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">o_id</span><span class="p">,))</span>
+        <span class="n">course_info</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">course_info</span><span class="p">:</span>
+            <span class="n">flash</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Course offering not found.&quot;</span><span class="p">),</span> <span class="s2">&quot;error&quot;</span><span class="p">)</span>
+            <span class="n">current_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Student </span><span class="si">{</span><span class="n">uid</span><span class="si">}</span><span class="s2"> attempted to enroll in non-existent offering </span><span class="si">{</span><span class="n">o_id</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;student.index&#39;</span><span class="p">))</span>
+
+        <span class="n">c_id</span> <span class="o">=</span> <span class="n">course_info</span><span class="p">[</span><span class="s1">&#39;c_id&#39;</span><span class="p">]</span>
+
+        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+            <span class="s1">&#39;SELECT prereq1_id, prereq2_id FROM c_catalog WHERE c_id = </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">c_id</span><span class="p">,)</span>
+        <span class="p">)</span>
+        <span class="n">prereqs</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
+
+        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">            SELECT o.c_id FROM enrollment e</span>
+<span class="s1">            JOIN plan p ON e.plan_id = p.plan_id</span>
+<span class="s1">            JOIN c_offering o ON e.o_id = o.o_id</span>
+<span class="s1">            WHERE p.owner_id = </span><span class="si">%s</span><span class="s1"> AND e.grade != &#39;IP&#39;</span>
+<span class="s1">        &#39;&#39;&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">uid</span><span class="p">,))</span>
+        <span class="n">completed_cids</span> <span class="o">=</span> <span class="p">{</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;c_id&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()}</span>
+
+        <span class="n">missing</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">prereq_id</span> <span class="ow">in</span> <span class="p">[</span><span class="n">prereqs</span><span class="p">[</span><span class="s1">&#39;prereq1_id&#39;</span><span class="p">],</span> <span class="n">prereqs</span><span class="p">[</span><span class="s1">&#39;prereq2_id&#39;</span><span class="p">]]:</span>
+            <span class="k">if</span> <span class="n">prereq_id</span> <span class="ow">and</span> <span class="n">prereq_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">completed_cids</span><span class="p">:</span>
+                <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                    <span class="s1">&#39;SELECT dept, number FROM c_catalog WHERE c_id = </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">prereq_id</span><span class="p">,)</span>
+                <span class="p">)</span>
+                <span class="n">prereq</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">prereq</span><span class="p">:</span>
+                    <span class="n">missing</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prereq</span><span class="p">[</span><span class="s1">&#39;dept&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">prereq</span><span class="p">[</span><span class="s1">&#39;number&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">missing</span><span class="p">:</span>
+            <span class="n">flash</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Missing prerequisites: </span><span class="si">%(prereqs)s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">prereqs</span><span class="o">=</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">missing</span><span class="p">)),</span> <span class="s2">&quot;error&quot;</span><span class="p">)</span>
+            <span class="n">current_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Student </span><span class="si">{</span><span class="n">uid</span><span class="si">}</span><span class="s2"> failed prerequisite check for offering </span><span class="si">{</span><span class="n">o_id</span><span class="si">}</span><span class="s2">. Missing: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">missing</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;student.index&#39;</span><span class="p">))</span>
+
+        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+            <span class="s1">&#39;SELECT day, start_time, end_time FROM schedule WHERE o_id = </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">o_id</span><span class="p">,)</span>
+        <span class="p">)</span>
+        <span class="n">new_course_times</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">has_time_conflict</span><span class="p">(</span><span class="n">current_schedule</span><span class="p">,</span> <span class="n">new_course_times</span><span class="p">):</span>
+            <span class="n">flash</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Time conflict! You must have at least 30 minutes between classes.&quot;</span><span class="p">),</span> <span class="s2">&quot;error&quot;</span><span class="p">)</span>
+            <span class="n">current_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Student </span><span class="si">{</span><span class="n">uid</span><span class="si">}</span><span class="s2"> experienced a time conflict when attempting to add offering </span><span class="si">{</span><span class="n">o_id</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;student.index&#39;</span><span class="p">))</span>
+
+        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">            INSERT INTO enrollment (plan_id, o_id, grade)</span>
+<span class="s1">            VALUES ((SELECT plan_id FROM plan WHERE owner_id = </span><span class="si">%s</span><span class="s1">), </span><span class="si">%s</span><span class="s1">, &#39;IP&#39;)</span>
+<span class="s1">        &#39;&#39;&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">uid</span><span class="p">,</span> <span class="n">o_id</span><span class="p">))</span>
+        <span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="n">flash</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;Course successfully added!&quot;</span><span class="p">),</span> <span class="s2">&quot;success&quot;</span><span class="p">)</span>
+        <span class="n">current_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Student </span><span class="si">{</span><span class="n">uid</span><span class="si">}</span><span class="s2"> successfully enrolled in offering </span><span class="si">{</span><span class="n">o_id</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="n">pymysql</span><span class="o">.</span><span class="n">IntegrityError</span><span class="p">:</span>
+        <span class="n">flash</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;You are already enrolled in this course.&quot;</span><span class="p">),</span> <span class="s2">&quot;error&quot;</span><span class="p">)</span>
+        <span class="n">current_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Student </span><span class="si">{</span><span class="n">uid</span><span class="si">}</span><span class="s2"> attempted to enroll in offering </span><span class="si">{</span><span class="n">o_id</span><span class="si">}</span><span class="s2"> but is already enrolled.&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">pymysql</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">flash</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s2">&quot;A database error occurred.&quot;</span><span class="p">),</span> <span class="s2">&quot;error&quot;</span><span class="p">)</span>
+        <span class="n">current_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;DB error in add_course: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">conn</span><span class="p">:</span>
+            <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;student.index&#39;</span><span class="p">))</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Borsato A. — Elsawalhi A. — Parekh V..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

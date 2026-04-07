@@ -75,20 +75,11 @@ def delete_user():
 
 
 @system_admin.route('/reset')
+@login_required
+@role_required('system_admin')
 def shutdown():
     run();
     return redirect(url_for('auth.login'))
-
-@system_admin.route('/fix_fk')
-@role_required('system_admin')
-def fix_fk():
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute("ALTER TABLE c_offering DROP FOREIGN KEY c_offering_ibfk_2")
-    cursor.execute("ALTER TABLE c_offering ADD CONSTRAINT c_offering_ibfk_2 FOREIGN KEY (i_id) REFERENCES users(id) ON DELETE SET NULL")
-    conn.commit()
-    conn.close()
-    return "done"
 
 
 @system_admin.route('/docs/')

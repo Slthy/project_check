@@ -1,0 +1,25 @@
+tests.conftest
+==============
+
+.. py:module:: tests.conftest
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   tests.conftest.app
+   tests.conftest.client
+   tests.conftest.mock_db
+
+
+Module Contents
+---------------
+
+.. py:function:: app()
+
+.. py:function:: client(app)
+
+.. py:function:: mock_db(mocker)
+
