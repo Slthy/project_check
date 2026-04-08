@@ -48,7 +48,7 @@ def view_users():
     finally:
         if conn:
             conn.close()
-    return render_template('view_users.html', users=users)
+    return render_template('system_admin/view_users.html', users=users)
 
 
 @system_admin.route('/users/delete', methods=['POST'])
@@ -266,7 +266,7 @@ def edit_user(uid):
         if conn:
             conn.close()
 
-    return render_template('edit_user.html', user=user, address=address,
+    return render_template('system_admin/edit_user.html', user=user, address=address,
                            assigned_courses=assigned_courses,
                            available_courses=available_courses,
                            student_courses=student_courses,

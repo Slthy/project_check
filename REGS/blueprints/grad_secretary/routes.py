@@ -45,7 +45,7 @@ def records():
     finally:
         if conn:
             conn.close()
-    return render_template('gs_records.html', students=students)
+    return render_template('grad_secretary/gs_records.html', students=students)
 
 
 @grad_secretary.route('/records/<int:uid>')
@@ -79,7 +79,7 @@ def student_transcript(uid):
     finally:
         if conn:
             conn.close()
-    return render_template('gs_transcript.html', student=student, courses=courses)
+    return render_template('grad_secretary/gs_transcript.html', student=student, courses=courses)
 
 
 @grad_secretary.route('/schedule')
@@ -110,7 +110,7 @@ def schedule():
     finally:
         if conn:
             conn.close()
-    return render_template('gs_schedule.html', courses=courses)
+    return render_template('grad_secretary/gs_schedule.html', courses=courses)
 
 
 @grad_secretary.route('/override-grades')
@@ -141,7 +141,7 @@ def override_grades():
     finally:
         if conn:
             conn.close()
-    return render_template('gs_override_grades.html', enrollments=enrollments)
+    return render_template('grad_secretary/gs_override_grades.html', enrollments=enrollments)
 
 
 @grad_secretary.route('/override-grades/<int:enroll_id>', methods=['POST'])

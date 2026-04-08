@@ -2,7 +2,7 @@
 Flask application factory.
 
 Call instance() to create and configure the Flask app with all blueprints
-registered and the two app-level routes (home dashboard and about me) attached.
+registered and the app-level routes (landing, REGS home, dashboard, and about me).
 """
 
 from flask import Flask, session, render_template, redirect, request, flash, url_for
@@ -60,9 +60,13 @@ def instance():
         return redirect(request.referrer or url_for('home'))
 
     @app.route('/')
+    def landing():
+        return render_template('index.html')
+
+    @app.route('/regs')
     def home():
         if 'role' not in session:
-            return render_template('index.html')
+            return render_template('regs_home.html')
 
         return redirect(url_for('dashboard'))
 

@@ -1,25 +1,25 @@
 {% extends "base.html" %}
-{% block title %}{{ _('Home') }}{% endblock %}
+{% block title %}University Systems Portal{% endblock %}
 
 {% block content %}
 <div class="card">
-    <h1>{{ _('Welcome to REGS') }}</h1>
-    <p>{{ _('Choose where you want to go to get started.') }}</p>
+    <h1>University Systems Landing Page</h1>
+    <p>Select a subproject to continue. More systems will be added here soon.</p>
 
     <div class="dashboard-grid">
-        <a class="dashboard-box" href="{{ url_for('auth.login') }}">
-            <h2>{{ _('Login') }}</h2>
-            <p>{{ _('Sign in to access your role-based dashboard and tools.') }}</p>
+        <a class="dashboard-box" href="{{ url_for('home') }}">
+            <h2>REGS</h2>
+            <p>Registration and records platform for students, faculty, graduate secretaries, and admins.</p>
         </a>
 
-        <a class="dashboard-box" href="{{ url_for('auth.register') }}">
-            <h2>{{ _('Student Registration') }}</h2>
-            <p>{{ _('Create a new student account and complete your profile details.') }}</p>
+        <a class="dashboard-box" href="#" aria-disabled="true">
+            <h2>Future Subproject #1</h2>
+            <p>Coming soon.</p>
         </a>
 
-        <a class="dashboard-box" href="{{ url_for('auth.login') }}">
-            <h2>{{ _('Admin / Faculty Access') }}</h2>
-            <p>{{ _('Staff users can log in here to manage courses, records, and users.') }}</p>
+        <a class="dashboard-box" href="#" aria-disabled="true">
+            <h2>Future Subproject #2</h2>
+            <p>Coming soon.</p>
         </a>
     </div>
 </div>
