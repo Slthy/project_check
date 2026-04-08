@@ -101,7 +101,7 @@ def index():
         if conn:
             conn.close()
 
-    return render_template('courses.html', all_courses=all_courses, current_courses=current_courses)
+    return render_template('student/courses.html', all_courses=all_courses, current_courses=current_courses)
 
 
 @student.route('/transcript')
@@ -150,7 +150,7 @@ def transcript():
 
     gpa = round(total_points / total_credits, 2) if total_credits > 0 else 0.0
 
-    return render_template('transcript.html',
+    return render_template('student/transcript.html',
                            all_courses=all_courses,
                            total_credits=total_credits,
                            gpa=gpa)

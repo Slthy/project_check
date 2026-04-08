@@ -17,7 +17,7 @@ from flask_babel import _
 @login_required
 @role_required('system_admin', 'faculty_instructor')
 def index():
-    return render_template('faculty_instructor.html')
+    return render_template('faculty_instructor/faculty_instructor.html')
 
 
 @faculty_instructor.route('/courses')
@@ -46,7 +46,7 @@ def courses():
     finally:
         if conn:
             conn.close()
-    return render_template('faculty_courses.html', courses=my_courses)
+    return render_template('faculty_instructor/faculty_courses.html', courses=my_courses)
 
 
 @faculty_instructor.route('/roster')
@@ -79,7 +79,7 @@ def roster():
     finally:
         if conn:
             conn.close()
-    return render_template('faculty_roster.html', roster=roster_data)
+    return render_template('faculty_instructor/faculty_roster.html', roster=roster_data)
 
 
 @faculty_instructor.route('/grades')
@@ -112,7 +112,7 @@ def grades():
     finally:
         if conn:
             conn.close()
-    return render_template('faculty_grades.html', students=students)
+    return render_template('faculty_instructor/faculty_grades.html', students=students)
 
 
 @faculty_instructor.route('/submit_grade/<int:enroll_id>', methods=['POST'])
