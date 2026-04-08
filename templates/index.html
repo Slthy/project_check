@@ -4,7 +4,23 @@
 {% block content %}
 <div class="card">
     <h1>{{ _('Welcome to REGS') }}</h1>
-    <p>{{ _('This is a demo front-end template for the registration system project.') }}</p>
-    <p>{{ _('Use the navigation bar to preview the required pages for each user role.') }}</p>
+    <p>{{ _('Choose where you want to go to get started.') }}</p>
+
+    <div class="dashboard-grid">
+        <a class="dashboard-box" href="{{ url_for('auth.login') }}">
+            <h2>{{ _('Login') }}</h2>
+            <p>{{ _('Sign in to access your role-based dashboard and tools.') }}</p>
+        </a>
+
+        <a class="dashboard-box" href="{{ url_for('auth.register') }}">
+            <h2>{{ _('Student Registration') }}</h2>
+            <p>{{ _('Create a new student account and complete your profile details.') }}</p>
+        </a>
+
+        <a class="dashboard-box" href="{{ url_for('auth.login') }}">
+            <h2>{{ _('Admin / Faculty Access') }}</h2>
+            <p>{{ _('Staff users can log in here to manage courses, records, and users.') }}</p>
+        </a>
+    </div>
 </div>
 {% endblock %}
