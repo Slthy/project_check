@@ -15,7 +15,7 @@
                         Application ID: {{ app['app_id'] }} |
                         UID: {{ app['uid'] }} |
                         {{ app['fname'] }} {{ app['lname'] }}
-                        <form method="POST" action="{{ url_for('mark_transcript_received', app_id=app['app_id']) }}" style="display:inline;">
+                        <form method="POST" action="{{ url_for('apps.mark_transcript_received', app_id=app['app_id']) }}" style="display:inline;">
                             <button type="submit">Mark Transcript Received</button>
                         </form>
                     </li>
@@ -33,7 +33,7 @@
                         UID: {{ app.uid }} |
                         {{ app.fname }} {{ app.lname }} |
                         Program ID: {{ app.pro_no }}
-                        <a href="{{ url_for('cac_gs_dashboard') }}">Open</a>
+                        <a href="{{ url_for('apps.cac_gs_dashboard') }}">Open</a>
                     </li>
                 {% endfor %}
             </ul>
@@ -49,7 +49,7 @@
                         UID: {{ app.uid }} |
                         {{ app.fname }} {{ app.lname }} |
                         Status: {{ app.status }}
-                        <a href="{{ url_for('cac_gs_dashboard') }}">View Progress</a>
+                        <a href="{{ url_for('apps.cac_gs_dashboard') }}">View Progress</a>
                     </li>
                 {% endfor %}
             </ul>
@@ -64,7 +64,7 @@
                     <li>
                         UID: {{ app.uid }} |
                         {{ app.fname }} {{ app.lname }}
-                        <a href="{{ url_for('cac_gs_dashboard') }}">Open</a>
+                        <a href="{{ url_for('apps.cac_gs_dashboard') }}">Open</a>
                     </li>
                 {% endfor %}
             </ul>
