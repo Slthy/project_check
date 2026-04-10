@@ -14,6 +14,9 @@ from REGS.blueprints.grad_secretary import grad_secretary
 from REGS.blueprints.student import student
 from REGS.blueprints.system_admin import system_admin
 
+from ADS.main import ads_bp, init_ads
+from APPS.main import apps_bp, init_apps
+
 from utils.functions import get_db_connection
 from utils.decorators import login_required
 
@@ -47,6 +50,11 @@ def instance():
     app.register_blueprint(grad_secretary, url_prefix='/grad_secretary')
     app.register_blueprint(student, url_prefix='/student')
     app.register_blueprint(system_admin, url_prefix='/system_admin')
+    app.register_blueprint(ads_bp, url_prefix='/ads')
+    app.register_blueprint(apps_bp, url_prefix='/apps')
+
+    init_ads(app)
+    init_apps(app)
 
     @app.route('/set_language', methods=['POST'])
     def set_language():

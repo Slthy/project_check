@@ -37,14 +37,14 @@
                 <td>{{ app['app_year'] }}</td>
                 <td>{{ app['status'] }}</td>
                 <td>
-                    <a href="{{ url_for('view_application', app_id=app['app_id']) }}">View Application</a>
+                    <a href="{{ url_for('apps.view_application', app_id=app['app_id']) }}">View Application</a>
                 </td>
 
                 {% if role in ['CAC', 'GS'] %}
                 <td>
                     {% if app['status'] == 'Complete' %}
                         {% if role == 'CAC' %}
-                            <form method="POST" action="{{ url_for('assign_reviewers') }}">
+                            <form method="POST" action="{{ url_for('apps.assign_reviewers') }}">
                                 <input type="hidden" name="application_id" value="{{ app['app_id'] }}">
 
                                 <select name="reviewer_id" multiple required size = "5">
@@ -67,7 +67,7 @@
                         <p>Review in progress</p>
                     {% elif app['status'] == 'Reviewed' %}
                         <p>Ready for final decision</p>
-                        <a href="{{ url_for('final_decision', app_id=app['app_id']) }}">Enter Final Decision</a>
+                        <a href="{{ url_for('apps.final_decision', app_id=app['app_id']) }}">Enter Final Decision</a>
                     {% elif app['status'] == 'Decision Made' %}
                         <p>Final decision recorded</p>
                     {% endif %}
@@ -81,9 +81,9 @@
     {% endif %}
     
     {% if role == 'CAC' %}
-        <p><a href="{{ url_for('cac_home') }}">Back to CAC Overview</a></p>
+        <p><a href="{{ url_for('apps.cac_home') }}">Back to CAC Overview</a></p>
     {% elif role == 'GS' %}
-        <p><a href="{{ url_for('gs') }}">Back to GS Dashboard</a></p>
+        <p><a href="{{ url_for('apps.gs') }}">Back to GS Dashboard</a></p>
     {% endif %}
 
     <p><a href="/logout">Logout</a></p>

@@ -1,17 +1,21 @@
-from flask import Flask, session, render_template, redirect, url_for, request, flash, g
+from pathlib import Path
+
+from flask import Blueprint, session, render_template, redirect, url_for, request, flash, g
 from flask_session import Session
 from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
 import sqlite3, os, uuid, mysql.connector,re,random,uuid6
 
-app = Flask('app')
-app.debug = os.environ.get('FLASK_DEBUG', 'false').lower() == 'true'
-app.secret_key = os.environ.get("SECRET_KEY", os.urandom(24))
-app.config["SESSION_PERMANENT"] = False
-app.config["SESSION_TYPE"] = "filesystem"
-Session(app)
+APPS_DIR = Path(__file__).resolve().parent
+apps_bp = Blueprint(
+    'apps',
+    __name__,
+    template_folder=str(APPS_DIR / 'templates'),
+    static_folder=str(APPS_DIR / 'static'),
+)
 
-DATABASE = 'appsdb.db'
+DATABASE = str(APPS_DIR / 'appsdb.db')
+SCHEMA_PATH = APPS_DIR / 'APPS_Schema.sql'
 
 def get_db():
     db = getattr(g, '_db', None)
@@ -20,7 +24,7 @@ def get_db():
         db.row_factory = sqlite3.Row
     return db
 
-@app.teardown_appcontext
+@apps_bp.teardown_app_request
 def close_db(error):
     db = getattr(g, '_db', None)
     if db is not None:
@@ -29,7 +33,7 @@ def close_db(error):
 def init_db():
     if not os.path.exists(DATABASE):
         db = sqlite3.connect(DATABASE)
-        with open('APPS_Schema.sql') as f:
+        with open(SCHEMA_PATH, encoding='utf-8') as f:
             db.executescript(f.read())
         db.commit()
         db.close()
@@ -50,7 +54,7 @@ def login_required(f):
     def decorated(*args, **kwargs):
         if 'user' not in session:
             flash('Please log in first.')
-            return redirect(url_for('login'))
+            return redirect(url_for('apps.login'))
         return f(*args, **kwargs)
     return decorated
 
@@ -60,7 +64,7 @@ def role_required(*roles):
         def decorated(*args, **kwargs):
             if 'user' not in session or session['user']['role'] not in roles:
                 flash('You are not authorized to access this page.')
-                return redirect(url_for('home_page'))
+                return redirect(url_for('apps.home_page'))
             return f(*args, **kwargs)
         return decorated
     return decorator
@@ -116,11 +120,11 @@ def parse_gre_score(value, low, high):
 def generate_prefixed_id(prefix):
    return f"{prefix}-{uuid6.uuid7()}"
 
-@app.route('/')
+@apps_bp.route('/')
 def home_page():
     return render_template("homepage.html")
 
-@app.route('/login', methods=['GET', 'POST'])
+@apps_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         username = request.form.get('username', '').strip()
@@ -132,31 +136,31 @@ def login():
             flash('You have logged in successfully', 'Success')
             role_id = user['role_id']
             if role_id == 0:
-                return redirect(url_for('applicant'))
+                return redirect(url_for('apps.applicant'))
             elif role_id == 1:
-                return redirect(url_for('student'))
+                return redirect(url_for('apps.student'))
             elif role_id == 2:
-                return redirect(url_for('faculty'))
+                return redirect(url_for('apps.faculty'))
             elif role_id == 3:
-                return redirect(url_for('gs'))
+                return redirect(url_for('apps.gs'))
             elif role_id == 4:
-                return redirect(url_for('cac_home'))
+                return redirect(url_for('apps.cac_home'))
             elif role_id == 5:
-                return redirect(url_for('admin'))
+                return redirect(url_for('apps.admin'))
             else:
                 flash('Invalid role', 'error')
-                return redirect(url_for('login'))
+                return redirect(url_for('apps.login'))
         else:
             flash('Username or password is incorrect', 'Failure')
     return render_template('login.html')
 
-@app.route('/logout')
+@apps_bp.route('/logout')
 def logout():
     session.clear()
     flash('Logged out.')
-    return redirect(url_for('home_page'))
+    return redirect(url_for('apps.home_page'))
 
-@app.route('/signup', methods=['GET', 'POST'])
+@apps_bp.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
         email = request.form.get('email', '').strip()
@@ -179,10 +183,10 @@ def signup():
                 db.commit()
                 session['user'] = {'username': username,'role': 0,'email': email}
                 flash('Account created successfully', 'Success')
-                return redirect(url_for('applicant'))
+                return redirect(url_for('apps.applicant'))
     return render_template('signup.html')
 
-@app.route('/applicant/application', methods=['GET', 'POST'])
+@apps_bp.route('/applicant/application', methods=['GET', 'POST'])
 @login_required
 @role_required(0)
 def application():
@@ -348,14 +352,14 @@ def application():
         flash('Application submitted successfully!', 'Success')
 
         if last_rid:
-            return redirect(url_for('recommendation_request_email', rid=last_rid))
-        return redirect(url_for('applicant'))
+            return redirect(url_for('apps.recommendation_request_email', rid=last_rid))
+        return redirect(url_for('apps.applicant'))
     db = get_db()
     departments = db.execute('SELECT * FROM departments').fetchall()
     programs = db.execute('SELECT * FROM programs').fetchall()
     return render_template('application.html', departments=departments, programs=programs)
 
-@app.route('/applicant/recommendation-request/<rid>')
+@apps_bp.route('/applicant/recommendation-request/<rid>')
 @login_required
 @role_required(0)
 def recommendation_request_email(rid):
@@ -366,7 +370,7 @@ def recommendation_request_email(rid):
 
     if not applicant_rec:
         flash('Applicant record not found')
-        return redirect(url_for('applicant'))
+        return redirect(url_for('apps.applicant'))
     
     rec = db.execute('''SELECT recommendation.* FROM recommendation
            JOIN applications ON recommendation.app_id = applications.app_id
@@ -375,18 +379,18 @@ def recommendation_request_email(rid):
 
     if not rec:
         flash('Recommendation request not found')
-        return redirect(url_for('applicant'))
+        return redirect(url_for('apps.applicant'))
 
-    submission_link = url_for('recommendation_submit', rid=rid, _external=True)
+    submission_link = url_for('apps.recommendation_submit', rid=rid, _external=True)
 
     return render_template('recommendation_request_email.html',rec=rec,submission_link=submission_link)
 
-@app.route('/programs')
+@apps_bp.route('/programs')
 def programs():
     return render_template('programs.html')
 
 # Role 0 — Applicant homepage (can apply and check status)
-@app.route('/applicant')
+@apps_bp.route('/applicant')
 @login_required
 @role_required(0)
 def applicant():
@@ -421,7 +425,7 @@ def applicant():
         student_account=student_account
     )
 
-@app.route('/applicant/status')
+@apps_bp.route('/applicant/status')
 @login_required
 @role_required(0)
 def status():
@@ -474,7 +478,7 @@ def status():
 
     return render_template('status.html', app_data=app_data, status_message=status_message,transcript=transcript,recommendations=recommendations)
 
-@app.route('/student')
+@apps_bp.route('/student')
 @login_required
 @role_required(1)
 def student():
@@ -497,13 +501,13 @@ def student():
 
     return render_template('student.html', student=student_rec, advisor=advisor, app_data=app_data)
 
-@app.route('/faculty')
+@apps_bp.route('/faculty')
 @login_required
 @role_required(2)
 def faculty():
     return render_template('faculty.html')
 
-@app.route('/faculty/recommendations')
+@apps_bp.route('/faculty/recommendations')
 @login_required
 @role_required(2,4)
 def recommendation_list():
@@ -522,7 +526,7 @@ def recommendation_list():
     role = 'CAC' if user and user['role_id'] == 4 else 'Faculty'
     return render_template('recommendation_list.html', recommendations=recommendations, role=role)
 
-@app.route('/recommendation/<rid>', methods=['GET','POST'])
+@apps_bp.route('/recommendation/<rid>', methods=['GET','POST'])
 def recommendation_submit(rid):
     db = get_db()
 
@@ -530,7 +534,7 @@ def recommendation_submit(rid):
 
     if not rec:
         flash('Recommendation request not found')
-        return redirect(url_for('home_page'))
+        return redirect(url_for('apps.home_page'))
     
     if rec['submitted']:
         return render_template('recommendation_submitted.html', rec=rec)
@@ -552,7 +556,7 @@ def recommendation_submit(rid):
     
     return render_template('recommendations.html', rec=rec)
 
-@app.route('/gs')
+@apps_bp.route('/gs')
 @login_required
 @role_required(3)
 def gs():
@@ -579,7 +583,7 @@ def gs():
 
     return render_template('gs.html',transcript_pending_apps=transcript_pending_apps,ready_apps=ready_apps,under_review_apps=under_review_apps,dec_ready_apps=dec_ready_apps)
 
-@app.route('/gs/transcript/<app_id>/receive', methods=['POST'])
+@apps_bp.route('/gs/transcript/<app_id>/receive', methods=['POST'])
 @login_required
 @role_required(3)
 def mark_transcript_received(app_id):
@@ -588,17 +592,17 @@ def mark_transcript_received(app_id):
 
     if not application:
         flash('Application not found')
-        return redirect(url_for('gs'))
+        return redirect(url_for('apps.gs'))
 
     transcript = db.execute('SELECT * FROM transcripts WHERE app_id=?',[app_id]).fetchone()
 
     if not transcript:
         flash('Transcript record not found for this application')
-        return redirect(url_for('gs'))
+        return redirect(url_for('apps.gs'))
 
     if transcript['received']:
         flash('Transcript has already been marked as received')
-        return redirect(url_for('gs'))
+        return redirect(url_for('apps.gs'))
 
     db.execute("UPDATE transcripts SET received=1, received_date=DATE('now') WHERE app_id=?", [app_id])
 
@@ -606,9 +610,9 @@ def mark_transcript_received(app_id):
 
     db.commit()
     flash('Transcript marked as received successfully')
-    return redirect(url_for('gs'))
+    return redirect(url_for('apps.gs'))
 
-@app.route('/dashboard/cac_gs')
+@apps_bp.route('/dashboard/cac_gs')
 @login_required
 @role_required(3, 4)
 def cac_gs_dashboard():
@@ -634,7 +638,7 @@ def cac_gs_dashboard():
 
     return render_template( 'cac_gs_dashboard.html', applications=applications, reviewers=reviewers, role =role)
 
-@app.route('/dashboard/cac_gs/application/<app_id>')
+@apps_bp.route('/dashboard/cac_gs/application/<app_id>')
 @login_required
 @role_required(3, 4)
 def view_application(app_id):
@@ -663,7 +667,7 @@ def view_application(app_id):
         recommendations=recommendations)
 
 
-@app.route('/reviews/assigned', methods=['GET'])
+@apps_bp.route('/reviews/assigned', methods=['GET'])
 @login_required
 @role_required(2, 4)
 def assigned_reviews():
@@ -685,7 +689,7 @@ def assigned_reviews():
     return render_template('reviewapp.html', assigned_apps=assigned_apps , completed_apps=completed_apps)
 
 
-@app.route('/createacc', methods=['GET', 'POST'])
+@apps_bp.route('/createacc', methods=['GET', 'POST'])
 @login_required
 @role_required(5)
 def create_acc():
@@ -711,16 +715,16 @@ def create_acc():
                 [username, email, generate_password_hash(password), role])
                 db.commit()
                 flash('Account created successfully', 'success')
-                return redirect(url_for('admin'))
+                return redirect(url_for('apps.admin'))
     return render_template('createacc.html')
 
-@app.route('/admin')
+@apps_bp.route('/admin')
 @login_required
 @role_required(5)
 def admin():
     return render_template('admin.html')
 
-@app.route('/dashboard/cac_gs/assign_reviewers', methods=['POST'])
+@apps_bp.route('/dashboard/cac_gs/assign_reviewers', methods=['POST'])
 @login_required
 @role_required(4)
 def assign_reviewers():
@@ -736,23 +740,23 @@ def assign_reviewers():
 
     if not application_id or not reviewer_ids:
         flash('You must choose at least one reviewer')
-        return redirect(url_for('cac_gs_dashboard'))
+        return redirect(url_for('apps.cac_gs_dashboard'))
 
     application = db.execute('SELECT * FROM applications WHERE app_id=?',[application_id]).fetchone()
 
     if not application:
         flash('Application not found')
-        return redirect(url_for('cac_gs_dashboard'))
+        return redirect(url_for('apps.cac_gs_dashboard'))
 
     if application['status'] != 'Complete':
         flash('Reviewers have already been assigned for this application')
-        return redirect(url_for('cac_gs_dashboard'))
+        return redirect(url_for('apps.cac_gs_dashboard'))
 
     existing_reviews = db.execute('SELECT * FROM review WHERE app_id=?',[application_id]).fetchall()
 
     if existing_reviews:
         flash('Reviewers have already been assigned for this application')
-        return redirect(url_for('cac_gs_dashboard'))
+        return redirect(url_for('apps.cac_gs_dashboard'))
 
     for reviewer_id in reviewer_ids:
         reviewer = db.execute('SELECT * FROM faculty JOIN users ON faculty.user_id = users.user_id WHERE faculty.user_id=? AND role_id IN (2, 4)',
@@ -760,7 +764,7 @@ def assign_reviewers():
 
         if not reviewer:
             flash('One of the reviewers is invalid')
-            return redirect(url_for('cac_gs_dashboard'))
+            return redirect(url_for('apps.cac_gs_dashboard'))
 
     last_review = db.execute("SELECT review_id FROM review ORDER BY review_id DESC LIMIT 1").fetchone()
 
@@ -780,14 +784,14 @@ def assign_reviewers():
 
     db.commit()
     flash('Reviewers assigned successfully')
-    return redirect(url_for('cac_gs_dashboard'))
+    return redirect(url_for('apps.cac_gs_dashboard'))
 
-@app.route('/cac')
+@apps_bp.route('/cac')
 @login_required
 @role_required(4)
 def cac_home():
     if 'user' not in session:
-        return redirect(url_for('login'))
+        return redirect(url_for('apps.login'))
     db = get_db()
 
     ready_apps = db.execute("SELECT * FROM applications JOIN applicants ON applications.uid = applicants.uid WHERE status = 'Complete' ").fetchall()
@@ -799,7 +803,7 @@ def cac_home():
     return render_template('cac.html', ready_apps=ready_apps, under_review_apps=under_review_apps,
         dec_ready_apps = dec_ready_apps)
 
-@app.route('/reviews/<app_id>', methods=['GET','POST'])
+@apps_bp.route('/reviews/<app_id>', methods=['GET','POST'])
 @login_required
 @role_required(2, 4)
 def review_application(app_id):    
@@ -813,17 +817,17 @@ def review_application(app_id):
         WHERE applications.app_id=?""",[app_id]).fetchone()
     if not application:
         flash('Application not found')
-        return redirect(url_for('assigned_reviews'))
+        return redirect(url_for('apps.assigned_reviews'))
     
     if application['status'] not in ['Complete', 'Under Review']:
         flash('This application is not ready for review.')
-        return redirect(url_for('assigned_reviews'))
+        return redirect(url_for('apps.assigned_reviews'))
     
     assigned_review = db.execute('SELECT * FROM review WHERE app_id=? AND reviewer_id=?',[app_id, username]).fetchone()
 
     if not assigned_review:
         flash('You are not assigned to review this application')
-        return redirect(url_for('assigned_reviews'))
+        return redirect(url_for('apps.assigned_reviews'))
     
     degrees = db.execute('SELECT * FROM previous_deg WHERE app_id=?',[app_id]).fetchall()
     gre = db.execute('SELECT * FROM gre WHERE app_id=?',[app_id]).fetchone()
@@ -869,12 +873,12 @@ def review_application(app_id):
 
         db.commit()
         flash('Review submitted successfully')
-        return redirect(url_for('assigned_reviews'))
+        return redirect(url_for('apps.assigned_reviews'))
         
     return render_template('reviewapp.html', application = application, degrees=degrees, 
     gre=gre,workex=workex,recommendations= recommendations, advisors=advisors, review=assigned_review)
 
-@app.route('/modifyacc', methods=['GET', 'POST'])
+@apps_bp.route('/modifyacc', methods=['GET', 'POST'])
 @login_required
 @role_required(5) 
 def modifyacc():
@@ -893,7 +897,7 @@ def modifyacc():
     }
     return render_template('modifyacc.html', users=users, role_map = role_map)
 
-@app.route('/modifyacc/<username>', methods=['GET', 'POST'])
+@apps_bp.route('/modifyacc/<username>', methods=['GET', 'POST'])
 @login_required
 @role_required(5)
 def modify_user(username):
@@ -943,7 +947,7 @@ def modify_user(username):
                         db.execute('UPDATE review SET review_id=? WHERE app_id=?', [revid, old_appid])
                     else:
                         flash('That Review ID is already in use', 'warning')
-                        return redirect(url_for('modify_user', username=username))
+                        return redirect(url_for('apps.modify_user', username=username))
 
             if appid and old_appid:
                 has_app = True
@@ -973,13 +977,13 @@ def modify_user(username):
             warned = True
         if not warned:
             flash('Account updated successfully', 'success')
-        return redirect(url_for('modify_user', username=user_name))
+        return redirect(url_for('apps.modify_user', username=user_name))
     return render_template('editacc.html', user = user)
 
 
 
 #Mostly a copy and paste of the original application with slight tweaks to make it suitable for admin
-@app.route('/modifyacc/<username>/application/create', methods=['GET', 'POST'])
+@apps_bp.route('/modifyacc/<username>/application/create', methods=['GET', 'POST'])
 @login_required
 @role_required(5)
 def admin_create_app(username):
@@ -991,7 +995,7 @@ def admin_create_app(username):
         existing_app = db.execute('SELECT * FROM applications WHERE uid=?', [applicant['uid']]).fetchone()
         if existing_app:
             flash('This user already has an application', 'warning')
-            return redirect(url_for('modify_user', username=username))
+            return redirect(url_for('apps.modify_user', username=username))
 
     if request.method == 'POST':
 
@@ -1120,12 +1124,12 @@ def admin_create_app(username):
         db.commit()
 
         flash('Application submitted successfully!', 'Success')
-        return redirect(url_for('modify_user', username=username))
+        return redirect(url_for('apps.modify_user', username=username))
 
     return render_template('admin_create_application.html', username=username)
 
 #Differs mainly in updating over inserting. Its a lot of redundant code tbh but oh well
-@app.route('/modifyacc/<username>/application/edit', methods=['GET', 'POST'])   
+@apps_bp.route('/modifyacc/<username>/application/edit', methods=['GET', 'POST'])   
 @login_required
 @role_required(5)
 def admin_edit_app(username):
@@ -1134,12 +1138,12 @@ def admin_edit_app(username):
     
     if not applicant:
         flash('This user has no application', 'warning')
-        return redirect(url_for('modify_user', username=username))
+        return redirect(url_for('apps.modify_user', username=username))
     
     appdata = db.execute('SELECT * FROM applications WHERE uid=?', [applicant['uid']]).fetchone()
     if not appdata:
         flash('This user has no existing application', 'warning')
-        return redirect(url_for('modify_user', username=username))
+        return redirect(url_for('apps.modify_user', username=username))
     aid = appdata['app_id']
     degrees         = db.execute('SELECT * FROM previous_deg WHERE app_id=?', [aid]).fetchall()
     gre             = db.execute('SELECT * FROM gre WHERE app_id=?', [aid]).fetchone()
@@ -1241,14 +1245,14 @@ def admin_edit_app(username):
         db.commit()
 
         flash('Application updated successfully', 'success')
-        return redirect(url_for('modify_user', username=username))
+        return redirect(url_for('apps.modify_user', username=username))
 
     return render_template('admin_edit_application.html', username=username,
                            appdata=appdata, degrees=degrees, gre=gre,
                            workex=workex, recommendation=recommendation, transcript=transcript, program=program, applicant=applicant)
     
 
-@app.route('/dashboard/cac_gs/final_decision/<app_id>', methods=['GET', 'POST'])
+@apps_bp.route('/dashboard/cac_gs/final_decision/<app_id>', methods=['GET', 'POST'])
 @login_required
 @role_required(3, 4)
 def final_decision(app_id):
@@ -1263,11 +1267,11 @@ def final_decision(app_id):
 
     if not application:
         flash('Application not found')
-        return redirect(url_for('cac_gs_dashboard'))
+        return redirect(url_for('apps.cac_gs_dashboard'))
 
     if application['status'] != 'Reviewed':
         flash('Final decision can only be entered after all reviews are completed')
-        return redirect(url_for('cac_gs_dashboard'))
+        return redirect(url_for('apps.cac_gs_dashboard'))
 
     reviews = db.execute("""SELECT * FROM review
         JOIN faculty ON review.reviewer_id = faculty.user_id
@@ -1323,11 +1327,11 @@ def final_decision(app_id):
 
         db.commit()
         flash('Final decision recorded successfully')
-        return redirect(url_for('cac_gs_dashboard'))
+        return redirect(url_for('apps.cac_gs_dashboard'))
 
     return render_template('final_decision.html', application=application, reviews=reviews, average_rating=average_rating)
 
-@app.route('/forgot_password', methods=['GET', 'POST'])
+@apps_bp.route('/forgot_password', methods=['GET', 'POST'])
 def forgot_password():
     if request.method == 'POST':
         username = request.form.get('username', '').strip()
@@ -1347,10 +1351,10 @@ def forgot_password():
                    [req_id, username])
         db.commit()
         flash('Reset request submitted. An admin will reset your password shortly.')
-        return redirect(url_for('login'))
+        return redirect(url_for('apps.login'))
     return render_template('forgot_password.html')
 
-@app.route('/admin/password_reset')
+@apps_bp.route('/admin/password_reset')
 @login_required
 @role_required(5)
 def admin_password_reset():
@@ -1360,7 +1364,7 @@ def admin_password_reset():
     ).fetchall()
     return render_template('admin_password_reset.html', requests=requests)
 
-@app.route('/admin/password_reset/<req_id>/reset', methods=['POST'])
+@apps_bp.route('/admin/password_reset/<req_id>/reset', methods=['POST'])
 @login_required
 @role_required(5)
 def admin_do_reset(req_id):
@@ -1368,19 +1372,19 @@ def admin_do_reset(req_id):
     req = db.execute('SELECT * FROM password_reset_requests WHERE req_id=?', [req_id]).fetchone()
     if not req:
         flash('Request not found.')
-        return redirect(url_for('admin_password_reset'))
+        return redirect(url_for('apps.admin_password_reset'))
     new_password = request.form.get('new_password', '').strip()
     if not new_password:
         flash('New password cannot be empty.')
-        return redirect(url_for('admin_password_reset'))
+        return redirect(url_for('apps.admin_password_reset'))
     db.execute('UPDATE users SET password=? WHERE user_id=?',
                [generate_password_hash(new_password), req['user_id']])
     db.execute("UPDATE password_reset_requests SET status='Resolved' WHERE req_id=?", [req_id])
     db.commit()
     flash(f"Password reset for {req['user_id']}.")
-    return redirect(url_for('admin_password_reset'))
+    return redirect(url_for('apps.admin_password_reset'))
 
-@app.route('/admin/password_reset/<req_id>/dismiss', methods=['POST'])
+@apps_bp.route('/admin/password_reset/<req_id>/dismiss', methods=['POST'])
 @login_required
 @role_required(5)
 def admin_dismiss_reset(req_id):
@@ -1388,8 +1392,11 @@ def admin_dismiss_reset(req_id):
     db.execute("UPDATE password_reset_requests SET status='Dismissed' WHERE req_id=?", [req_id])
     db.commit()
     flash('Request dismissed.')
-    return redirect(url_for('admin_password_reset'))
+    return redirect(url_for('apps.admin_password_reset'))
 
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080)
+def init_apps(app):
+    app.secret_key = app.secret_key or os.environ.get('SECRET_KEY', os.urandom(24))
+    app.config.setdefault('SESSION_PERMANENT', False)
+    app.config.setdefault('SESSION_TYPE', 'filesystem')
+    Session(app)

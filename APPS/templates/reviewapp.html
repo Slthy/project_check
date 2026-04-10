@@ -18,7 +18,7 @@
                             Applicant UID: {{ app['uid'] }} |
                             {{ app['fname'] }} {{ app['lname'] }} |
                             Status: {{ app['status'] }}
-                            <a href="{{ url_for('review_application', app_id=app['app_id']) }}">Open Review Form</a>
+                            <a href="{{ url_for('apps.review_application', app_id=app['app_id']) }}">Open Review Form</a>
                         </li>
                     {% endfor %}
                 </ul>
