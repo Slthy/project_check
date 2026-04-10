@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Grad Secretary Dashboard | ADS{% endblock %}
+
+{% block content %}
+<section class="dashboard-shell">
+    <section class="dashboard-hero">
+        <h2>Grad Secretary Dashboard</h2>
+        <p>Coordinate advisor assignments and graduation approvals for student records.</p>
+    </section>
+
+    <section class="dashboard-grid">
+        <section class="dashboard-actions">
+            <a class="dashboard-action-card" href="{{ url_for('gs.assign_advisor') }}">
+                <h3>Assign Advisor</h3>
+                <p>Match students to advisors and maintain advising coverage.</p>
+            </a>
+            <a class="dashboard-action-card" href="{{ url_for('gs.approve_graduation') }}">
+                <h3>Approve Graduation</h3>
+                <p>Review graduation submissions and confirm completion status.</p>
+            </a>
+        </section>
+
+        <aside class="dashboard-side">
+            <section class="dashboard-panel">
+                <h3>Checklist</h3>
+                <ul>
+                    <li>Assign advisors before reviewing advisor-dependent records.</li>
+                    <li>Confirm missing documents before final graduation decisions.</li>
+                    <li>Use review pages to leave clear decision notes.</li>
+                </ul>
+            </section>
+            <section class="dashboard-panel">
+                <h3>Tip</h3>
+                <p>Prioritize students with pending graduation requests first.</p>
+            </section>
+        </aside>
+    </section>
+</section>
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Alumni Transcript | ADS{% endblock %}
+ 
+{% block content %}
+<h1>Alumni Transcript</h1>
+
+{% if alumni %}
+<p><strong>Alumni:</strong> {{ alumni.first_name }} {{ alumni.last_name }}</p>
+<p><strong>UID:</strong> {{ alumni.uid }}</p>
+<p><strong>Program:</strong> {{ alumni.program_code }} - {{ alumni.program_name }}</p>
+<p><strong>Graduation:</strong> {{ alumni.graduation_term_name }} {{ alumni.graduation_year }}</p>
+
+<section class="student-metrics">
+    <article class="student-metric-card">
+        <p class="student-metric-label">GPA</p>
+        <p class="student-metric-value">{{ gpa if gpa is not none else '--' }}</p>
+    </article>
+    <article class="student-metric-card">
+        <p class="student-metric-label">Total Credits</p>
+        <p class="student-metric-value">{{ total_credits }}</p>
+    </article>
+</section>
+
+<table border="1" cellpadding="6" cellspacing="0">
+    <thead>
+        <tr>
+            <th>Dept</th>
+            <th>Course Number</th>
+            <th>Title</th>
+            <th>Credits</th>
+            <th>Semester</th>
+            <th>Year</th>
+            <th>Grade</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if transcript_rows %}
+            {% for row in transcript_rows %}
+                <tr>
+                    <td>{{ row.department_code }}</td>
+                    <td>{{ row.course_number }}</td>
+                    <td>{{ row.title }}</td>
+                    <td>{{ row.credit_hours }}</td>
+                    <td>{{ row.term_name }}</td>
+                    <td>{{ row.year_taken }}</td>
+                    <td>{{ row.grade_code }}</td>
+                </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td colspan="7">No courses found.</td>
+            </tr>
+        {% endif %}
+    </tbody>
+</table>
+
+{% else %}
+<p>No alumni profile was found for this account.</p>
+{% endif %}
+
+<p><a href="{{ url_for('alumni.alumni_dashboard') }}">Back to {{ session.get('username') }}'s Dashboard</a></p>
+{% endblock %}

@@ -37,11 +37,9 @@ def instance():
     def get_locale():
         if 'lang' in session:
             return session['lang']
-
-        return request.accept_languages.best_match(['en', 'it', 'ar', 'es'])
+        return request.accept_languages.best_match(['en', 'it', 'ar', 'es', 'fr', 'hi'])
 
     babel.init_app(app, locale_selector=get_locale)
-
     setup_logger(app)
 
     app.register_blueprint(auth, url_prefix='/auth')
@@ -53,10 +51,8 @@ def instance():
     @app.route('/set_language', methods=['POST'])
     def set_language():
         language = request.form.get('language')
-
         if language in ['en', 'it', 'ar', 'es', 'fr', 'hi']:
             session['lang'] = language
-
         return redirect(request.referrer or url_for('home'))
 
     @app.route('/')
@@ -115,15 +111,7 @@ def instance():
                             city = %s, state = %s, zip = %s, country_code = %s
                         WHERE a_id = %s
                         ''',
-                        (
-                            line_one,
-                            line_two,
-                            city,
-                            state,
-                            zip_code,
-                            country_code,
-                            session['user_id'],
-                        ),
+                        (line_one, line_two, city, state, zip_code, country_code, session['user_id'],),
                     )
                     conn.commit()
                     flash(_('Profile updated successfully.'), 'success')

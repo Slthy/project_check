@@ -1,0 +1,48 @@
+<html>
+<head>
+    <title>Student Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <h1>Student Dashboard</h1>
+    <h2>Your advisor is </h2>
+    {% if student %}
+        <p>Welcome! You were admitted for <strong>{{ student['start_semester'] }} {{ student['start_year'] }}</strong>.</p>
+        <table>
+            <tr>
+                <th>Field</th>
+                <th>Details</th>
+            </tr>
+            <tr>
+                <td>Program</td>
+                <td>{{app_data['pname'] if app_data else 'N/A'}}</td>
+            </tr>
+            <tr>
+                <td>Degree</td>
+                <td>{{ app_data['deg_type'] if app_data else 'N/A' }}</td>
+            </tr>
+            <tr>
+                <td>Application Status</td>
+                <td>{{ app_data['status'] if app_data else 'N/A' }}</td>
+            </tr>
+            <tr>
+                <td>Final Decision</td>
+                <td>{{ app_data['final_dec'] if app_data else 'N/A' }}</td>
+            </tr>
+            <tr>
+                <td>Advisor</td>
+                <td>
+                    {% if advisor %}
+                        {{ advisor['fname'] }} {{ advisor['lname'] }} ({{ advisor['user_id'] }})
+                    {% else %}
+                        No advisor assigned yet
+                    {% endif %}
+                </td>
+            </tr>
+        </table>
+    {% else %}
+        <p>No student record found.</p>
+    {% endif %}
+    <p><a href="/logout">Logout</a></p>
+</body>
+</html>

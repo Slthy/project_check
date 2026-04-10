@@ -1,0 +1,58 @@
+<html>
+    <head>
+        <title>Final Decision</title>
+        <link rel="stylesheet" href="/static/style.css">
+    </head>
+
+    <body>
+        <h1>Final Decision</h1>
+
+        <h2>Applicant Summary</h2>
+        <p><strong>Name:</strong> {{ application['lname'] }}, {{ application['fname'] }}</p>
+        <p><strong>Student Number:</strong> {{ application['uid'] }}</p>
+        <p><strong>Semester and Year:</strong> {{ application['semester'] }} {{ application['app_year'] }}</p>
+        <p><strong>Applying for Degree:</strong> {{ application['deg_type'] }}</p>
+        <p><strong>Status:</strong> {{ application['status'] }}</p>
+
+        <h2>Reviewer Evaluations</h2>
+        {% if reviews %}
+            <ul>
+                {% for review in reviews %}
+                    <li>
+                        <p>Reviewer ID: {{ review['reviewer_id'] }} </p>
+                        <p>Reviewer Name: {{ review['fname'] }} {{ review['lname'] }} </p>
+                        <p>Rating: {{ review['rating'] }} </p>
+                        <p>Recommended Advisor: {{ review['recom_advisor_id'] }} </p>
+                        <p>Reject Reason: {{ review['reject_reason'] }} </p>
+                        <p>Deficiency Courses: {{ review['deficiency_courses'] }} </p>
+                        <p>Comments: {{ review['comments'] }} </p>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No submitted reviews found.</p>
+        {% endif %}
+
+        <h2>Average Reviewer Score</h2>
+        <p><strong>Average Rating:</strong> {{ average_rating }}</p>
+
+        <h2>Committee Final Decision</h2>
+        <form method="POST">
+            <p>
+                <label for="final_decision">Final Decision:</label>
+                <select name="final_decision" id="final_decision" required>
+                    <option value="">Select Decision</option>
+                    <option value="Admit with Aid">Admit with Aid</option>
+                    <option value="Admit">Admit</option>
+                    <option value="Reject">Reject</option>
+                </select>
+            </p>
+
+            <p>
+                <button type="submit">Submit Final Decision</button>
+            </p>
+        </form>
+
+        <p><a href="{{ url_for('cac_gs_dashboard') }}">Back to CAC/GS Dashboard</a></p>
+    </body>
+</html>

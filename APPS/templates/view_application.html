@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Application Information</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <h1>Application Details: {{ application['app_id'] }}</h1>
+
+   <div class="details-section">
+        <h2>Personal Information</h2>
+        <table>
+            <tr><th>Full Name</th><td>{{ application['fname'] }} {{ application['lname'] }}</td></tr>
+            <tr><th>Applicant UID</th><td>{{ application['uid'] }}</td></tr>
+            <tr><th>User ID</th><td>{{ application['user_id'] }}</td></tr>
+            <tr><th>Email</th><td>{{ application['email'] }}</td></tr>
+            <tr><th>Address</th><td>{{ application['address'] }}</td></tr>
+            <tr><th>Date of Birth</th><td>{{ application['dob'] }}</td></tr>
+            <tr><th>SSN</th><td>***-**-{{ application['ssn'][-4:] if application['ssn'] else 'N/A' }}</td></tr>
+        </table>
+    </div>
+
+    <div class="details-section">
+        <h2>Application Status & Program</h2>
+        <table>
+            <tr><th>Degree Sought</th><td>{{ "PhD" if application['deg_no'] == 2 else "MS" }}</td></tr>
+            <tr><th>Program ID</th><td>{{ application['pro_no'] }}</td></tr>
+            <tr><th>Semester/Year</th><td>{{ application['semester'] }} {{ application['app_year'] }}</td></tr>
+            <tr><th>Current Status</th><td><strong>{{ application['status'] }}</strong></td></tr>
+            <tr><th>Final Decision</th><td>{{ application['final_dec'] or 'Pending' }}</td></tr>
+        </table>
+    </div>
+
+    <div class="details-section">
+        <h2>Academic Scores</h2>
+        <table>
+            <tr><th>TOEFL Score</th><td>{{ application['toefl_score'] or 'N/A' }}</td></tr>
+            <tr><th>TOEFL Exam Year</th><td>{{ application['toefl_exam_year'] or 'N/A' }}</td></tr>
+            <tr><th>GRE Verbal</th><td>{{ gre['verbal'] or 'N/A' }}</td></tr>
+            <tr><th>GRE Quantitative</th><td>{{ gre['quantitative'] or 'N/A' }}</td></tr>
+            <tr><th>GRE Total</th><td>{{ gre['total'] or 'N/A' }}</td></tr>
+            <tr><th>GRE Subject</th><td>{{ gre['subj_name'] or 'None' }} (Score: {{ gre['subj_score'] or 'N/A' }})</td></tr>
+        </table>
+    </div>
+
+    <div class="details-section">
+        <h2>Previous Degrees</h2>
+        {% if previous_degs %}
+            <table>
+                <thead>
+                    <tr><th>Type</th><th>Major</th><th>University</th><th>Year</th><th>GPA</th></tr>
+                </thead>
+                <tbody>
+                    {% for deg in previous_degs %}
+                    <tr>
+                        <td>{{ deg['dtype'] }}</td>
+                        <td>{{ deg['dmajor'] }}</td>
+                        <td>{{ deg['duni'] }}</td>
+                        <td>{{ deg['dyear'] }}</td>
+                        <td>{{ deg['dGPA'] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No previous degrees listed.</p>
+        {% endif %}
+    </div>
+
+    <div class="details-section">
+        <h2>Work Experience</h2>
+        {% if work_experience %}
+            {% for work in work_experience %}
+                <div style="background: #fffdf7; padding: 10px; margin-bottom: 10px; border-left: 4px solid #7a4e10;">
+                    <p><strong>{{ work['job_title'] }}</strong> at {{ work['com_name'] }}</p>
+                    <p><small>{{ work['start_date'] }} to {{ work['end_date'] or 'Present' }}</small></p>
+                    <p>{{ work['description'] }}</p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No work experience provided.</p>
+        {% endif %}
+    </div>
+
+    <div class="details-section">
+        <h2>Recommendations</h2>
+        {% if recommendations %}
+            <table>
+                <tr><th>Name</th><th>Affiliation/Title</th><th>Email</th><th>Submitted?</th></tr>
+                {% for rec in recommendations %}
+                <tr>
+                    <td>{{ rec['rfname'] }} {{ rec['rlname'] }}</td>
+                    <td>{{ rec['rtitle'] }}, {{ rec['raffiliation'] }}</td>
+                    <td>{{ rec['remail'] }}</td>
+                    <td>{{ '✅ Yes' if rec['submitted'] else '❌ No' }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        {% endif %}
+    </div>
+
+    <div class="details-section">
+        <h2>Statements</h2>
+        <p><strong>Areas of Interest:</strong><br>{{ application['areas_of_interest'] or 'None provided' }}</p>
+        <p><strong>Experience Summary:</strong><br>{{ application['experience_summary'] or 'None provided' }}</p>
+    </div>
+
+    <div style="margin-top: 30px;">
+        <a href="{{ url_for('cac_gs_dashboard') }}">Back to Dashboard</a>
+        <a href="/logout" style="background-color: #a05050;">Logout</a>
+    </div>
+</body>
+</html>

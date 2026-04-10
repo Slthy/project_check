@@ -1,0 +1,57 @@
+<html>
+    <head>
+        <title>Create Account</title>
+        <link rel="stylesheet" href="/static/style.css">
+    </head>
+
+    <body>
+        <h1>Create New Account</h1>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        {% endwith %}
+
+        <form method="POST" action="/createacc">
+            <p>
+                <label>Username:</label>
+                <br>
+                <input type="text" name="username" required>
+            </p>
+
+            <p>
+                <label>Email:</label>
+                <br>
+                <input type="email" name="email" required>
+            </p>
+            <p>
+                <label>Password:</label>
+                <br>
+                <input type="password" name="password" required>
+            </p>
+            <p>
+                <label>Confirm Password</label>
+                <br>
+                <input type="password" name="confirm_password" required>
+            </p>
+            <p>
+            <Label>Role:</Label>
+            <br>
+            <select name="role">
+                <option value="">-- Select a Role --</option>
+                <option value="0">Applicant</option>
+                <option value="1">Student</option>
+                <option value="2">Faculty</option>
+                <option value="3">Graduate Secretary</option>
+                <option value="4">Chair of Admissions Committee</option>
+                <option value="5">Admin</option>
+            </select>
+            </p>
+            <br>
+            <button type="submit">Create Account</button>
+        </form>
+        <p>
+            <a href="/admin">Return to Admin Dashboard</a>
+        </p>
+    </body>
+</html>

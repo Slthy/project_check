@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Approve Graduation | ADS{% endblock %}
+ 
+{% block content %}
+<h1>Approve Graduation</h1>
+<h2>Review students whose graduation audit passed</h2>
+
+{% if applications %}
+<table border="1" cellpadding="6" cellspacing="0">
+    <thead>
+        <tr>
+            <th>UID</th>
+            <th>Student</th>
+            <th>Program</th>
+            <th>GS Decision</th>
+            <th>Review</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for app in applications %}
+        <tr>
+            <td>{{ app.uid }}</td>
+            <td>
+                <a href="{{ url_for('gs.review_graduation_application', student_id=app.student_id) }}">
+                    {{ app.first_name }} {{ app.last_name }}
+                </a>
+            </td>
+            <td>{{ app.program_code }} - {{ app.program_name }}</td>
+            {% set gs_decision = (app.gs_decision or 'pending')|lower %}
+            <td>
+                <span class="status {% if gs_decision in ['approved', 'passed'] %}status-success{% elif gs_decision in ['rejected', 'failed'] %}status-danger{% elif gs_decision in ['pending', 'not submitted', 'not audited'] %}status-warning{% endif %}">
+                    {{ gs_decision|title }}
+                </span>
+            </td>
+            <td>
+                <a href="{{ url_for('gs.review_graduation_application', student_id=app.student_id) }}">
+                    <button type="button">Review Application</button>
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No students with cleared graduation audits were found.</p>
+{% endif %}
+
+<br>
+<a href="{{ url_for('gs.gs_dashboard') }}">Back to {{ session.get('username') }}'s Dashboard</a>
+{% endblock %}

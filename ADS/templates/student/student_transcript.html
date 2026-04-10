@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Transcript{% endblock %}
+
+{% block content %}
+<h2>Transcript</h2>
+
+{% if student %}
+<p><strong>Student:</strong> {{ student.first_name }} {{ student.last_name }}</p>
+<p><strong>UID:</strong> {{ student.uid }}</p>
+<p><strong>Program:</strong> {{ student.program_code }} - {{ student.program_name }}</p>
+
+<section class="student-metrics">
+    <article class="student-metric-card">
+        <p class="student-metric-label">GPA</p>
+        <p class="student-metric-value">{{ gpa if gpa is not none else '--' }}</p>
+    </article>
+    <article class="student-metric-card">
+        <p class="student-metric-label">Total Credits</p>
+        <p class="student-metric-value">{{ total_credits }}</p>
+    </article>
+</section>
+
+<p>
+    <strong>Academic Standing:</strong>
+    {% if suspension_active %}
+        <span class="status status-danger">Suspended</span>
+    {% else %}
+        <span class="status status-success">Good Standing</span>
+    {% endif %}
+</p>
+
+<section class="card">
+    <table>
+        <thead>
+            <tr>
+                <th>Dept</th>
+                <th>Course Number</th>
+                <th>Title</th>
+                <th>Credits</th>
+                <th>Semester</th>
+                <th>Year</th>
+                <th>Grade</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if transcript_rows %}
+                {% for row in transcript_rows %}
+                    <tr>
+                        <td>{{ row.department_code }}</td>
+                        <td>{{ row.course_number }}</td>
+                        <td>{{ row.title }}</td>
+                        <td>{{ row.credit_hours }}</td>
+                        <td>{{ row.term_name }}</td>
+                        <td>{{ row.year_taken }}</td>
+                        <td>{{ row.grade_code }}</td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="7">No courses found.</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</section>
+            <a class="dashboard-action-card" href="{{ url_for('student.download_transcript') }}">
+                <h3>Download Transcript</h3>
+                <p>Click to download your unofficial academic transcript.</p>
+            </a>
+{% else %}
+<p>No student profile found for this account.</p>
+{% endif %}
+{% endblock %}

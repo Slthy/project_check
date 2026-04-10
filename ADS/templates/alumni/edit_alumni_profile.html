@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Edit Alumni Profile | ADS{% endblock %}
+{% block content %}
+<h2>Edit Personal Information</h2>
+
+{% if alumni %}
+<p><strong>Alumni ID:</strong> {{ alumni.alumni_id }}</p>
+<p><strong>UID:</strong> {{ alumni.uid }}</p>
+<p><strong>Username:</strong> {{ alumni.username }}</p>
+<p><strong>Program:</strong> {{ alumni.program_code }} - {{ alumni.program_name }}</p>
+
+<form method="POST">
+    <p>
+        <label for="first_name"><strong>First Name:</strong></label><br>
+        <input type="text" id="first_name" name="first_name" value="{{ alumni.first_name }}" required>
+    </p>
+    <p>
+        <label for="last_name"><strong>Last Name:</strong></label><br>
+        <input type="text" id="last_name" name="last_name" value="{{ alumni.last_name }}" required>
+    </p>
+    <p>
+        <label for="address"><strong>Address:</strong></label><br>
+        <input type="text" id="address" name="address" value="{{ alumni.address or '' }}">
+    </p>
+    <p>
+        <label for="email"><strong>Email:</strong></label><br>
+        <input type="email" id="email" name="email" value="{{ alumni.email or '' }}">
+    </p>
+    <button type="submit">Save Changes</button>
+</form>
+
+<p><a href="{{ url_for('alumni.alumni_profile') }}">Back to Profile</a></p>
+{% else %}
+<p>No alumni profile was found for this account.</p>
+{% endif %}
+{% endblock %}

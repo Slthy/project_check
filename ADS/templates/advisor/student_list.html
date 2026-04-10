@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}My Students | ADS{% endblock %}
+
+{% block content %}
+<h2>My Students</h2>
+
+{% if students %}
+<table border="1" cellpadding="6" cellspacing="0">
+    <thead>
+        <tr>
+            <th>UID</th>
+            <th>Name</th>
+            <th>Program</th>
+            <th>Academic Standing</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for student in students %}
+        <tr>
+            <td>{{ student.uid }}</td>
+            <td>
+                <a href="{{ url_for('advisor.advisor_student_detail', student_id=student.student_id) }}">
+                    {{ student.first_name }} {{ student.last_name }}
+                </a>
+            </td>
+            <td>{{ student.program_code }} - {{ student.program_name }}</td>
+            <td>
+                {% if student.grades_below_b_count >= 3 %}
+                    <span class="status status-danger">Suspended</span>
+                {% else %}
+                    <span class="status status-success">Good Standing</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>You have no students connected to you yet.</p>
+{% endif %}
+
+<br>
+<a href="{{ url_for('advisor.advisor_dashboard') }}">Back to {{ session.get('username') }}'s Dashboard</a>
+{% endblock %}

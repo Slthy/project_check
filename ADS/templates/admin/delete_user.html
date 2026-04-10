@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Delete User | ADS{% endblock %}
+
+{% block content %}
+<h1>Delete User</h1>
+<h2>Delete an existing user account</h2>
+<a href="{{ url_for('admin.admin_dashboard') }}">Back to {{ session.get('username') }}'s Dashboard</a>
+
+<form method="POST">
+    <p>
+        <label>Name of user to be deleted(exact username):</label><br>
+        <input type="text" name="username" required>
+    </p>
+    <input type="submit" value="Delete User">
+</form>
+{% endblock %}

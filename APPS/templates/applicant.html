@@ -1,0 +1,42 @@
+<html>
+<head>
+    <title>Applicant Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <h1>Applicant Dashboard</h1>
+
+    {% if app_data %}
+        <p>You have already submitted an application.</p>
+        <p>
+            Status:
+            <strong>
+                {% if app_data['final_dec'] == 'Reject' %}
+                    Your application for admission has been denied.
+                {% elif app_data['final_dec'] in ['Admit', 'Admit with Aid'] %}
+                    Congratulations you have been admitted.
+                {% elif app_data['status'] in ['Complete', 'Under Review', 'Reviewed'] %}
+                    Application Complete and Under Review / No Decision Yet
+                {% else %}
+                    Application Incomplete
+                {% endif %}
+            </strong>
+        </p>
+
+        {% if app_data['final_dec'] in ['Admit', 'Admit with Aid'] and student_account %}
+            <p>
+                <strong>Student Account Created:</strong><br>
+                Username: {{ student_account['user_id'] }}<br>
+                Temporary Password: changeme123
+            </p>
+        {% endif %}
+
+        <p><a href="/applicant/status">View Full Status</a></p>
+    {% else %}
+        <p><a href="/applicant/application">Apply Now</a></p>
+    {% endif %}
+
+    <p><a href="/applicant/status">Check Application Status</a></p>
+    <p><a href="/logout">Logout</a></p>
+</body>
+</html>

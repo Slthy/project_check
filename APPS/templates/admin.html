@@ -1,0 +1,30 @@
+<!--Administrator priveledges go here-->
+
+<html>
+
+<head>
+    <title>Admin</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+
+<body>
+    <h1>Admin Dashboard</h1>
+    <p>
+        <a href="/createacc">Create New Account</a>
+    </p>
+    <br>
+    <p>
+        <a href="/modifyacc">Modify Existing Account</a>
+    </p>
+    <br>
+    <p>
+        <a href="{{url_for('admin_password_reset')}}">Password Reset Requests</a>
+    </p>
+    <br>
+    <p>
+        <a href="/logout">Logout</a>
+    </p>
+</body>
+
+</html>

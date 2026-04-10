@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Advisor Dashboard | ADS{% endblock %}
+
+{% block content %}
+<section class="dashboard-shell">
+    <section class="dashboard-hero">
+        <h2>Advisor Dashboard</h2>
+        <p>Review advisees, track progress, and complete required advising actions.</p>
+    </section>
+
+    <section class="dashboard-grid">
+        <section class="dashboard-actions">
+            <a class="dashboard-action-card" href="{{ url_for('advisor.student_list') }}">
+                <h3>View Advisees</h3>
+                <p>Open your advisee directory and view student details and transcripts.</p>
+            </a>
+            <a class="dashboard-action-card" href="{{ url_for('advisor.review_form1_list') }}">
+                <h3>Review Submissions</h3>
+                <p>Review advisees whose latest Form 1 or Thesis Defense has passed audit.</p>
+            </a>
+        </section>
+
+        <aside class="dashboard-side">
+            <section class="dashboard-panel">
+                <h3>Advising Notes</h3>
+                <ul>
+                    <li>Review Form 1 or Thesis Defense submissions promptly after student updates.</li>
+                    <li>Verify prerequisites and course sequencing when approving.</li>
+                    <li>Keep comments specific to help students revise faster.</li>
+                </ul>
+            </section>
+        </aside>
+    </section>
+</section>
+{% endblock %}

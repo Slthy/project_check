@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Alumni Dashboard | ADS{% endblock %}
+
+{% block content %}
+<section class="dashboard-shell">
+    <section class="dashboard-hero">
+        <h2>Alumni Dashboard</h2>
+        <p>View your academic history and maintain alumni profile information.</p>
+    </section>
+
+    <section class="dashboard-grid">
+        <section class="dashboard-actions">
+            <a class="dashboard-action-card" href="{{ url_for('alumni.alumni_profile') }}">
+                <h3>View Profile</h3>
+                <p>Review your stored profile details and contact information.</p>
+            </a>
+            <a class="dashboard-action-card" href="{{ url_for('alumni.alumni_transcript') }}">
+                <h3>View Transcript</h3>
+                <p>Access your completed degree coursework and grades.</p>
+            </a>
+        </section>
+
+        <aside class="dashboard-side">
+            <section class="dashboard-panel">
+                <h3>Helpful Notes</h3>
+                <ul>
+                    <li>Update profile details to keep records accurate.</li>
+                    <li>Use transcript export options when needed for verification.</li>
+                </ul>
+            </section>
+        </aside>
+    </section>
+</section>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Review Submissions | ADS{% endblock %}
+
+{% block content %}
+<h2>Review Submissions</h2>
+
+{% if students %}
+<table border="1" cellpadding="6" cellspacing="0">
+    <thead>
+        <tr>
+            <th>UID</th>
+            <th>Name</th>
+            <th>Program</th>
+            <th>Review Status</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for student in students %}
+        <tr>
+            <td>{{ student.uid }}</td>
+            <td>{{ student.first_name }} {{ student.last_name }}</td>
+            <td>{{ student.program_code }} - {{ student.program_name }}</td>
+            {% set review_status = (student.review_status or 'pending')|lower %}
+            <td>
+                <span class="status {% if review_status in ['approved', 'passed'] %}status-success{% elif review_status in ['rejected', 'failed'] %}status-danger{% elif review_status in ['pending', 'not submitted', 'not audited'] %}status-warning{% endif %}">
+                    {{ review_status|title }}
+                </span>
+            </td>
+            <td>
+                {% set review_label = 'Thesis Defense' if (student.program_code or '')|upper == 'PHD' else 'Form 1' %}
+                <a href="{{ url_for('advisor.review_form1', student_id=student.student_id) }}">
+                    <button type="button">Review {{ review_label }}</button>
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No advisees with audit-passed submissions were found.</p>
+{% endif %}
+
+<br>
+<a href="{{ url_for('advisor.advisor_dashboard') }}">Back to {{ session.get('username') }}'s Dashboard</a>
+{% endblock %}

@@ -1,0 +1,31 @@
+<html>
+
+<head>
+    <title>Application Status</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+    <h1>Application Status</h1>
+
+    {% if app_data %}
+    <p><strong>Application ID:</strong> {{ app_data['app_id'] }}</p>
+    <p><strong>Program:</strong> {{ app_data['pname'] }}</p>
+    <p><strong>Degree:</strong> {{ app_data['deg_type'] }}</p>
+    <p><strong>Semester:</strong> {{ app_data['semester'] }} {{ app_data['app_year'] }}</p>
+    <p><strong>Status:</strong> {{ status_message }}</p>
+    <ul>
+        <li>Transcript: {{ 'Received ✓' if transcript and transcript['received'] else 'Pending ✗' }}</li>
+        <li>Recommendation: {{ 'Submitted ✓' if recommendations and recommendations | selectattr('submitted') | list
+            else 'Pending ✗' }}</li>
+    </ul>
+    {% else %}
+    <p>{{ status_message }}</p>
+    {% endif %}
+
+    <p>
+        <a href="/applicant">Back to Applicant Dashboard</a>
+    </p>
+</body>
+
+</html>

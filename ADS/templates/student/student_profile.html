@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Student Profile | ADS{% endblock %}
+{% block content %}
+<section class="page-hero">
+    <h2>Student Profile</h2>
+    <p>Review your academic and contact details in one place.</p>
+</section>
+
+{% if student %}
+<section class="profile-grid">
+    <article class="card profile-card">
+        <h3>Personal Information</h3>
+        <dl class="profile-list">
+            <div>
+                <dt>UID</dt>
+                <dd>{{ student.uid }}</dd>
+            </div>
+            <div>
+                <dt>First Name</dt>
+                <dd>{{ student.first_name }}</dd>
+            </div>
+            <div>
+                <dt>Last Name</dt>
+                <dd>{{ student.last_name }}</dd>
+            </div>
+            <div>
+                <dt>Username</dt>
+                <dd>{{ student.username }}</dd>
+            </div>
+            <div>
+                <dt>Address</dt>
+                <dd>{{ student.address or 'N/A' }}</dd>
+            </div>
+            <div>
+                <dt>Email</dt>
+                <dd>{{ student.email or 'N/A' }}</dd>
+            </div>
+        </dl>
+    </article>
+
+    <article class="card profile-card profile-highlight">
+        <h3>Academic Information</h3>
+        <dl class="profile-list">
+            <div>
+                <dt>Program</dt>
+                <dd>{{ student.program_code }} - {{ student.program_name }}</dd>
+            </div>
+            <div>
+                <dt>Advisor</dt>
+                <dd>
+                    {% if student.advisor_first_name and student.advisor_last_name %}
+                        {{ student.advisor_first_name }} {{ student.advisor_last_name }}
+                    {% else %}
+                        Not assigned
+                    {% endif %}
+                </dd>
+            </div>
+        </dl>
+        <a class="btn profile-cta" href="{{ url_for('student.edit_student_profile') }}">Edit Personal Information</a>
+    </article>
+</section>
+{% else %}
+<section class="card profile-empty">
+    <p>No student profile was found for this account.</p>
+</section>
+{% endif %}
+{% endblock %}

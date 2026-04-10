@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Student Dashboard | ADS{% endblock %}
+
+{% block content %}
+{% set student_form_label = 'Thesis Defense' if session.get('student_program_code', '')|upper == 'PHD' else 'Form 1' %}
+<section class="dashboard-shell">
+    <section class="dashboard-hero">
+        <h2>Student Dashboard</h2>
+        <p>Access your academic records, advising forms, and graduation workflow.</p>
+    </section>
+    {% if suspension_active %}
+    <section class="card audit-problems" role="alert" aria-live="polite">
+        <p class="audit-problems-title"><strong>Academic Suspension Active</strong></p>
+        <p>You have {{ grades_below_b_count }} grade{% if grades_below_b_count != 1 %}s{% endif %} below B. Form and graduation audits are unavailable.</p>
+    </section>
+    {% endif %}
+
+    <section class="dashboard-grid">
+        <section class="dashboard-actions">
+            <a class="dashboard-action-card" href="{{ url_for('student.student_profile') }}">
+                <h3>Profile</h3>
+                <p>View and maintain your personal and program information.</p>
+            </a>
+            <a class="dashboard-action-card" href="{{ url_for('student.view_transcript') }}">
+                <h3>Transcript</h3>
+                <p>Check completed courses, grades, and GPA details.</p>
+            </a>
+            <a class="dashboard-action-card" href="{{ url_for('student.form1') }}">
+                <h3>{{ student_form_label }}</h3>
+                <p>Submit or update your course plan for advising approval.</p>
+            </a>
+            <a class="dashboard-action-card" href="{{ url_for('student.apply_graduation') }}">
+                <h3>Apply for Graduation</h3>
+                <p>Start a graduation request and track its review status.</p>
+            </a>
+        </section>
+
+        <aside class="dashboard-side">
+            <section class="dashboard-panel">
+                <h3>Student Checklist</h3>
+                <ul>
+                    <li>Keep your profile current before submitting forms.</li>
+                    <li>Audit {{ student_form_label }} before final submission.</li>
+                    <li>Resolve advisor feedback quickly to avoid delays.</li>
+                </ul>
+            </section>
+        </aside>
+    </section>
+</section>
+{% endblock %}

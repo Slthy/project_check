@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}Student Detail | ADS{% endblock %}
+
+{% block content %}
+<h2>Student Detail</h2>
+
+{% if student %}
+<section class="student-metrics">
+    <article class="student-metric-card">
+        <p class="student-metric-label">GPA</p>
+        <p class="student-metric-value">{{ gpa if gpa is not none else '--' }}</p>
+    </article>
+    <article class="student-metric-card">
+        <p class="student-metric-label">Total Credits</p>
+        <p class="student-metric-value">{{ total_credits }}</p>
+    </article>
+</section>
+
+<p>
+    <strong>Academic Standing:</strong>
+    {% if suspension_active %}
+        <span class="status status-danger">Suspended</span>
+    {% else %}
+        <span class="status status-success">Good Standing</span>
+    {% endif %}
+</p>
+
+<section class="card profile-card">
+    <h3>Basic Information</h3>
+    <dl class="profile-list">
+        <div>
+            <dt>Name</dt>
+            <dd>{{ student.first_name }} {{ student.last_name }}</dd>
+        </div>
+        <div>
+            <dt>UID</dt>
+            <dd>{{ student.uid }}</dd>
+        </div>
+        <div>
+            <dt>Program</dt>
+            <dd>{{ student.program_code }} - {{ student.program_name }}</dd>
+        </div>
+        <div>
+            <dt>Email</dt>
+            <dd>{{ student.email if student.email else 'Not provided' }}</dd>
+        </div>
+        <div>
+            <dt>Address</dt>
+            <dd>{{ student.address if student.address else 'Not provided' }}</dd>
+        </div>
+    </dl>
+</section>
+
+<section class="card">
+    <h3>Transcript</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Dept</th>
+                <th>Course Number</th>
+                <th>Title</th>
+                <th>Credits</th>
+                <th>Term</th>
+                <th>Year</th>
+                <th>Grade</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if transcript_rows %}
+                {% for row in transcript_rows %}
+                <tr>
+                    <td>{{ row.department_code }}</td>
+                    <td>{{ row.course_number }}</td>
+                    <td>{{ row.title }}</td>
+                    <td>{{ row.credit_hours }}</td>
+                    <td>{{ row.term_name }}</td>
+                    <td>{{ row.year_taken }}</td>
+                    <td>{{ row.grade_code }}</td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="7">No transcript courses found.</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</section>
+{% else %}
+<p>Student not found.</p>
+{% endif %}
+
+<a href="{{ url_for('advisor.student_list') }}">Back to Student List</a>
+{% endblock %}

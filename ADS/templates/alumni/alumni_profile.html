@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Alumni Profile | ADS{% endblock %}
+ 
+{% block content %}
+<section class="page-hero">
+    <h2>Alumni Profile</h2>
+    <p>Review your academic and contact details in one place.</p>
+</section>
+
+{% if alumni %}
+<section class="profile-grid">
+    <article class="card profile-card">
+        <h3>Personal Information</h3>
+        <dl class="profile-list">
+            <div>
+                <dt>UID</dt>
+                <dd>{{ alumni.uid }}</dd>
+            </div>
+            <div>
+                <dt>First Name</dt>
+                <dd>{{ alumni.first_name }}</dd>
+            </div>
+            <div>
+                <dt>Last Name</dt>
+                <dd>{{ alumni.last_name }}</dd>
+            </div>
+            <div>
+                <dt>Username</dt>
+                <dd>{{ alumni.username }}</dd>
+            </div>
+            <div>
+                <dt>Address</dt>
+                <dd>{{ alumni.address or 'N/A' }}</dd>
+            </div>
+            <div>
+                <dt>Email</dt>
+                <dd>{{ alumni.email or 'N/A' }}</dd>
+            </div>
+        </dl>
+    </article>
+
+    <article class="card profile-card profile-highlight">
+        <h3>Academic Information</h3>
+        <dl class="profile-list">
+            <div>
+                <dt>Program</dt>
+                <dd>{{ alumni.program_code }} - {{ alumni.program_name }}</dd>
+            </div>
+            <div>
+                <dt>Graduation Term</dt>
+                <dd>{{ alumni.graduation_term_name }} {{ alumni.graduation_year }}</dd>
+            </div>
+            <div>
+                <dt>Final GPA</dt>
+                <dd>{{ alumni.final_gpa }}</dd>
+            </div>
+        </dl>
+        <a class="btn profile-cta" href="{{ url_for('alumni.edit_alumni_profile') }}">Edit Personal Information</a>
+    </article>
+</section>
+{% else %}
+<section class="card profile-empty">
+    <p>No alumni profile was found for this account.</p>
+</section>
+{% endif %}
+<p><a href="{{ url_for('alumni.alumni_dashboard') }}">Back to {{ session.get('username') }}'s Dashboard</a></p>
+{% endblock %}

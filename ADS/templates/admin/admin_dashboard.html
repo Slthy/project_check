@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard | ADS{% endblock %}
+
+{% block content %}
+<section class="dashboard-shell">
+    <section class="dashboard-hero">
+        <h2>Admin Dashboard</h2>
+        <p>Manage accounts, keep user access clean, and maintain the system directory.</p>
+    </section>
+
+    <section class="dashboard-grid">
+        <section class="dashboard-actions">
+            <a class="dashboard-action-card" href="{{ url_for('admin.create_user') }}">
+                <h3>Create User</h3>
+                <p>Add a new student, advisor, graduate secretary, or admin account.</p>
+            </a>
+            <a class="dashboard-action-card" href="{{ url_for('admin.delete_user') }}">
+                <h3>Delete User</h3>
+                <p>Remove users who are no longer active in the system.</p>
+            </a>
+        </section>
+
+        <aside class="dashboard-side">
+            <section class="dashboard-panel">
+                <h3>Admin Reminders</h3>
+                <ul>
+                    <li>Use exact usernames to avoid deleting the wrong user.</li>
+                    <li>Create advisors before assigning students to them.</li>
+                    <li>Review role selection carefully when creating accounts.</li>
+                </ul>
+            </section>
+            <section class="dashboard-panel">
+                <h3>Quick Tip</h3>
+                <p>Use the top navigation bar for fast switching between admin actions.</p>
+            </section>
+        </aside>
+    </section>
+</section>
+{% endblock %}

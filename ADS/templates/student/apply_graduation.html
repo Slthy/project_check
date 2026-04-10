@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block title %}Apply for Graduation | ADS{% endblock %}
+ 
+{% block content %}
+<h2>Apply for Graduation</h2>
+
+<p><strong>Student:</strong> {{ student.first_name }} {{ student.last_name }}</p>
+<p><strong>UID:</strong> {{ student.uid }}</p>
+<p><strong>Program:</strong> {{ student.program_code }} - {{ student.program_name }}</p>
+<p>
+    <strong>Academic Standing:</strong>
+    {% if suspension_active %}
+        <span class="status status-danger">Suspended</span>
+    {% else %}
+        <span class="status status-success">Good Standing</span>
+    {% endif %}
+</p>
+
+<p>Review your transcript, then run your graduation application audit.</p>
+
+<section class="card graduation-panel">
+    {% if audit_issues %}
+    <div class="audit-problems" role="alert" aria-live="polite">
+        <p class="audit-problems-title"><strong>Audit Problems:</strong></p>
+        <ul>
+            {% for issue in audit_issues %}
+            <li>{{ issue }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+    <h3>Transcript</h3>
+
+    <section class="student-metrics">
+        <article class="student-metric-card">
+            <p class="student-metric-label">GPA</p>
+            <p class="student-metric-value">{{ gpa if gpa is not none else '--' }}</p>
+        </article>
+        <article class="student-metric-card">
+            <p class="student-metric-label">Total Credits</p>
+            <p class="student-metric-value">{{ total_credits }}</p>
+        </article>
+    </section>
+
+        <p>
+        <strong>Audit Result:</strong>
+        {% if graduation_application and graduation_application.audit_passed == 1 %}
+            <span class="status status-success">Passed</span>
+        {% elif graduation_application and graduation_application.audit_passed == 0 %}
+            <span class="status status-danger">Failed</span>
+        {% else %}
+            <span class="status status-warning">Not Audited</span>
+        {% endif %}
+        &nbsp;|&nbsp;
+        <strong>Graduate Secretary Review:</strong>
+        {% set gs_review_status = (graduation_application.gs_decision if graduation_application and graduation_application.gs_decision else 'Not Submitted') %}
+        <span class="status {% if gs_review_status|lower in ['approved', 'passed'] %}status-success{% elif gs_review_status|lower in ['rejected', 'failed'] %}status-danger{% elif gs_review_status|lower in ['pending', 'not submitted', 'not audited'] %}status-warning{% endif %}">
+            {{ gs_review_status|title }}
+        </span>
+    </p>
+    
+    <table border="1" cellpadding="6" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Dept</th>
+                <th>Course Number</th>
+                <th>Title</th>
+                <th>Credits</th>
+                <th>Semester</th>
+                <th>Year</th>
+                <th>Grade</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if transcript_rows %}
+                {% for row in transcript_rows %}
+                    <tr>
+                        <td>{{ row.department_code }}</td>
+                        <td>{{ row.course_number }}</td>
+                        <td>{{ row.title }}</td>
+                        <td>{{ row.credit_hours }}</td>
+                        <td>{{ row.term_name }}</td>
+                        <td>{{ row.year_taken }}</td>
+                        <td>{{ row.grade_code }}</td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="7">No courses found.</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+
+    <div class="form1-action-row">
+        <form class="inline-action-form" method="GET" action="{{ url_for('student.audit_graduation_application') }}">
+            <button type="submit" {% if suspension_active %}disabled{% endif %}>Audit Graduation Application</button>
+        </form>
+    </div>
+</section>
+
+<br>
+<a href="{{ url_for('student.student_dashboard') }}">Back to {{ session.get('username') }}'s Dashboard</a>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Login | ADS{% endblock %}
+
+{% block content %}
+<h2>Login</h2>
+{% if flask_debug %}
+<p><strong>Test users:</strong></p>
+<ul class="test-users-list" aria-label="Test accounts">
+    <li><strong>Admin:</strong> <code>admin1 / adminpass</code></li>
+    <li><strong>Grad Secretary:</strong> <code>gs_office / gs_office_pass</code></li>
+    <li><strong>Advisor (Narahari):</strong> <code>narahari / narahari_pass</code></li>
+    <li><strong>Advisor (Parmer):</strong> <code>parmer / parmer_pass</code></li>
+    <li><strong>Student (Paul):</strong> <code>pmccartney / pmccartney_pass</code></li>
+    <li><strong>Student (George):</strong> <code>gharrison / gharrison_pass</code></li>
+    <li><strong>PhD Student (Ringo):</strong> <code>rstarr / rstarr_pass</code></li>
+    <li><strong>Alumni (Eric):</strong> <code>eclapton / eclapton_pass</code></li>
+</ul>
+{% endif %}
+
+<form action="{{ url_for('auth.login') }}" method="POST">
+    <label for="username">Username</label>
+    <input type="text" id="username" name="username" required>
+
+    <label for="password">Password</label>
+    <input type="password" id="password" name="password" required>
+
+    <button type="submit">Login</button>
+</form>
+
+<p>
+    Need an account?
+    <a href="{{ url_for('auth.register') }}">Register here</a>.
+</p>
+{% endblock %}

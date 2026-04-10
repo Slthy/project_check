@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title %}Create User | ADS{% endblock %}
+
+{% block content %}
+<h1>Create User</h1>
+<h2>Create a new user account</h2>
+<a href="{{ url_for('admin.admin_dashboard') }}">Back to {{ session.get('username') }}'s Dashboard</a>
+
+<form method="POST">
+    <p>
+        <label>Username:</label><br>
+        <input type="text" name="username" required>
+    </p>
+    <p>
+        <label>Password:</label><br>
+        <input type="password" name="password" required>
+    </p>
+    <p>
+        <label>Role:</label><br>
+        <select name="role" id="role-select" onchange="showRoleFields()" required>
+            <option value="">-- Select Role --</option>
+            <option value="student">Student</option>
+            <option value="advisor">Advisor</option>
+            <option value="grad_secretary">Grad Secretary</option>
+        </select>
+    </p>
+    <div id="student-fields" style="display:none;">
+        <p>
+            <label>UID:</label><br>
+            <input type="text" id="student-uid" name="uid">
+        </p>
+        <p>
+            <label>First Name:</label><br>
+            <input type="text" id="student-first-name" name="first_name_student">
+        </p>
+        <p>
+            <label>Last Name:</label><br>
+            <input type="text" id="student-last-name" name="last_name_student">
+        </p>
+        <p>
+            <label>Program:</label><br>
+            <select id="student-program" name="program_code">
+                <option value="">-- Select Program --</option>
+                {% for program in programs %}
+                    <option value="{{ program.program_code|upper }}">{{ program.program_code|upper }}</option>
+                {% endfor %}
+            </select>
+        </p>
+        <p>
+            <label>Address:</label><br>
+            <input type="text" id="student-address" name="address">
+        </p>
+        <p>
+            <label>Email:</label><br>
+            <input type="email" id="student-email" name="email">
+        </p>
+    </div>
+ 
+    <div id="faculty-fields" style="display:none;">
+        <p>
+            <label>First Name:</label><br>
+            <input type="text" id="faculty-first-name" name="first_name_faculty">
+        </p>
+        <p>
+            <label>Last Name:</label><br>
+            <input type="text" id="faculty-last-name" name="last_name_faculty">
+        </p>
+    </div>
+ 
+    <input type="submit" value="Create User">
+</form>
+ 
+<script>
+    function showRoleFields() {
+        const role = document.getElementById('role-select').value;
+        const isStudent = role === 'student';
+        const isFaculty = role === 'advisor' || role === 'grad_secretary';
+
+        document.getElementById('student-fields').style.display = isStudent ? 'block' : 'none';
+        document.getElementById('faculty-fields').style.display = isFaculty ? 'block' : 'none';
+
+        document.getElementById('student-uid').required = isStudent;
+        document.getElementById('student-first-name').required = isStudent;
+        document.getElementById('student-last-name').required = isStudent;
+        document.getElementById('student-program').required = isStudent;
+        document.getElementById('student-address').required = isStudent;
+        document.getElementById('student-email').required = isStudent;
+
+        document.getElementById('faculty-first-name').required = isFaculty;
+        document.getElementById('faculty-last-name').required = isFaculty;
+    }
+
+    showRoleFields();
+</script>
+{% endblock %}

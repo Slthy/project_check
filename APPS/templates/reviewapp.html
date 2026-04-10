@@ -1,0 +1,229 @@
+<html>
+    <head>
+        <title>Review Application</title>
+        <link rel="stylesheet" href="/static/style.css">
+    </head>
+
+    <body>
+        <h1>Review Application</h1>
+
+        {% if assigned_apps is defined %}
+            <h2>Assigned Applications</h2>
+
+            {% if assigned_apps %}
+                <ul>
+                    {% for app in assigned_apps %}
+                        <li>
+                            Application ID: {{ app['app_id'] }} |
+                            Applicant UID: {{ app['uid'] }} |
+                            {{ app['fname'] }} {{ app['lname'] }} |
+                            Status: {{ app['status'] }}
+                            <a href="{{ url_for('review_application', app_id=app['app_id']) }}">Open Review Form</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No applications have been assigned to you.</p>
+            {% endif %}
+            
+            <h2>Completed Applications / Final Decisions</h2>
+
+            {% if completed_apps %}
+                <ul>
+                    {% for app in completed_apps %}
+                        <li>
+                            Application ID: {{ app['app_id'] }} |
+                            Applicant UID: {{ app['uid'] }} |
+                            {{ app['fname'] }} {{ app['lname'] }} |
+                            Status: {{ app['status'] }}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No completed or finalized applications found.</p>
+            {% endif %}
+        
+        {% else %}
+        <h2>Graduate Admissions Review Form</h2>
+
+        <p><strong>Name:</strong> {{ application['lname'] }}, {{ application['fname'] }}</p>
+        <p><strong>Student Number:</strong> {{ application['uid'] }}</p>
+        <p><strong>Semester and Year of Application:</strong> {{ application['semester'] }} {{ application['app_year'] }}</p>
+        <p><strong>Applying for Degree:</strong> {{ application['deg_type'] }}</p>
+        
+        <h3>Summary of Credentials</h3>
+
+
+        <h2>GRE Scores</h2>
+
+        <p>
+            <strong>GRE</strong><br>
+            Verbal: {{ gre['verbal'] if gre else 'N/A' }}<br>
+            Quantitative: {{ gre['quantitative'] if gre else 'N/A' }}<br>
+            Year of Exam: {{ gre['exam_year'] if gre else 'N/A' }}<br>
+        </p>
+
+        <p><strong>GRE Advanced</strong></p>
+        <p>Score: {{ gre['subj_score'] if gre and gre['subj_score'] else 'N/A' }}</p>
+        <p>Subject: {{ gre['subj_name'] if gre and gre['subj_name'] else 'N/A' }}</p>
+        
+        <p><strong>TOEFL</strong></p>
+        <p>Score: {{ application['toefl_score'] or 'N/A' }}</p>
+        <p>Date of Exam: {{ application['toefl_exam_year'] or 'N/A' }}</p>
+
+        <h2>Prior Degrees</h2>
+        {% if degrees %}
+            <ul>
+                {% for degree in degrees %}
+                    <li>
+                        Degree: {{ degree['dtype'] }} |
+                        GPA: {{ degree['dGPA'] }} |
+                        Major: {{ degree['dmajor'] }} |
+                        Year: {{ degree['dyear'] }} |
+                        University: {{ degree['duni'] }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No prior degree information found.</p>
+        {% endif %}
+        
+        <p><strong>Areas of Interest:</strong> {{ application['areas_of_interest'] or 'N/A' }}</p>
+
+        <h2>Work Experience</h2>
+            {% if workex %}
+                <ul>
+                    {% for work in workex %}
+                        <li>
+                            {% if work['job_title'] %}<strong>{{ work['job_title'] }}</strong>{% endif %}
+                            {% if work['com_name'] %} at {{ work['com_name'] }}{% endif %}
+                            {% if work['description'] %} - {{ work['description'] }}{% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No work experience listed.</p>
+            {% endif %}
+
+        <form method="POST">
+            <h3>Recommendation Letters Rating (Worst = 1, Best = 5)</h3>
+                {% if recommendations %}
+                    <ol>
+                        {% for rec in recommendations %}
+                            <li>
+                                <p><strong>From:</strong> {{ rec['rfname'] }} {{ rec['rlname'] }} ({{ rec['raffiliation'] or 'N/A' }})</p>
+                                <p><strong>Email:</strong> {{ rec['remail'] }}</p>
+                                <p><strong>Title:</strong> {{ rec['rtitle'] or 'N/A' }}</p>
+                                <p><strong>Submitted:</strong> {{ rec['submitted'] }}</p>
+
+                                <p><strong>Letter:</strong></p>
+                                <p>{{ rec['letter_text'] or 'No letter text submitted.' }}</p>
+
+                                <p>
+                                    <label for="letter_rating_{{ rec['rid'] }}">Rating:</label>
+                                    <select name="letter_rating_{{ rec['rid'] }}" id="letter_rating_{{ rec['rid'] }}">
+                                        <option value="">Select Rating</option>
+                                        <option value="1" {% if rec['letter_rating']|string == '1' %}selected{% endif %}>1</option>
+                                        <option value="2" {% if rec['letter_rating']|string == '2' %}selected{% endif %}>2</option>
+                                        <option value="3" {% if rec['letter_rating']|string == '3' %}selected{% endif %}>3</option>
+                                        <option value="4" {% if rec['letter_rating']|string == '4' %}selected{% endif %}>4</option>
+                                        <option value="5" {% if rec['letter_rating']|string == '5' %}selected{% endif %}>5</option>
+                                    </select>
+                                </p>
+            
+                                <p>
+                                    <label for="is_generic_{{ rec['rid'] }}">Generic:</label>
+                                    <select name="is_generic_{{ rec['rid'] }}" id="is_generic_{{ rec['rid'] }}">
+                                        <option value="">Select</option>
+                                        <option value="Y" {% if rec['is_generic'] == 1 %}selected{% endif %}>Y</option>
+                                        <option value="N" {% if rec['is_generic'] == 0 %}selected{% endif %}>N</option>
+                                    </select>
+                                </p>
+            
+                                <p>
+                                    <label for="is_credible_{{ rec['rid'] }}">Credible:</label>
+                                    <select name="is_credible_{{ rec['rid'] }}" id="is_credible_{{ rec['rid'] }}">
+                                        <option value="">Select</option>
+                                        <option value="Y" {% if rec['is_credible'] == 1 %}selected{% endif %}>Y</option>
+                                        <option value="N" {% if rec['is_credible'] == 0 %}selected{% endif %}>N</option>
+                                    </select>
+                                </p>
+                            </li>
+                        {% endfor %}
+                    </ol>
+                {% else %}
+                    <p>No recommendation letters found.</p>
+                {% endif %}
+
+                <h3>Grad Admissions Committee (GAS) Review Rating</h3>
+
+                <p>
+                    <select name="rating" id="rating" required>
+                        <option value="">Select Rating</option>
+                        <option value="0" {% if review and review['rating']|string == '0' %}selected{% endif %}>0 - Reject</option>
+                        <option value="1" {% if review and review['rating']|string == '1' %}selected{% endif %}>1 - Borderline Admit</option>
+                        <option value="2" {% if review and review['rating']|string == '2' %}selected{% endif %}>2 - Admit without Aid</option>
+                        <option value="3" {% if review and review['rating']|string == '3' %}selected{% endif %}>3 - Admit with Aid</option>
+                    </select>
+                </p>
+
+                <p>
+                    <label for="deficiency_courses"><strong>Deficiency Courses if Any:</strong></label><br>
+                    <textarea name="deficiency_courses" id="deficiency_courses" rows="2" cols="60">{{ review['deficiency_courses'] if review else '' }}</textarea>
+                </p>
+
+                <p>
+                    <label for="reject_reason">Reason for Reject:</label>
+                    <select name="reject_reason" id="reject_reason">
+                        <option value="">Select Reason</option>
+                        <option value="A" {% if review and review["reject_reason"] == 'A' %}selected{% endif %}>A - Incomplete Record</option>
+                        <option value="B" {% if review and review['reject_reason'] == 'B' %}selected{% endif %}>B - Does not meet minimum requirements</option>
+                        <option value="C" {% if review and review['reject_reason'] == 'C' %}selected{% endif %}>C - Problems with Letters</option>
+                        <option value="D" {% if review and review['reject_reason'] == 'D' %}selected{% endif %}>D - Not competitive</option>
+                        <option value="E" {% if review and review['reject_reason'] == 'E' %}selected{% endif %}>E - Other reasons</option>
+                    </select>
+                </p>
+                    <p><small>Reject reason is required if the GAS review rating is Reject.</small></p>              
+
+                <p>
+                    <label for="comments"><strong>GAS Reviewer Comments:</strong></label><br>
+                    <textarea name="comments" id="comments" rows="3" cols="60">{{ review['comments'] if review else '' }}</textarea>
+                </p>
+
+                <p>
+                    <label for="recom_advisor_id"><strong>Recommended Advisor:</strong></label><br>
+                    <select name="recom_advisor_id" id="recom_advisor_id">
+                        <option value="">Select Advisor</option>
+                        {% for advisor in advisors %}
+                            <option value="{{ advisor['user_id'] }}" {% if review and review['recom_advisor_id'] == advisor['user_id'] %}selected{% endif %}>
+                                {{ advisor['fname'] }} {{ advisor['lname'] }} ({{ advisor['user_id'] }})
+                            </option>
+                        {% endfor %}
+                    </select>
+                </p>
+
+                <p>
+                    <strong>Final Decision:</strong>
+                    {{ application['final_dec'] or 'Pending CAC/GS decision' }}
+                </p>
+
+                <p>
+                    <button type="submit">Submit Review</button>
+                </p>
+            </form>
+        {% endif %}
+
+    <p>
+        {% if session['user']['role'] == 5 %}
+            <a href="/admin">Back to Admin Dashboard</a>
+        {% elif session['user']['role'] == 3 %}
+            <a href="/gs">Back to GS Dashboard</a>
+        {% elif session['user']['role'] == 4 %}
+            <a href="/cac">Back to CAC Dashboard</a>
+        {% elif session['user']['role'] == 2 %}
+            <a href="/faculty">Back to Faculty Dashboard</a>
+        {% endif %}
+    </p>
+
+    </body>
+</html>

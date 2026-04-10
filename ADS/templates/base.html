@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Advising System{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    {% set _role = session.get('role_id') %}
+    {% if _role == 1 %}{% set _dash = url_for('admin.admin_dashboard') %}
+    {% elif _role == 2 %}{% set _dash = url_for('gs.gs_dashboard') %}
+    {% elif _role == 3 %}{% set _dash = url_for('advisor.advisor_dashboard') %}
+    {% elif _role == 4 %}{% set _dash = url_for('student.student_dashboard') %}
+    {% elif _role == 5 %}{% set _dash = url_for('alumni.alumni_dashboard') %}
+    {% else %}{% set _dash = url_for('auth.login') %}{% endif %}
+    <header>
+        <h1><a class="brand-link" href="{{ _dash }}">Advising System (ADS)</a></h1>
+        <nav>
+            {% if session.get('user_id') %}
+                <div class="nav-links">
+                    {% if session.get('role_id') == 1 %}
+                        <a href="{{ url_for('admin.admin_dashboard') }}">Dashboard</a>
+                        <a href="{{ url_for('admin.create_user') }}">Create User</a>
+                        <a href="{{ url_for('admin.delete_user') }}">Delete User</a>
+                    {% elif session.get('role_id') == 2 %}
+                        <a href="{{ url_for('gs.gs_dashboard') }}">Dashboard</a>
+                        <a href="{{ url_for('gs.assign_advisor') }}">Assign Advisor</a>
+                        <a href="{{ url_for('gs.approve_graduation') }}">Approve Graduation</a>
+                    {% elif session.get('role_id') == 3 %}
+                        <a href="{{ url_for('advisor.advisor_dashboard') }}">Dashboard</a>
+                        <a href="{{ url_for('advisor.student_list') }}">Student List</a>
+                        <a href="{{ url_for('advisor.review_form1_list') }}">Review Submissions</a>
+                    {% elif session.get('role_id') == 4 %}
+                        {% set student_form_label = 'Thesis Defense' if session.get('student_program_code', '')|upper == 'PHD' else 'Form 1' %}
+                        <a href="{{ url_for('student.student_dashboard') }}">Dashboard</a>
+                        <a href="{{ url_for('student.student_profile') }}">Profile</a>
+                        <a href="{{ url_for('student.view_transcript') }}">Transcript</a>
+                        <a href="{{ url_for('student.form1') }}">{{ student_form_label }}</a>
+                        <a href="{{ url_for('student.apply_graduation') }}">Apply Graduation</a>
+                    {% elif session.get('role_id') == 5 %}
+                        <a href="{{ url_for('alumni.alumni_dashboard') }}">Dashboard</a>
+                        <a href="{{ url_for('alumni.alumni_profile') }}">Profile</a>
+                        <a href="{{ url_for('alumni.alumni_transcript') }}">Transcript</a>
+                    {% else %}
+                        <a href="{{ url_for('student.student_dashboard') }}">Dashboard</a>
+                    {% endif %}
+                </div>
+                <span class="session-info">Signed in as {{ session.get('username') }}</span>
+                <a class="logout-link" href="{{ url_for('auth.logout') }}">Logout</a>
+            {% else %}
+                <div class="nav-links">
+                    <a href="{{ url_for('auth.login') }}">Login</a>
+                    <a href="{{ url_for('auth.register') }}">Register</a>
+                </div>
+            {% endif %}
+        </nav>
+    </header>
+
+    <main>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <section class="flash-stack">
+                    {% for category, message in messages %}
+                        <p class="flash-message flash-{{ category }}"><strong>{{ category|capitalize }}:</strong> {{ message }}</p>
+                    {% endfor %}
+                </section>
+            {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

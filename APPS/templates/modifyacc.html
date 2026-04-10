@@ -1,0 +1,33 @@
+<html>
+    <head>
+        <title>Modify Accounts</title>
+        <link rel="stylesheet" href="/static/style.css">
+    </head>
+
+    <body>
+        <h1>Modify Accounts</h1>
+
+        <table border="1">
+            <tr>
+                <th>Username</th>
+                <th>Password</th>
+                <th>email</th>
+                <th>Role</th>
+                <th>Application Found</th>
+                <th>Review Found</th>
+            </tr>
+            {%for user in users%}
+            <tr>
+                <td>{{ user['user_id']}}</td>
+                <td class="password-cell">••••••••</td>
+                <td>{{ user['email']}}</td>
+                <td>{{ role_map.get(user['role_id'], 'Unknown') }}</td>
+                <td>{{ user['app_id'] }}</td>
+                <td>{{ user['review_id']}}</td>
+                <td><a href="/modifyacc/{{ user['user_id'] }}">Edit</a></td>
+            </tr>
+            {%endfor%}
+        </table>
+        <p><a href="/admin">Back to Admin Dashboard</a></p>
+    </body>
+</html>

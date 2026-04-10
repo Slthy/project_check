@@ -1,0 +1,24 @@
+<html>
+    <head>
+        <title>Recommendation</title>
+        <link rel="stylesheet" href="/static/style.css">
+    </head>
+    <body>
+        <h1>Write Recommendation</h1>
+
+        <p><strong>Applicant ID:</strong> {{ rec['app_id'] }}</p>
+        <p><strong>Recommender:</strong> {{ rec['rfname'] }} {{ rec['rlname'] }}</p>
+        <p><strong>Email:</strong> {{ rec['remail'] }}</p>
+        <p><strong>Affiliation:</strong> {{ rec['raffiliation'] }}</p>
+        <p><strong>Title:</strong> {{ rec['rtitle'] }}</p>
+
+        <form method="POST">
+            <p>
+                <label>Recommendation Letter:</label><br>
+                <textarea name="recommendation" rows="10" cols="70" required>{{ rec['letter_text'] or '' }}</textarea>
+            </p>
+
+            <button type="submit">Submit</button>
+        </form>
+    </body>
+</html>

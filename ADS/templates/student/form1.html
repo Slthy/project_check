@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title %}{{ form_label }}{% endblock %}
+{% block content %}
+<h2>{{ form_label }}</h2>
+
+{% if student %}
+<p><strong>Student:</strong> {{ student.first_name }} {{ student.last_name }}</p>
+<p><strong>UID:</strong> {{ student.uid }}</p>
+<p><strong>Program:</strong> {{ student.program_code }} - {{ student.program_name }}</p>
+<p>
+    <strong>Academic Standing:</strong>
+    {% if suspension_active %}
+        <span class="status status-danger">Suspended</span>
+    {% else %}
+        <span class="status status-success">Good Standing</span>
+    {% endif %}
+</p>
+
+{% if suspension_active %}
+<div class="audit-problems" role="alert" aria-live="polite">
+    <p class="audit-problems-title"><strong>Academic Suspension Active</strong></p>
+    <p>{{ form_label }} actions are unavailable while you have 3 or more grades below B.</p>
+</div>
+{% endif %}
+
+{% if latest_form1 %}
+<section class="card form1-latest-panel">
+    {% if audit_issues %}
+    <div class="audit-problems" role="alert" aria-live="polite">
+        <p class="audit-problems-title"><strong>Audit Problems:</strong></p>
+        <ul>
+            {% for issue in audit_issues %}
+            <li>{{ issue }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+    <p>
+        <strong>Advisor Review:</strong>
+        {% set advisor_review_status = (latest_form1.review_status or 'pending')|lower %}
+        <span class="status {% if advisor_review_status in ['approved', 'passed'] %}status-success{% elif advisor_review_status in ['rejected', 'failed'] %}status-danger{% elif advisor_review_status in ['pending', 'not submitted', 'not audited'] %}status-warning{% endif %}">
+            {{ advisor_review_status|title }}
+        </span>
+        &nbsp;|&nbsp;
+        <strong>Audit Result:</strong>
+        {% if latest_form1.audit_passed == 1 %}
+            <span class="status status-success">Passed</span>
+        {% elif latest_form1.audit_passed == 0 %}
+            <span class="status status-danger">Failed</span>
+        {% else %}
+            <span class="status status-warning">Pending</span>
+        {% endif %}
+    </p>
+
+    {% if latest_courses %}
+    <table>
+        <thead>
+            <tr>
+                <th>Department</th>
+                <th>Course Number</th>
+                <th>Title</th>
+                <th>Credits</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for course in latest_courses %}
+            <tr>
+                <td>{{ course.department_code }}</td>
+                <td>{{ course.course_number }}</td>
+                <td>{{ course.title }}</td>
+                <td>{{ course.credit_hours }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+    <div class="form1-action-row">
+        <form class="inline-action-form" method="GET" action="{{ url_for('student.edit_form1') }}">
+            <button type="submit" {% if suspension_active %}disabled{% endif %}>Edit {{ form_label }}</button>
+        </form>
+        <form class="inline-action-form" method="POST" action="{{ url_for('student.audit_form1') }}">
+            <button type="submit" {% if suspension_active %}disabled{% endif %}>Audit {{ form_label }}</button>
+        </form>
+    </div>
+</section>
+{% else %}
+<p>No recent {{ form_label }} found.</p>
+<form method="GET" action="{{ url_for('student.edit_form1') }}">
+    <button type="submit" {% if suspension_active %}disabled{% endif %}>Create {{ form_label }}</button>
+</form>
+{% endif %}
+{% else %}
+<p>No student record found for this account.</p>
+{% endif %}
+{% endblock %}

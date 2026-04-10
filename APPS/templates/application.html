@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/static/style.css">
+    <title>Graduate Application</title>
+    <style>
+        .error-msg {
+            color: #c0392b;
+            font-size: 0.85em;
+            display: none;
+            margin-top: 2px;
+        }
+
+        input:invalid,
+        select:invalid {
+            border: 1px solid #c0392b;
+        }
+
+        input.touched:invalid {
+            border: 1px solid #c0392b;
+        }
+
+        fieldset {
+            margin-bottom: 1em;
+        }
+
+        label span.req {
+            color: #c0392b;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Graduate Admissions Application</h1>
+
+    <form method="POST" action="/applicant/application" id="appForm" novalidate>
+
+        <h2>Personal Information</h2>
+
+        <p>
+            <label>First Name: <span class="req">*</span></label><br>
+            <input type="text" name="fname" required pattern="[A-Za-z\u00C0-\u024F'\- ]{1,50}"
+                title="First name: letters, hyphens, apostrophes, spaces only (max 50)" maxlength="50"
+                oninvalid="showError(this,'Please enter a valid first name (letters only, max 50 chars).')"
+                oninput="clearError(this)">
+            <span class="error-msg" id="err-fname"></span>
+        </p>
+        <p>
+            <label>Last Name: <span class="req">*</span></label><br>
+            <input type="text" name="lname" required pattern="[A-Za-z\u00C0-\u024F'\- ]{1,50}" maxlength="50"
+                title="Last name: letters, hyphens, apostrophes, spaces only (max 50)"
+                oninvalid="showError(this,'Please enter a valid last name (letters only, max 50 chars).')"
+                oninput="clearError(this)">
+            <span class="error-msg" id="err-lname"></span>
+        </p>
+        <p>
+            <label>Date of Birth: <span class="req">*</span></label><br>
+            <input type="date" name="dob" id="dob" required
+                oninvalid="showError(this,'Date of birth is required and must be a past date.')"
+                oninput="clearError(this); validateDob(this)">
+            <span class="error-msg" id="err-dob"></span>
+        </p>
+        <p>
+            <label>Address: <span class="req">*</span></label><br>
+            <input type="text" name="address" required minlength="5" maxlength="200"
+                title="Please enter a full street address (5–200 characters)"
+                oninvalid="showError(this,'Please enter a valid address (at least 5 characters).')"
+                oninput="clearError(this)">
+            <span class="error-msg" id="err-address"></span>
+        </p>
+        <p>
+            <label>SSN: <span class="req">*</span></label><br>
+            <input type="password" name="ssn" required maxlength="9" minlength="9" pattern="\d{9}" inputmode="numeric"
+                autocomplete="off" title="SSN must be exactly 9 digits (no dashes or spaces)"
+                placeholder="9 digits, no dashes" oninvalid="showError(this,'SSN must be exactly 9 digits.')"
+                oninput="this.value=this.value.replace(/\D/g,''); clearError(this)">
+            <span class="error-msg" id="err-ssn"></span>
+        </p>
+
+
+        <h2>Academic Information</h2>
+        <p>
+            <label>TOEFL Score:</label><br>
+            <input type="number" name="toefl_score" min="0" max="120" placeholder="0–120"
+                title="TOEFL score must be between 0 and 120"
+                oninvalid="showError(this,'TOEFL score must be between 0 and 120.')" oninput="clearError(this)">
+            <span class="error-msg" id="err-toefl_score"></span>
+        </p>
+
+        <p>
+            <label>TOEFL Exam Date:</label><br>
+            <input type="date" name="toefl_exam_date" id="toefl_exam_date"
+                oninput="validatePastDate(this, 'TOEFL exam date cannot be in the future.'); clearError(this)">
+            <span class="error-msg" id="err-toefl_exam_date"></span>
+        </p>
+
+        <p>
+            <label>Areas of Interest:</label><br>
+            <textarea name="areas_of_interest" rows="3" cols="60" maxlength="500"
+                placeholder="Example: AI, Machine Learning, Databases, Cybersecurity"></textarea>
+        </p>
+
+        <p>
+            <label>Experience Summary:</label><br>
+            <textarea name="experience_summary" rows="4" cols="60" maxlength="1000"
+                placeholder="Summarize research, internships, teaching, projects, or professional experience"></textarea>
+        </p>
+        <p>
+            <label>Degree Sought: <span class="req">*</span></label><br>
+            <select name="deg_no" id="deg_no" required onchange="toggleGRERequirement()"
+                oninvalid="showError(this,'Please select a degree.')"
+                onchange="clearError(this); toggleGRERequirement()">
+                <option value="">-- SELECT A DEGREE --</option>
+                <option value="1">Master of Science (MS)</option>
+                <option value="2">Doctor of Philosophy (PhD)</option>
+            </select>
+            <span class="error-msg" id="err-deg_no"></span>
+        </p>
+
+        <p>
+            <label>Department: <span class="req">*</span></label><br>
+            <select name="dnumber" required onchange="filterPrograms(this.value); clearError(this)"
+                oninvalid="showError(this,'Please select a department.')">
+                <option value="">-- SELECT A DEPARTMENT --</option>
+                {% for dept in departments %}
+                <option value="{{ dept['dnumber'] }}">{{ dept['dname'] }}</option>
+                {% endfor %}
+            </select>
+            <span class="error-msg" id="err-dnumber"></span>
+        </p>
+
+        <p>
+            <label>Program: <span class="req">*</span></label><br>
+            <select id="pnumber" name="pnumber" required disabled oninvalid="showError(this,'Please select a program.')"
+                onchange="clearError(this)">
+                <option value="">-- SELECT A DEPARTMENT FIRST --</option>
+                {% for prog in programs %}
+                <option value="{{ prog['pnumber'] }}" data-dept="{{ prog['dno'] }}">{{ prog['pname'] }}</option>
+                {% endfor %}
+            </select>
+            <span class="error-msg" id="err-pnumber"></span>
+        </p>
+
+        <p>
+            <label>Semester: <span class="req">*</span></label><br>
+            <select name="semester" required oninvalid="showError(this,'Please select a semester.')"
+                onchange="clearError(this)">
+                <option value="">-- SELECT A SEMESTER --</option>
+                <option value="Fall">Fall</option>
+                <option value="Spring">Spring</option>
+                <option value="Summer">Summer</option>
+            </select>
+            <span class="error-msg" id="err-semester"></span>
+        </p>
+
+        <p>
+            <label>Year: <span class="req">*</span></label><br>
+            <select name="app_year" required oninvalid="showError(this,'Please select a year.')"
+                onchange="clearError(this)">
+                <option value="">-- SELECT A YEAR --</option>
+                <option value="2026">2026</option>
+                <option value="2027">2027</option>
+            </select>
+            <span class="error-msg" id="err-app_year"></span>
+        </p>
+
+        <h2>Previous Degrees</h2>
+        <p>At least one undergraduate degree is required.</p>
+
+        <div id="degrees-container">
+            <fieldset>
+                <legend>Degree #1</legend>
+                <p><label>Degree Type: <span class="req">*</span></label><br>
+                    <select name="dtype[]" required oninvalid="showError(this,'Please select a degree type.')"
+                        onchange="clearError(this)">
+                        <option value="">-- SELECT --</option>
+                        <option value="BS">Bachelor of Science (BS)</option>
+                        <option value="BA">Bachelor of Arts (BA)</option>
+                        <option value="MS">Master of Science (MS)</option>
+                        <option value="MA">Master of Arts (MA)</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </p>
+                <p><label>Year Conferred: <span class="req">*</span></label><br>
+                    <input type="number" name="dyear[]" min="1950" max="2026" required placeholder="e.g. 2020"
+                        oninvalid="showError(this,'Enter a valid year (1950–2026).')" oninput="clearError(this)">
+                </p>
+                <p><label>University Name: <span class="req">*</span></label><br>
+                    <input type="text" name="duni[]" required minlength="2" maxlength="150"
+                        title="University name (2–150 characters)"
+                        oninvalid="showError(this,'University name is required.')" oninput="clearError(this)">
+                </p>
+                <p><label>Major: <span class="req">*</span></label><br>
+                    <input type="text" name="dmajor[]" required minlength="2" maxlength="100"
+                        title="Major (2–100 characters)" oninvalid="showError(this,'Major is required.')"
+                        oninput="clearError(this)">
+                </p>
+                <p><label>GPA: <span class="req">*</span></label><br>
+                    <input type="number" name="dGPA[]" step="0.01" min="0.00" max="4.00" required
+                        placeholder="0.00 – 4.00" oninvalid="showError(this,'GPA must be between 0.00 and 4.00.')"
+                        oninput="clearError(this)">
+                </p>
+            </fieldset>
+        </div>
+        <p><button type="button" onclick="addDegree()">+ Add Another Degree</button></p>
+
+        <h2>GRE Scores</h2>
+        <p id="gre-note" style="color:#555; font-style:italic;">GRE scores are required for PhD applicants.</p>
+        <fieldset>
+            <legend>GRE</legend>
+            <p><label>Verbal Score (130–170): <span id="gre-req-star" class="req"></span></label><br>
+                <input type="number" name="verbal" id="gre-verbal" min="130" max="170" placeholder="130–170"
+                    title="Verbal GRE score: 130 to 170" oninput="updateGRETotal(); clearError(this)"
+                    oninvalid="showError(this,'Verbal score must be 130–170.')">
+            </p>
+            <p><label>Quantitative Score (130–170): <span id="gre-req-star2" class="req"></span></label><br>
+                <input type="number" name="quantitative" id="gre-quant" min="130" max="170" placeholder="130–170"
+                    title="Quantitative GRE score: 130 to 170" oninput="updateGRETotal(); clearError(this)"
+                    oninvalid="showError(this,'Quantitative score must be 130–170.')">
+            </p>
+            <p><label>Total Score (auto-calculated):</label><br>
+                <output id="greTotal">-</output>
+                <input type="hidden" name="gre_total" id="greTotalInput">
+            </p>
+            <p><label>Exam Year:</label><br>
+                <input type="number" name="exam_year" min="2015" max="2026" placeholder="e.g. 2023"
+                    title="GRE exam year: 2015 to 2026" oninput="clearError(this)"
+                    oninvalid="showError(this,'Exam year must be 2015–2026.')">
+            </p>
+            <p><label>Subject Test Name:</label><br>
+                <input type="text" name="subj_name" maxlength="100" title="GRE subject test name (optional)">
+            </p>
+            <p><label>Subject Test Score (200–990):</label><br>
+                <input type="number" name="subj_score" min="200" max="990" step="10" placeholder="200–990"
+                    title="GRE subject score: 200 to 990 in steps of 10" oninput="clearError(this)"
+                    oninvalid="showError(this,'Subject score must be 200–990.')">
+            </p>
+        </fieldset>
+
+        <h2>Work Experience</h2>
+        <div id="workex-container"></div>
+        <p><button type="button" onclick="addWorkEx()">+ Add Work Experience</button></p>
+
+        <h2>Official Transcript</h2>
+        <fieldset>
+            <legend>Transcript</legend>
+            <p>Will an official transcript be mailed?</p>
+            <div>
+                <input type="radio" name="transcript" value="true" onchange="toggleSection('transcriptDate', true)"
+                    checked>
+                <label>Yes</label>
+            </div>
+            <div>
+                <input type="radio" name="transcript" value="false" onchange="toggleSection('transcriptDate', false)">
+                <label>No</label>
+            </div>
+            <div id="transcriptDate">
+                <p><label>Date Sent (or expected date):</label><br>
+                    <!-- Must not be in the future -->
+                    <input type="date" name="sent_date" id="sent_date" oninput="validateSentDate(this)">
+                    <span class="error-msg" id="err-sent_date"></span>
+                </p>
+            </div>
+        </fieldset>
+
+        <h2>Letter of Recommendation</h2>
+        <p>Enter one recommender's information below.</p>
+
+        <fieldset>
+            <legend>Recommendation Request</legend>
+
+            <p>
+                <label for="rfname">Recommender First Name:</label><br>
+                <input type="text" id="rfname" name="rfname" required>
+            </p>
+
+            <p>
+                <label for="rlname">Recommender Last Name:</label><br>
+                <input type="text" id="rlname" name="rlname" required>
+            </p>
+
+            <p>
+                <label for="remail">Recommender Email:</label><br>
+                <input type="email" id="remail" name="remail" required>
+            </p>
+
+            <p>
+                <label for="rnumber">Recommender Phone:</label><br>
+                <input type="tel" id="rnumber" name="rnumber">
+            </p>
+
+            <p>
+                <label for="raffiliation">Recommender Affiliation:</label><br>
+                <input type="text" id="raffiliation" name="raffiliation" required>
+            </p>
+
+            <p>
+                <label for="rtitle">Recommender Title:</label><br>
+                <input type="text" id="rtitle" name="rtitle" required>
+            </p>
+        </fieldset>
+
+
+        <br>
+        <button type="submit" onclick="return validateForm()">Submit Application</button>
+        <button type="reset" onclick="resetForm()">Reset Application</button>
+
+    </form>
+
+    <script>
+        function showError(el, msg) {
+            const errEl = document.getElementById('err-' + el.name?.replace('[]', ''));
+            if (errEl) { errEl.textContent = msg; errEl.style.display = 'block'; }
+        }
+        function clearError(el) {
+            const errEl = document.getElementById('err-' + el.name?.replace('[]', ''));
+            if (errEl) { errEl.style.display = 'none'; }
+        }
+
+        (function setDobMax() {
+            const dob = document.getElementById('dob');
+            const today = new Date();
+            const minAge = new Date(today.getFullYear() - 15, today.getMonth(), today.getDate());
+            dob.max = minAge.toISOString().split('T')[0];
+        })();
+        function validateDob(el) {
+            const val = new Date(el.value);
+            const today = new Date();
+            const minAge = new Date(today.getFullYear() - 15, today.getMonth(), today.getDate());
+            if (val > minAge) {
+                el.setCustomValidity('Applicant must be at least 15 years old.');
+                showError(el, 'Applicant must be at least 15 years old.');
+            } else {
+                el.setCustomValidity('');
+                clearError(el);
+            }
+        }
+
+        function validateSentDate(el) {
+            if (!el.value) return;
+            const today = new Date().toISOString().split('T')[0];
+            if (el.value > today) {
+                const errEl = document.getElementById('err-sent_date');
+                errEl.textContent = 'Sent date cannot be in the future.';
+                errEl.style.display = 'block';
+                el.setCustomValidity('Sent date cannot be in the future.');
+            } else {
+                document.getElementById('err-sent_date').style.display = 'none';
+                el.setCustomValidity('');
+            }
+        }
+        (function setSentDateMax() {
+            const sd = document.getElementById('sent_date');
+            sd.max = new Date().toISOString().split('T')[0];
+        })();
+
+        function toggleGRERequirement() {
+            const deg = document.getElementById('deg_no').value;
+            const isPhD = (deg === '2');
+            const verbal = document.getElementById('gre-verbal');
+            const quant = document.getElementById('gre-quant');
+            const star1 = document.getElementById('gre-req-star');
+            const star2 = document.getElementById('gre-req-star2');
+            const note = document.getElementById('gre-note');
+
+            verbal.required = isPhD;
+            quant.required = isPhD;
+            star1.textContent = isPhD ? '*' : '';
+            star2.textContent = isPhD ? '*' : '';
+            note.style.display = isPhD ? 'block' : 'none';
+        }
+        toggleGRERequirement();
+
+        function updateGRETotal() {
+            const v = parseInt(document.getElementById('gre-verbal').value) || 0;
+            const q = parseInt(document.getElementById('gre-quant').value) || 0;
+            const display = document.getElementById('greTotal');
+            const hidden = document.getElementById('greTotalInput');
+            if (v >= 130 && q >= 130) {
+                display.value = v + q;
+                hidden.value = v + q;
+            } else {
+                display.value = '-';
+                hidden.value = '';
+            }
+        }
+
+        const allPrograms = [
+            {% for prog in programs %}
+        { "value": "{{ prog['pnumber'] }}", "label": "{{ prog['pname'] }}", "dept": "{{ prog['dno'] }}" } {% if not loop.last %}, {% endif %}
+        {% endfor %}
+    ];
+        function filterPrograms(deptValue) {
+            const sel = document.getElementById('pnumber');
+            sel.innerHTML = '<option value="">-- SELECT A PROGRAM --</option>';
+            if (!deptValue) { sel.disabled = true; return; }
+            allPrograms.filter(p => String(p.dept) === String(deptValue)).forEach(p => {
+                const opt = document.createElement('option');
+                opt.value = p.value;
+                opt.textContent = p.label;
+                sel.appendChild(opt);
+            });
+            sel.disabled = false;
+        }
+
+        function toggleSection(id, show) {
+            document.getElementById(id).style.display = show ? 'block' : 'none';
+        }
+
+        let degreeCount = 1;
+        function addDegree() {
+            if (degreeCount >= 2) {
+                alert('A maximum of 2 previous degrees may be entered per the application requirements.');
+                return;
+            }
+            const container = document.getElementById('degrees-container');
+            const i = ++degreeCount;
+            const fs = document.createElement('fieldset');
+            const currentYear = new Date().getFullYear();
+            fs.innerHTML = `
+            <legend>Degree #${i} <button type="button" onclick="this.closest('fieldset').remove(); degreeCount--;">Remove</button></legend>
+            <p><label>Degree Type:</label><br>
+               <select name="dtype[]">
+                   <option value="">-- SELECT --</option>
+                   <option value="BS">Bachelor of Science (BS)</option>
+                   <option value="BA">Bachelor of Arts (BA)</option>
+                   <option value="MS">Master of Science (MS)</option>
+                   <option value="MA">Master of Arts (MA)</option>
+                   <option value="Other">Other</option>
+               </select></p>
+            <p><label>Year Conferred:</label><br>
+               <input type="number" name="dyear[]" min="1950" max="${currentYear}" placeholder="e.g. 2020"></p>
+            <p><label>University Name:</label><br>
+               <input type="text" name="duni[]" maxlength="150"></p>
+            <p><label>Major:</label><br>
+               <input type="text" name="dmajor[]" maxlength="100"></p>
+            <p><label>GPA:</label><br>
+               <input type="number" name="dGPA[]" step="0.01" min="0.00" max="4.00" placeholder="0.00 – 4.00"></p>`;
+            container.appendChild(fs);
+        }
+
+        let workCount = 0;
+        function addWorkEx() {
+            const container = document.getElementById('workex-container');
+            const i = ++workCount;
+            const fs = document.createElement('fieldset');
+            const today = new Date().toISOString().split('T')[0];
+            fs.innerHTML = `
+            <legend>Work Experience #${i} <button type="button" onclick="this.closest('fieldset').remove()">Remove</button></legend>
+            <p><label>Job Title:</label><br>
+               <input type="text" name="job_title[]" maxlength="100" title="Job title (max 100 characters)"></p>
+            <p><label>Job Description:</label><br>
+               <textarea name="description[]" rows="3" cols="50" maxlength="500"
+                         placeholder="Briefly describe your role (max 500 characters)"></textarea></p>
+            <p><label>Organization / Company:</label><br>
+               <input type="text" name="com_name[]" maxlength="150"></p>
+            <p><label>Start Date:</label><br>
+               <input type="date" name="start_date[]" max="${today}"
+                      onchange="validateWorkDates(this)"></p>
+            <p><label>End Date (leave blank if current):</label><br>
+               <input type="date" name="end_date[]" max="${today}"
+                      onchange="validateWorkDates(this)"></p>
+            <p><strong>Previous Manager (Optional)</strong></p>
+            <p><label>Manager Name:</label><br>
+               <input type="text" name="man_name[]" maxlength="100"></p>
+            <p><label>Manager Email:</label><br>
+               <input type="email" name="man_email[]" maxlength="150"
+                      title="Enter a valid email address"
+                      oninvalid="this.setCustomValidity('Please enter a valid email address.')"
+                      oninput="this.setCustomValidity('')"></p>
+            <p><label>Manager Phone:</label><br>
+               <input type="tel" name="man_number[]" maxlength="20"
+                      pattern="[0-9+\-\(\) ]{7,20}"
+                      title="Phone number: digits, spaces, +, -, (, ) only (7–20 chars)"
+                      oninvalid="this.setCustomValidity('Enter a valid phone number.')"
+                      oninput="this.setCustomValidity('')"></p>`;
+            container.appendChild(fs);
+        }
+
+        function validateWorkDates(changedEl) {
+            const fs = changedEl.closest('fieldset');
+            const start = fs.querySelector('[name="start_date[]"]');
+            const end = fs.querySelector('[name="end_date[]"]');
+            if (start.value && end.value && end.value < start.value) {
+                end.setCustomValidity('End date cannot be before start date.');
+            } else {
+                end.setCustomValidity('');
+            }
+        }
+
+        function validateForm() {
+            let workDatesOk = true;
+            document.querySelectorAll('#workex-container fieldset').forEach(fs => {
+                const start = fs.querySelector('[name="start_date[]"]');
+                const end = fs.querySelector('[name="end_date[]"]');
+                if (start && end && start.value && end.value && end.value < start.value) {
+                    workDatesOk = false;
+                    end.setCustomValidity('End date cannot be before start date.');
+                    end.reportValidity();
+                }
+            });
+
+            if (!workDatesOk) return false;
+
+            if (!document.getElementById('appForm').checkValidity()) {
+                document.getElementById('appForm').reportValidity();
+                return false;
+            }
+
+            return true;
+        }
+
+        function resetForm() {
+            degreeCount = 1;
+            workCount = 0;
+            document.querySelectorAll('#degrees-container fieldset:not(:first-child)').forEach(e => e.remove());
+            document.getElementById('workex-container').innerHTML = '';
+            document.getElementById('greTotal').value = '-';
+            document.getElementById('greTotalInput').value = '';
+            toggleSection('transcriptDate', true);
+            toggleGRERequirement();
+        }
+        function validatePastDate(el, msg) {
+            if (!el.value) return;
+            const today = new Date().toISOString().split('T')[0];
+            if (el.value > today) {
+                el.setCustomValidity(msg);
+                showError(el, msg);
+            } else {
+                el.setCustomValidity('');
+                clearError(el);
+            }
+        }
+    </script>
+
+</body>
+
+</html>

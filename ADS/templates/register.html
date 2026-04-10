@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Register | ADS{% endblock %}
+
+{% block content %}
+<h2>Register</h2>
+
+<form action="{{ url_for('auth.register') }}" method="POST">
+    <label for="username">Username</label><br>
+    <input type="text" id="username" name="username" required><br><br>
+
+    <label for="password">Password</label><br>
+    <input type="password" id="password" name="password" required><br><br>
+
+    <label for="confirm_password">Confirm Password</label><br>
+    <input type="password" id="confirm_password" name="confirm_password" required><br><br>
+
+    <label for="first_name_student">First Name</label><br>
+    <input type="text" id="first_name_student" name="first_name_student" required><br><br>
+
+    <label for="last_name_student">Last Name</label><br>
+    <input type="text" id="last_name_student" name="last_name_student" required><br><br>
+
+    <label for="program_code">Program</label><br>
+    <select id="program_code" name="program_code" required>
+        <option value="">-- Select Program --</option>
+        {% for program in programs %}
+            <option value="{{ program.program_code|upper }}">{{ program.program_code|upper }}</option>
+        {% endfor %}
+    </select><br><br>
+
+    <label for="address">Address</label><br>
+    <input type="text" id="address" name="address" required><br><br>
+
+    <label for="email">Email</label><br>
+    <input type="email" id="email" name="email" required><br><br>
+
+    <button type="submit">Register</button>
+</form>
+
+<p>
+    Already have an account?
+    <a href="{{ url_for('auth.login') }}">Login here</a>.
+</p>
+{% endblock %}

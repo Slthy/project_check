@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/static/style.css">
+    <title>Graduate Application</title>
+</head>
+<body>
+
+<h1>Creating Graduate Admissions Application</h1>
+
+<form method="POST" action="/modifyacc/{{ username }}/application/create">
+
+    <h2>Personal Information</h2>
+
+    <p>
+        <label for="fname">First Name: *</label><br>
+        <input type="text" id="fname" name="fname" required>
+    </p>
+
+    <p>
+        <label for="middle">Middle Name / Initial:</label><br>
+        <input type="text" id="middle" name="middle">
+    </p>
+
+    <p>
+        <label for="lname">Last Name: *</label><br>
+        <input type="text" id="lname" name="lname" required>
+    </p>
+
+    <p>
+        <label for="dob">Date of Birth: *</label><br>
+        <input type="date" id="dob" name="dob" required>
+    </p>
+
+    <p>
+        <label for="address">Address: *</label><br>
+        <input type="text" id="address" name="address" required>
+    </p>
+
+    <p>
+        <label for="ssn">SSN: *</label><br>
+        <input type="password" id="ssn" name="ssn" maxlength="9" pattern="\d{9}" required>
+    </p>
+
+    <!-- ACADEMIC INFO -->
+    <h2>Academic Information</h2>
+
+    <p>
+        <label for="deg_no">Degree Sought: *</label><br>
+        <select id="deg_no" name="deg_no" required>
+            <option value="">-- SELECT A DEGREE --</option>
+            <option value="1">Master of Science (MS)</option>
+            <option value="2">Doctor of Philosophy (PhD)</option>
+        </select>
+    </p>
+
+    <p>
+        <label for="dnumber">Department: *</label><br>
+        <select id="dnumber" name="dnumber" required onchange="filterPrograms(this.value)">
+            <option value="">-- SELECT A DEPARTMENT --</option>
+            <option value="1">School of Engineering and Applied Science</option>
+            <option value="2">School of Business and Finance</option>
+            <option value="3">School of Politics and International Affairs</option>
+        </select>
+    </p>
+
+    <p>
+        <label for="pnumber">Program: *</label><br>
+        <select id="pnumber" name="pnumber" required disabled>
+            <option value="">-- SELECT A DEPARTMENT FIRST --</option>
+        </select>
+    </p>
+
+    <p>
+        <label for="semester">Semester: *</label><br>
+        <select id="semester" name="semester" required>
+            <option value="">-- SELECT A SEMESTER --</option>
+            <option value="Fall">Fall</option>
+            <option value="Spring">Spring</option>
+            <option value="Summer">Summer</option>
+        </select>
+    </p>
+
+    <p>
+        <label for="app_year">Year: *</label><br>
+        <select id="app_year" name="app_year" required>
+            <option value="">-- SELECT A YEAR --</option>
+            <option value="2026">2026</option>
+            <option value="2027">2027</option>
+        </select>
+    </p>
+
+    <!-- PREVIOUS DEGREES -->
+    <h2>Previous Degrees</h2>
+    <p>At least one undergraduate degree is required.</p>
+
+    <div id="degrees-container">
+        <fieldset>
+            <legend>Degree #1</legend>
+            <p>
+                <label for="dtype_0">Degree Type: *</label><br>
+                <select id="dtype_0" name="dtype[]" required>
+                    <option value="">-- SELECT --</option>
+                    <option value="BS">Bachelor of Science (BS)</option>
+                    <option value="BA">Bachelor of Arts (BA)</option>
+                    <option value="MS">Master of Science (MS)</option>
+                    <option value="MA">Master of Arts (MA)</option>
+                    <option value="Other">Other</option>
+                </select>
+            </p>
+
+            <p>
+                <label for="dyear_0">Year Conferred: *</label><br>
+                <input type="number" id="dyear_0" name="dyear[]" min="1950" max="2026" required>
+            </p>
+
+            <p>
+                <label for="duni_0">University Name: *</label><br>
+                <input type="text" id="duni_0" name="duni[]" required>
+            </p>
+
+            <p>
+                <label for="dmajor_0">Major: *</label><br>
+                <input type="text" id="dmajor_0" name="dmajor[]" required>
+            </p>
+
+            <p>
+                <label for="dGPA_0">GPA: *</label><br>
+                <input type="number" id="dGPA_0" name="dGPA[]" step="0.01" min="0.00" max="4.00" required>
+            </p>
+        </fieldset>
+    </div>
+
+    <p>
+        <button type="button" onclick="addDegree()">+ Add Another Degree</button>
+    </p>
+
+    <!-- GRE SCORES -->
+    <h2>GRE Scores</h2>
+
+    <fieldset>
+        <legend>GRE</legend>
+
+        <p>
+            <label for="verbal">Verbal Score (130-170):</label><br>
+            <input type="number" id="verbal" name="verbal" min="130" max="170" oninput="updateGRETotal()">
+        </p>
+
+        <p>
+            <label for="quantitative">Quantitative Score (130-170):</label><br>
+            <input type="number" id="quantitative" name="quantitative" min="130" max="170" oninput="updateGRETotal()">
+        </p>
+
+        <p>
+            <label>Total Score (auto-calculated):</label><br>
+            <output id="greTotal">-</output>
+            <input type="hidden" name="gre_total" id="greTotalInput">
+        </p>
+
+        <p>
+            <label for="exam_year">Exam Year:</label><br>
+            <input type="number" id="exam_year" name="exam_year" min="2020" max="2026">
+        </p>
+
+        <p>
+            <label for="subj_name">Subject Test Name:</label><br>
+            <input type="text" id="subj_name" name="subj_name">
+        </p>
+
+        <p>
+            <label for="subj_score">Subject Test Score (200-990):</label><br>
+            <input type="number" id="subj_score" name="subj_score" min="200" max="990">
+        </p>
+    </fieldset>
+
+    <!-- WORK EXPERIENCE -->
+    <h2>Work Experience</h2>
+
+    <fieldset>
+        <legend>Work Experience</legend>
+
+        <p>
+            <label for="job_title">Job Title:</label><br>
+            <input type="text" id="job_title" name="job_title">
+        </p>
+
+        <p>
+            <label for="description">Job Description:</label><br>
+            <textarea id="description" name="description" rows="4" cols="50"></textarea>
+        </p>
+
+        <p>
+            <label for="com_name">Organization / Company:</label><br>
+            <input type="text" id="com_name" name="com_name">
+        </p>
+
+        <p>
+            <label for="start_date">Start Date:</label><br>
+            <input type="date" id="start_date" name="start_date">
+        </p>
+
+        <p>
+            <label for="end_date">End Date:</label><br>
+            <input type="date" id="end_date" name="end_date">
+        </p>
+
+        <p><strong>Previous Manager (Optional)</strong></p>
+
+        <p>
+            <label for="man_name">Manager Name:</label><br>
+            <input type="text" id="man_name" name="man_name">
+        </p>
+
+        <p>
+            <label for="man_email">Manager Email:</label><br>
+            <input type="email" id="man_email" name="man_email">
+        </p>
+
+        <p>
+            <label for="man_number">Manager Phone:</label><br>
+            <input type="tel" id="man_number" name="man_number">
+        </p>
+    </fieldset>
+
+    <!-- TRANSCRIPT -->
+    <h2>Official Transcript</h2>
+
+    <fieldset>
+        <legend>Transcript</legend>
+
+        <p>Will an official transcript be mailed?</p>
+        <div>
+            <input type="radio" id="transcript_yes" name="transcript" value="true"
+                   onchange="toggleSection('transcriptDate', true)" checked>
+            <label for="transcript_yes">Yes</label>
+        </div>
+        <div>
+            <input type="radio" id="transcript_no" name="transcript" value="false"
+                   onchange="toggleSection('transcriptDate', false)">
+            <label for="transcript_no">No</label>
+        </div>
+
+        <div id="transcriptDate">
+            <p>
+                <label for="sent_date">Date Sent (or expected date):</label><br>
+                <input type="date" id="sent_date" name="sent_date">
+            </p>
+        </div>
+    </fieldset>
+
+    <!-- RECOMMENDATION LETTERS  -->
+    <h2>Letters of Recommendation</h2>
+
+    <fieldset>
+        <legend>Recommendation</legend>
+
+        <p>Will a letter of recommendation be submitted?</p>
+        <div>
+            <input type="radio" id="submitted_yes" name="submitted" value="true"
+                   onchange="toggleSection('recommenderInfo', true)" checked>
+            <label for="submitted_yes">Yes</label>
+        </div>
+        <div>
+            <input type="radio" id="submitted_no" name="submitted" value="false"
+                   onchange="toggleSection('recommenderInfo', false)">
+            <label for="submitted_no">No</label>
+        </div>
+
+        <div id="recommenderInfo">
+            <p>
+                <label for="rfname">Recommender First Name:</label><br>
+                <input type="text" id="rfname" name="rfname">
+            </p>
+
+            <p>
+                <label for="rlname">Recommender Last Name:</label><br>
+                <input type="text" id="rlname" name="rlname">
+            </p>
+
+            <p>
+                <label for="remail">Recommender Email:</label><br>
+                <input type="email" id="remail" name="remail">
+            </p>
+
+            <p>
+                <label for="rec_number">Recommender Phone:</label><br>
+                <input type="tel" id="rec_number" name="rnumber">
+            </p>
+
+            <p>
+                <label for="raffiliation">Recommender Affiliation:</label><br>
+                <input type="text" id="raffiliation" name="raffiliation">
+            </p>
+
+            <p>
+                <label for="rtitle">Recommender Title:</label><br>
+                <input type="text" id="rtitle" name="rtitle">
+            </p>
+        </div>
+    </fieldset>
+
+    <br>
+    <button type="submit">Submit Application</button>
+    <button type="button" onclick="saveDraft()">Save Application</button>
+    <button type="reset">Reset Application</button>
+
+</form>
+
+<script>
+    /* Department -> Program cascade
+       Matches programs.dno FK to departments.dnumber */
+    const programsByDept = {
+        "1": [
+            { value: "101", label: "Computer Science" },
+            { value: "102", label: "Electrical & Computer Engineering" },
+            { value: "103", label: "Biomedical Engineering" },
+            { value: "104", label: "Computer Engineering" },
+            { value: "105", label: "Mechanical Engineering" }
+        ],
+        "2": [
+            { value: "201", label: "Business Administration" },
+            { value: "202", label: "Finance" }
+        ],
+        "3": [
+            { value: "301", label: "Political Science" },
+            { value: "302", label: "International Affairs" }
+        ]
+    };
+
+    function filterPrograms(deptValue) {
+        const sel = document.getElementById("pnumber");
+        sel.innerHTML = '<option value="">-- SELECT A PROGRAM --</option>';
+        if (!deptValue || !programsByDept[deptValue]) {
+            sel.disabled = true;
+            return;
+        }
+        programsByDept[deptValue].forEach(p => {
+            const opt = document.createElement("option");
+            opt.value = p.value;
+            opt.textContent = p.label;
+            sel.appendChild(opt);
+        });
+        sel.disabled = false;
+    }
+
+    /* GRE total auto-calc */
+    function updateGRETotal() {
+        const v = parseInt(document.getElementById("verbal").value) || 0;
+        const q = parseInt(document.getElementById("quantitative").value) || 0;
+        const display = document.getElementById("greTotal");
+        const hidden  = document.getElementById("greTotalInput");
+        if (v > 0 && q > 0) {
+            display.value = v + q;
+            hidden.value  = v + q;
+        } else {
+            display.value = "-";
+            hidden.value  = "";
+        }
+    }
+
+    /* Show/hide conditional sections */
+    function toggleSection(id, show) {
+        document.getElementById(id).style.display = show ? "block" : "none";
+    }
+
+    /* Add another degree entry */
+    let degreeCount = 1;
+    function addDegree() {
+        const container = document.getElementById("degrees-container");
+        const i = degreeCount++;
+        const fs = document.createElement("fieldset");
+        fs.innerHTML = `
+            <legend>Degree #${i + 1}
+                <button type="button" onclick="this.closest('fieldset').remove()">Remove</button>
+            </legend>
+            <p><label>Degree Type:</label><br>
+               <select name="dtype[]">
+                   <option value="">-- SELECT --</option>
+                   <option value="BS">Bachelor of Science (BS)</option>
+                   <option value="BA">Bachelor of Arts (BA)</option>
+                   <option value="MS">Master of Science (MS)</option>
+                   <option value="MA">Master of Arts (MA)</option>
+                   <option value="Other">Other</option>
+               </select>
+            </p>
+            <p><label>Year Conferred:</label><br>
+               <input type="number" name="dyear[]" min="1950" max="2026"></p>
+            <p><label>University Name:</label><br>
+               <input type="text" name="duni[]"></p>
+            <p><label>Major:</label><br>
+               <input type="text" name="dmajor[]"></p>
+            <p><label>GPA:</label><br>
+               <input type="number" name="dGPA[]" step="0.01" min="0.00" max="4.00"></p>
+        `;
+        container.appendChild(fs);
+    }
+
+    /* Save draft to sessionStorage */
+    function saveDraft() {
+        const data = new FormData(document.getElementById("appForm"));
+        const obj = {};
+        data.forEach((v, k) => { obj[k] = v; });
+        try { sessionStorage.setItem("appDraft", JSON.stringify(obj)); } catch(e) {}
+        alert("Draft saved.");
+    }
+</script>
+
+</body>
+</html>

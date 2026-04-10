@@ -1,0 +1,6 @@
+Flask
+PyMySQL
+DBUtils
+fpdf2
+bcrypt
+python-dotenv

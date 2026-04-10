@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}Review Graduation Application | ADS{% endblock %}
+
+{% block content %}
+<h2>Review Graduation Application</h2>
+
+{% if student %}
+{% set form_label = 'Thesis Defense' if (student.program_code or '')|upper == 'PHD' else 'Form 1' %}
+<p><strong>Student:</strong> {{ student.first_name }} {{ student.last_name }}</p>
+<p><strong>UID:</strong> {{ student.uid }}</p>
+<p><strong>Program:</strong> {{ student.program_code }} - {{ student.program_name }}</p>
+
+{% if application and application.audit_passed == 1 %}
+<section class="card form1-latest-panel">
+    <p>
+        <strong>Audit Status:</strong>
+        <span class="status status-success">Passed</span>
+    </p>
+
+    <h3>Approved {{ form_label }}</h3>
+    {% if form1_courses %}
+    <table>
+        <thead>
+            <tr>
+                <th>Department</th>
+                <th>Course Number</th>
+                <th>Title</th>
+                <th>Credits</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for course in form1_courses %}
+            <tr>
+                <td>{{ course.department_code }}</td>
+                <td>{{ course.course_number }}</td>
+                <td>{{ course.title }}</td>
+                <td>{{ course.credit_hours }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No courses found on the linked {{ form_label }}.</p>
+    {% endif %}
+
+    <h3>Transcript</h3>
+    {% if transcript_rows %}
+    <table>
+        <thead>
+            <tr>
+                <th>Dept</th>
+                <th>Course Number</th>
+                <th>Title</th>
+                <th>Credits</th>
+                <th>Term</th>
+                <th>Year</th>
+                <th>Grade</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in transcript_rows %}
+            <tr>
+                <td>{{ row.department_code }}</td>
+                <td>{{ row.course_number }}</td>
+                <td>{{ row.title }}</td>
+                <td>{{ row.credit_hours }}</td>
+                <td>{{ row.term_name }}</td>
+                <td>{{ row.year_taken }}</td>
+                <td>{{ row.grade_code }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No transcript courses found.</p>
+    {% endif %}
+
+    {% if application.gs_decision == 'pending' or not application.gs_decision %}
+    <form class="inline-action-form" method="POST">
+        <div class="form1-action-row">
+            <button type="submit" name="action" value="approve">Approve Application</button>
+            <button type="submit" name="action" value="reject">Reject Application</button>
+        </div>
+    </form>
+    {% else %}
+    <p><strong>Note:</strong> This application has already been reviewed and cannot be modified.</p>
+    {% endif %}
+</section>
+{% else %}
+<p>No cleared graduation application found for this student.</p>
+{% endif %}
+{% else %}
+<p>Student not found.</p>
+{% endif %}
+
+<a class="back-link" href="{{ url_for('gs.approve_graduation') }}">Back to Approve Graduation</a>
+{% endblock %}

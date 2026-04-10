@@ -1,0 +1,83 @@
+<html>
+    <head>
+        <title>Edit Account</title>
+        <link rel="stylesheet" href="/static/style.css">
+    </head>
+
+    <body>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div id="flash-container">
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}">
+                    {{ message }}
+                    </div>
+                {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        <h1>Edit {{user['user_id']}}'s Account</h1>
+
+        <form method="POST" action="/modifyacc/{{ user['user_id'] }}">
+            <p>
+                <label>Username:</label>
+                <br>
+                <input type="text" name="username" value="{{ user['user_id']}}" required>
+            </p>
+
+            <p>
+                <label>Email:</label>
+                <br>
+                <input type="email" name="email" value="{{user ['email']}}" required>
+            </p>
+
+            <p>
+                <label>New Password:</label>
+                <br>
+                <input type="password" name="password" placeholder="Leave blank to keep current">
+                <small style="color:#6b3f0e; display:block; margin-top:4px;">Only fill in to change the password.</small>
+            </p>
+
+            <p>
+            <Label>Role:</Label>
+            <br>
+            <select name="role_id" required>
+                <option value="">-- Select a Role --</option>
+                <option value="0"{% if user['role_id'] == 0 %}selected{% endif %}>Applicant</option>
+                <option value="1"{% if user['role_id'] == 1 %}selected{% endif %}>Student</option>
+                <option value="2"{% if user['role_id'] == 2 %}selected{% endif %}>Faculty</option>
+                <option value="3"{% if user['role_id'] == 3 %}selected{% endif %}>Graduate Secretary</option>
+                <option value="4"{% if user['role_id'] == 4 %}selected{% endif %}>Chair of Admissions Committee</option>
+                <option value="5"{% if user['role_id'] == 5 %}selected{% endif %}>Admin</option>
+            </select>
+            </p>
+            <p>
+                <Label>Application ID</Label>
+                <br>
+                <input type="text" name="app_id" value="{{user['app_id']}}">
+                {% if not user['app_id'] or user['app_id'] == 'None' %}
+                    <small>No application found for this user: </small>
+                    <small><a href="/modifyacc/{{ user['user_id'] }}/application/create">Create Application</a></small>
+                {%else%}
+                    <a href="/modifyacc/{{ user['user_id'] }}/application/edit">Edit Application</a>
+                {%endif%}
+            </p>
+            <p>
+                <Label>Review ID</Label>
+                <br>
+                <input type="text" name="review_id" value="{{user['review_id']}}">
+                {%if not user['app_id'] %}
+                    <small>No review found for this user: </small>
+                    <small><a href="/modifyacc/{{ user['user_id'] }}/application/create">Create Review Forum</a></small>
+                {%else%}
+                    <small><a href="/">Edit Review Forum</a></small>
+                {%endif%}
+            </p>
+
+            <button type="submit">Save Changes</button>
+        </form>
+        <p>
+            <a href="/modifyacc">Back to Modify Accounts</a>
+        </p>
+    </body>
+</html>

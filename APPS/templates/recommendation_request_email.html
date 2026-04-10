@@ -1,0 +1,31 @@
+<html>
+    <head>
+        <title>Recommendation Request Email</title>
+        <link rel="stylesheet" href="/static/style.css">
+    </head>
+    <body>
+        <h1>Recommendation Request Email</h1>
+
+        <p>The system would send the following email message:</p>
+
+        <div style="border:1px solid #ccc; padding:16px; margin-top:12px;">
+            <p><strong>To:</strong> {{ rec['remail'] }}</p>
+            <p><strong>Subject:</strong> Request for Graduate Recommendation Letter</p>
+
+            <p>Dear {{ rec['rfname'] }} {{ rec['rlname'] }},</p>
+
+            <p>
+                A graduate applicant has requested a recommendation letter from you.
+                Please use the link below to submit your recommendation.
+            </p>
+
+            <p>
+                <a href="{{ submission_link }}">{{ submission_link }}</a>
+            </p>
+
+            <p>Thank you.</p>
+        </div>
+
+        <p><a href="{{ url_for('applicant') }}">Back to Applicant Dashboard</a></p>
+    </body>
+</html>

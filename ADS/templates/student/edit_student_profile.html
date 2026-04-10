@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Edit Profile | ADS{% endblock %}
+{% block content %}
+<h2>Edit Personal Information</h2>
+
+{% if student %}
+<p><strong>Student ID:</strong> {{ student.student_id }}</p>
+<p><strong>UID:</strong> {{ student.uid }}</p>
+<p><strong>Username:</strong> {{ student.username }}</p>
+<p><strong>Program:</strong> {{ student.program_code }} - {{ student.program_name }}</p>
+
+<form method="POST">
+    <p>
+        <label for="first_name"><strong>First Name:</strong></label><br>
+        <input type="text" id="first_name" name="first_name" value="{{ student.first_name }}" required>
+    </p>
+    <p>
+        <label for="last_name"><strong>Last Name:</strong></label><br>
+        <input type="text" id="last_name" name="last_name" value="{{ student.last_name }}" required>
+    </p>
+    <p>
+        <label for="address"><strong>Address:</strong></label><br>
+        <input type="text" id="address" name="address" value="{{ student.address or '' }}">
+    </p>
+    <p>
+        <label for="email"><strong>Email:</strong></label><br>
+        <input type="email" id="email" name="email" value="{{ student.email or '' }}">
+    </p>
+    <button type="submit">Save Changes</button>
+</form>
+
+<p><a href="{{ url_for('student.student_profile') }}">Back to Profile</a></p>
+{% else %}
+<p>No student profile was found for this account.</p>
+{% endif %}
+{% endblock %}

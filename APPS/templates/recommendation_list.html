@@ -1,0 +1,31 @@
+<html>
+    <head>
+        <title>Recommendation Requests</title>
+         <link rel="stylesheet" href="/static/style.css">
+    </head>
+    <body>
+        <h1>Recommendation Requests</h1>
+
+        {% if recommendations %}
+            <ul>
+                {% for rec in recommendations %}
+                    <li>
+                        Request ID: {{ rec['rid'] }} |
+                        Applicant ID: {{ rec['app_id'] }} |
+                        Recommender: {{ rec['rfname'] }} {{ rec['rlname'] }} |
+                        Submitted: {{ rec['submitted'] }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No recommendation requests found.</p>
+        {% endif %}
+
+        {% if role == 'CAC' %}
+            <p><a href="{{ url_for('cac_home') }}">Back to CAC Dashboard</a></p>
+        {% else %}
+            <p><a href="{{ url_for('faculty') }}">Back to Faculty Dashboard</a></p>
+        {% endif %}
+    
+    </body>
+</html>

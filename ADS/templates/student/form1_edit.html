@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Edit {{ form_label }}{% endblock %}
+{% block content %}
+<h2>Edit {{ form_label }}</h2>
+
+{% if student %}
+<p><strong>Student:</strong> {{ student.first_name }} {{ student.last_name }}</p>
+<p><strong>UID:</strong> {{ student.uid }}</p>
+<p><strong>Program:</strong> {{ student.program_code }} - {{ student.program_name }}</p>
+
+<form method="POST">
+    {% if available_courses %}
+    <table>
+        <thead>
+            <tr>
+                <th>Select</th>
+                <th>Department</th>
+                <th>Course Number</th>
+                <th>Title</th>
+                <th>Credits</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for course in available_courses %}
+            {% set is_transcript_course = course.course_id in transcript_course_ids %}
+            <tr>
+                <td>
+                    <input type="checkbox" name="course_ids" value="{{ course.course_id }}" {% if course.course_id in
+                        selected_course_ids %}checked{% endif %} {% if is_transcript_course %}disabled{% endif %}>
+                    {% if is_transcript_course %}
+                    <input type="hidden" name="course_ids" value="{{ course.course_id }}">
+                    {% endif %}
+                </td>
+                <td>{{ course.department_code }}</td>
+                <td>{{ course.course_number }}</td>
+                <td>{{ course.title }}</td>
+                <td>{{ course.credit_hours }}</td>
+                <td>{% if is_transcript_course %}From Transcript{% endif %}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <button type="submit">{% if latest_form1 %}Save {{ form_label }} Changes{% else %}Submit {{ form_label }}{% endif %}</button>
+    {% else %}
+    <p>No courses available in the catalog.</p>
+    {% endif %}
+</form>
+
+<a class="back-link" href="{{ url_for('student.form1') }}">Back to {{ form_label }}</a>
+{% else %}
+<p>No student record found for this account.</p>
+{% endif %}
+{% endblock %}
